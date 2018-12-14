@@ -1,13 +1,21 @@
 language: python
 dist: xenial
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
-  - "3.6"
-  - "3.7"
-  - "3.8-dev"
+- '2.7'
+- '3.4'
+- '3.5'
+- '3.6'
+- '3.7'
+- 3.8-dev
 install:
-  - python setup.py install
+- python setup.py install
 script:
-  - python setup.py test
+- python setup.py test
+deploy:
+  provider: pypi
+  user: clpo13
+  password:
+    secure: Lo/SvGh6GRboESrUBR2M8MNitlX9mxQFom+zDdRHLgjrPvUCnkR156lQOBsSoYQAtDqH1o3RyxEyt92nkFubqgDrYRkDjJAZT20XSRu+OiXdMENN1VhpAQdYkeN71BNe7SWJDwvcoUWRqOv+DnZbQMMRpfyh+8AHrhImPNxX77oTlqOekrsvL92CwhhtZT9co/JsSQ1dPcmbFtW8JrYDj+BiDNKGzFBXshyfps5MnEy4pPENN0Qyg0dKMtPmVQjhQvdbkyvNmLbyqJHDjVHpmUY4iUWv/7AWFNmj5jxg6mN43olUndRqo8krk8yrrCRFyfCKG3JOpF9lobrJd/cWxt+D3sepaYM25gYCkzUIBqhEQr2qaTrzY1H1oM4bkBK8QrdKbKUGnLCjdURVkjLDl5JLD20W9RfdCLKlhSisVlFpHn76sQEXRATfTNw1EpFd9yAQe3basYw4bOhEpUMKnhmEglvfuH58iZpb0Top5pMTrY4q7BQnX2xjrF+5okqlgZICgpuMrcUuCpTTuK+Y3Pn+C011UrpLS35SNPPJlIIQaxEg/bxE1nsWjx82xZjP/7ggvjc2lJrcXYyCC/aHnC9vccHs7YUGlfr6F8qHJtJA2AvjcDKu23F0HRLk7rPWlW691GW+Gr0dabYGMrwAlrWNpX4l/iE3IQscDeTqPgc=
+  server: https://test.pypi.org/legacy/
+  distributions: sdist bdist_wheel --universal
+  skip_existing: true

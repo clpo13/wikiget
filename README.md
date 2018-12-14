@@ -1,5 +1,7 @@
 # wikiget
 
+[![Build Status](https://travis-ci.org/clpo13/python-wikiget.svg?branch=master)](https://travis-ci.org/clpo13/python-wikiget)
+
 Something like a wget clone for downloading files from MediaWiki sites (like
 Wikipedia or Wikimedia Commons) using only the file name or the URL of its
 description page.

@@ -17,7 +17,7 @@ with open("wikiget/version.py", "r") as fv:
     exec(fv.read(), version)
 
 setup(
-    name="wikiget",
+    name="wikiget_test",
     version=version["__version__"],
     author="Cody Logan",
     author_email="clpo13@gmail.com",
