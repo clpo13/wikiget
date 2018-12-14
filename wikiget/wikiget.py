@@ -7,8 +7,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
 """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+
 from builtins import open
+
 from future import standard_library
+
 standard_library.install_aliases()
 
 import argparse
@@ -26,6 +29,9 @@ from wikiget.version import __version__
 
 
 def main():
+    """
+    Main entry point for console script. Automatically compiled by setuptools.
+    """
     default_site = "en.wikipedia.org"
     site_regex = re.compile(r"wiki[mp]edia\.org$", re.I)
     file_regex = re.compile(r"([Ff]ile:|[Ii]mage:)([^/\s]+\.\w+)$")
@@ -46,13 +52,16 @@ def main():
                         name of the file to download with the File: or Image: prefix,
                         or the URL of its file description page
                         """)
-    parser.add_argument("-V", "--version", action="version", version="%(prog)s {}".format(__version__))
+    parser.add_argument("-V", "--version", action="version",
+                        version="%(prog)s {}".format(__version__))
     output_options = parser.add_mutually_exclusive_group()
-    output_options.add_argument("-q", "--quiet", help="suppress warning messages", action="store_true")
+    output_options.add_argument("-q", "--quiet", help="suppress warning messages",
+                                action="store_true")
     output_options.add_argument("-v", "--verbose",
                                 help="print detailed information, use -vv for even more detail",
                                 action="count", default=0)
-    parser.add_argument("-f", "--force", help="force overwriting existing files", action="store_true")
+    parser.add_argument("-f", "--force", help="force overwriting existing files",
+                        action="store_true")
     parser.add_argument("-s", "--site", default=default_site,
                         help="MediaWiki site to download from (default: %(default)s)")
     parser.add_argument("-o", "--output", help="write download to OUTPUT")
@@ -119,7 +128,8 @@ def main():
         file_size = file.imageinfo["size"]
 
         if args.verbose >= 1:
-            print("Info: downloading '{}' ({} bytes) from {}".format(filename, file_size, site.host), end="")
+            print("Info: downloading '{}' "
+                  "({} bytes) from {}".format(filename, file_size, site.host), end="")
             if args.output:
                 print(" to '{}'".format(dest))
             else:
@@ -131,7 +141,8 @@ def main():
         else:
             try:
                 # download the file
-                with tqdm(total=file_size, unit="B", unit_scale=True, unit_divisor=1024) as progress_bar:
+                with tqdm(total=file_size, unit="B",
+                          unit_scale=True, unit_divisor=1024) as progress_bar:
                     with open(dest, "wb") as fd:
                         res = site.connection.get(file_url, stream=True)
                         progress_bar.set_postfix(file=dest, refresh=False)
