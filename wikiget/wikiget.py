@@ -1,4 +1,4 @@
-"""wikiget2
+"""wikiget
 Simple wget clone for downloading files from Wikimedia sites.
 Copyright (C) 2018 Cody Logan; licensed GPLv3+
 SPDX-License-Identifier: GPL-3.0-or-later
@@ -31,8 +31,6 @@ def main():
     Main entry point for console script. Automatically compiled by setuptools.
     """
     default_site = "en.wikipedia.org"
-    site_regex = re.compile(r"wiki[mp]edia\.org$", re.I)
-    file_regex = re.compile(r"([Ff]ile:|[Ii]mage:)([^/\s]+\.\w+)$")
     user_agent = "wikiget/{} (https://github.com/clpo13/wikiget) " \
                  "mwclient/{}".format(__version__, mwclient_version)
 
@@ -77,13 +75,14 @@ def main():
         filename = url.path
         site_name = url.netloc
         if args.site is not default_site and not args.quiet:
+            # this will work even if the user specifies 'en.wikipedia.org'
             print("Warning: target is a URL, ignoring site specified with --site")
     else:
         filename = args.FILE
         site_name = args.site
 
-    file_match = file_regex.search(filename)
-    site_match = site_regex.search(site_name)
+    file_match = valid_file(filename)
+    site_match = valid_site(site_name)
 
     # check for valid site parameter
     if not site_match:
@@ -91,13 +90,17 @@ def main():
         sys.exit(1)
 
     # check if this is a valid file
-    if file_match:
-        # get file name without File:/Image: prefix (second match group)
+    if file_match and file_match.group(1):
+        # has File:/Image: prefix and extension
         filename = file_match.group(2)
     else:
-        # no file extension or prefix, probably an article
-        print("Downloading Wikipedia articles is not currently supported. "
-              "If this is a file, please add the 'File:' prefix.")
+        # no file extension and/or prefix, probably an article
+        print("Downloading Wikipedia articles is not currently supported.", end="")
+        if file_match and not file_match.group(1):
+            # file extension detected, but no prefix
+            print(" If this is a file, please add the 'File:' prefix.")
+        else:
+            print("\n", end="")
         sys.exit(1)
 
     dest = args.output or filename
@@ -155,3 +158,30 @@ def main():
         # no file information returned
         print("Target does not appear to be a valid file.")
         sys.exit(1)
+
+
+def valid_file(search_string):
+    """
+    Determines if the given string contains a valid file name, defined as a string
+    ending with a '.' and at least one character, optionally beginning with 'File:'
+    or 'Image:', the standard file prefixes in MediaWiki.
+    :param search_string: string to validate
+    :returns: a regex Match object if there's a match or None otherwise
+    """
+    # second group could also restrict to file extensions with three or more
+    # letters with ([^/\s]+\.\w{3,})
+    file_regex = re.compile(r"([Ff]ile:|[Ii]mage:)?([^/\s]+\.\w+)$")
+    return file_regex.search(search_string)
+
+
+def valid_site(search_string):
+    """
+    Determines if the given string contains a valid site name, defined as a string
+    ending with 'wikipedia.org' or 'wikimedia.org'. This covers all subdomains of
+    those domains. Eventually, it should be possible to support any MediaWiki site,
+    regardless of domain name.
+    :param search_string: string to validate
+    :returns: a regex Match object if there's a match or None otherwise
+    """
+    site_regex = re.compile(r"wiki[mp]edia\.org$", re.I)
+    return site_regex.search(search_string)
