@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """wikiget2
 Simple wget clone for downloading files from Wikimedia sites.
 Copyright (C) 2018 Cody Logan; licensed GPLv3+
@@ -15,7 +13,7 @@ with open(path.join(here, "README.md"), "r") as fr:
     long_description = fr.read()
 
 version = {}
-with open("wikiget/version.py") as fv:
+with open("wikiget/version.py", "r") as fv:
     exec(fv.read(), version)
 
 setup(
