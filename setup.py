@@ -37,7 +37,8 @@ setup(
         "Programming Language :: Python :: 3",
         "Topic :: Utilities",
     ],
-    install_requires=["future", "mwclient", "requests", "tqdm"],
+    install_requires=["future", "mwclient", "pytest-runner", "requests", "tqdm"],
+    tests_require=["pytest"],
     project_urls={
         "Bug Reports": "https://github.com/clpo13/python-wikiget/issues",
     },
