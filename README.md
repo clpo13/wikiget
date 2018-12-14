@@ -4,8 +4,7 @@ Something like a wget clone for downloading files from MediaWiki sites (like
 Wikipedia or Wikimedia Commons) using only the file name or the URL of its
 description page.
 
-Requires Python 2 or 3 (tested on 2.7 and 3.7). Install with
-`pip install --user -U wikiget`.
+Requires Python 2.7 or 3.4+. Install with `pip install --user -U wikiget`.
 
 ## Usage
 
