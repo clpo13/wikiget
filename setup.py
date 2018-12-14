@@ -1,4 +1,4 @@
-"""wikiget2
+"""wikiget
 Simple wget clone for downloading files from Wikimedia sites.
 Copyright (C) 2018 Cody Logan; licensed GPLv3+
 SPDX-License-Identifier: GPL-3.0-or-later
@@ -13,11 +13,11 @@ with open(path.join(here, "README.md"), "r") as fr:
     long_description = fr.read()
 
 version = {}
-with open("wikiget/version.py", "r") as fv:
+with open(path.join(here, "wikiget", "version.py"), "r") as fv:
     exec(fv.read(), version)
 
 setup(
-    name="wikiget_test",
+    name="wikiget",
     version=version["__version__"],
     author="Cody Logan",
     author_email="clpo13@gmail.com",
