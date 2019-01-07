@@ -17,7 +17,7 @@ import logging
 import os
 import re
 import sys
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from mwclient import InvalidResponse, Site, __ver__ as mwclient_version
 from requests import ConnectionError
@@ -98,10 +98,14 @@ def main():
         print("Downloading Wikipedia articles is not currently supported.", end="")
         if file_match and not file_match.group(1):
             # file extension detected, but no prefix
+            # TODO: no longer possible to get to this point
             print(" If this is a file, please add the 'File:' prefix.")
         else:
             print("\n", end="")
         sys.exit(1)
+
+    # remove URL encoding
+    filename = unquote(filename)
 
     dest = args.output or filename
 
@@ -163,14 +167,14 @@ def main():
 def valid_file(search_string):
     """
     Determines if the given string contains a valid file name, defined as a string
-    ending with a '.' and at least one character, optionally beginning with 'File:'
-    or 'Image:', the standard file prefixes in MediaWiki.
+    ending with a '.' and at least one character, beginning with 'File:' or
+    'Image:', the standard file prefixes in MediaWiki.
     :param search_string: string to validate
     :returns: a regex Match object if there's a match or None otherwise
     """
     # second group could also restrict to file extensions with three or more
-    # letters with ([^/\s]+\.\w{3,})
-    file_regex = re.compile(r"([Ff]ile:|[Ii]mage:)?([^/\s]+\.\w+)$")
+    # letters with ([^/\r\n\t\f\v]+\.\w{3,})
+    file_regex = re.compile(r"([Ff]ile:|[Ii]mage:)([^/\r\n\t\f\v]+\.\w+)$")
     return file_regex.search(search_string)
 
 

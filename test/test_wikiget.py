@@ -32,14 +32,16 @@ def test_file_regex():
 
 
 def test_invalid_file_input():
-    invalid_input = ["file:example", "example"]
+    invalid_input = ["file:example", "example.jpg", "Foo Bar.gif",
+                     "Fil:Example.jpg"]
     for i in invalid_input:
         file_match = wikiget.valid_file(i)
         assert file_match is None
 
 
 def test_valid_file_input():
-    valid_input = ["example.jpg", "file:example.jpg", "example.file-01.jpg"]
+    valid_input = ["Image:example.jpg", "file:example.jpg", "File:example.file-01.jpg",
+                   "File:ß handwritten sample.gif"]
     for i in valid_input:
         file_match = wikiget.valid_file(i)
         assert file_match is not None
