@@ -31,13 +31,14 @@ be downloaded to a different name with `-o`.
 
 ## Future plans
 
+- batch download categories and user uploads
 - download from any MediaWiki-powered site, not just Wikimedia projects
 - download Wikipedia articles, in plain text, wikitext, or other formats
 
 ## Contributing
 
-It's recommended that you use a virtual environment manager (like virtualenv) to
-install dependencies:
+It's recommended that you use a virtual environment manager (like
+[virtualenv](https://virtualenv.pypa.io/en/latest/)) to install dependencies:
 
 ```bash
 pip install --user -U virtualenv
@@ -49,13 +50,14 @@ virtualenv venv
 To activate the virtual environment, use one of the following commands:
 
 ```bash
-source venv/bin/activate     # Linux and macOS (bash, zsh)
-.\venv\Scripts\activate.bat  # Windows command prompt
-.\venv\Scripts\Activate.ps1  # Windows PowerShell
+source venv/bin/activate  # Linux and macOS
+.\venv\Scripts\activate   # Windows
 ```
 
-Then run `pip install -e .` to invoke an editable install, meaning any changes
-made to the source will be reflected immediately. 
+Then run `pip install -e .` to invoke an
+["editable" install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs),
+meaning any changes made to the source will be reflected immediately in the
+executable script. Unit tests can be run with `python setup.py test`.
 
 ## License
 
@@ -68,8 +70,8 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+along with this program. If not, see <https://www.gnu.org/licenses/>.

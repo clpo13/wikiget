@@ -4,9 +4,10 @@ Copyright (C) 2018 Cody Logan; licensed GPLv3+
 SPDX-License-Identifier: GPL-3.0-or-later
 """
 
-from setuptools import setup, find_packages
-from os import path
 from io import open
+from os import path
+
+from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
 with open(path.join(here, "README.md"), "r") as fr:

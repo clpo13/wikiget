@@ -28,7 +28,8 @@ from wikiget.version import __version__
 
 def main():
     """
-    Main entry point for console script. Automatically compiled by setuptools.
+    Main entry point for console script. Automatically compiled by setuptools
+    when installed with `pip install` or `python setup.py install`.
     """
     default_site = "en.wikipedia.org"
     user_agent = "wikiget/{} (https://github.com/clpo13/wikiget) " \
@@ -54,7 +55,7 @@ def main():
     output_options.add_argument("-q", "--quiet", help="suppress warning messages",
                                 action="store_true")
     output_options.add_argument("-v", "--verbose",
-                                help="print detailed information, use -vv for even more detail",
+                                help="print detailed information; use -vv for even more detail",
                                 action="count", default=0)
     parser.add_argument("-f", "--force", help="force overwriting existing files",
                         action="store_true")
@@ -98,14 +99,13 @@ def main():
         print("Downloading Wikipedia articles is not currently supported.", end="")
         if file_match and not file_match.group(1):
             # file extension detected, but no prefix
-            # TODO: no longer possible to get to this point
+            # TODO: no longer possible to get to this point since file_match is None with no prefix
             print(" If this is a file, please add the 'File:' prefix.")
         else:
             print("\n", end="")
         sys.exit(1)
 
-    # remove URL encoding
-    filename = unquote(filename)
+    filename = unquote(filename)  # remove URL encoding for special characters
 
     dest = args.output or filename
 
