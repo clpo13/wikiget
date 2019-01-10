@@ -1,7 +1,9 @@
 language: python
 dist: xenial
 python:
+- '2.6'
 - '2.7'
+- '3.3'
 - '3.4'
 - '3.5'
 - '3.6'
@@ -20,3 +22,7 @@ deploy:
     tags: true
   distributions: sdist bdist_wheel --universal
   skip_existing: true
+matrix:
+  allow_failures:
+    - python: '2.6'
+    - python: '3.3'
