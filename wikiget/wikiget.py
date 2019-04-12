@@ -1,6 +1,6 @@
 """wikiget
 Simple wget clone for downloading files from Wikimedia sites.
-Copyright (C) 2018 Cody Logan; licensed GPLv3+
+Copyright (C) 2018-2019 Cody Logan; licensed GPLv3+
 SPDX-License-Identifier: GPL-3.0-or-later
 """
 
@@ -40,8 +40,8 @@ def main():
                                      using the file name or description page URL
                                      """,
                                      epilog="""
-                                     Copyright (C) 2018 Cody Logan. License GPLv3+: GNU GPL version 3
-                                     or later <http://www.gnu.org/licenses/gpl.html>.
+                                     Copyright (C) 2018-2019 Cody Logan. License GPLv3+: GNU GPL
+                                     version 3 or later <http://www.gnu.org/licenses/gpl.html>.
                                      This is free software; you are free to change and redistribute it.
                                      There is NO WARRANTY, to the extent permitted by law.
                                      """)
