@@ -43,7 +43,7 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 ## Future plans
 
 - compare downloaded file hash with server
-- batch download categories and user uploads
+- batch download categories, user uploads, or from a text file
 - download from any MediaWiki-powered site, not just Wikimedia projects
 - download Wikipedia articles, in plain text, wikitext, or other formats
 
