@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """wikiget
 Simple wget clone for downloading files from Wikimedia sites.
-Copyright (C) 2018 Cody Logan; licensed GPLv3+
+Copyright (C) 2018-2019 Cody Logan; licensed GPLv3+
 SPDX-License-Identifier: GPL-3.0-or-later
 """
 
@@ -61,7 +61,7 @@ def test_valid_file_input():
     """
     valid_input = ["Image:example.jpg", "file:example.jpg",
                    "File:example.file-01.jpg",
-                   "File:ß handwritten sample.gif"]
+                   "File:ß handwritten sample.gif", "File:A (1).jpeg"]
     for i in valid_input:
         file_match = wikiget.valid_file(i)
         assert file_match is not None

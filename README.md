@@ -17,6 +17,9 @@ If `FILE` is in the form `File:Example.jpg` or `Example.jpg`, it will be fetched
 from the default site, which is "en.wikipedia.org". If it's the fully-qualified
 URL of a file description page, like `https://commons.wikimedia.org/wiki/File:Example.jpg`,
 the file is fetched from the specified site, in this case "commons.wikimedia.org".
+Full URLs may contain characters your shell interprets differently, so you can
+either escape those characters with a backslash `\` or surround the entire URL
+with single `'` or double `"` quotes.
 
 The site can also be specified with the `--site` flag, though this will not have
 any effect if the full URL is given.
@@ -29,8 +32,17 @@ By default, the program won't overwrite existing files with the same name as the
 target, but this can be forced with `-f` or `--force`. Additionally, the file can
 be downloaded to a different name with `-o`.
 
+### Examples
+
+```bash
+wikiget File:Example.jpg
+wikiget --site commons.wikimedia.org File:Example.jpg
+wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
+```
+
 ## Future plans
 
+- compare downloaded file hash with server
 - batch download categories and user uploads
 - download from any MediaWiki-powered site, not just Wikimedia projects
 - download Wikipedia articles, in plain text, wikitext, or other formats
@@ -61,7 +73,7 @@ executable script. Unit tests can be run with `python setup.py test`.
 
 ## License
 
-Copyright (C) 2018 Cody Logan
+Copyright (C) 2018-2019 Cody Logan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
