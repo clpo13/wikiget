@@ -38,6 +38,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Topic :: Utilities",
     ],
+    python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
     install_requires=["future", "mwclient", "pytest-runner", "requests", "tqdm"],
     tests_require=["pytest"],
     project_urls={
