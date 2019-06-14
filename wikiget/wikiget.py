@@ -13,6 +13,7 @@ from future import standard_library
 standard_library.install_aliases()
 
 import argparse
+import hashlib
 import logging
 import os
 import re
@@ -24,6 +25,8 @@ from requests import ConnectionError
 from tqdm import tqdm
 
 from wikiget.version import __version__
+
+BLOCKSIZE = 65536
 
 
 def main():
@@ -131,6 +134,7 @@ def main():
         # file exists either locally or at Wikimedia Commons
         file_url = file.imageinfo["url"]
         file_size = file.imageinfo["size"]
+        file_sha1 = file.imageinfo["sha1"]
 
         if args.verbose >= 1:
             print("Info: downloading '{}' "
@@ -158,6 +162,21 @@ def main():
                 print("File could not be written. The following error was encountered:")
                 print(e)
                 sys.exit(1)
+
+            # verify file integrity
+            dl_sha1 = verify_hash(dest)
+
+            if args.verbose >= 1:
+                print("Info: downloaded file SHA1 is {}".format(dl_sha1))
+                print("Info: server file SHA1 is {}".format(file_sha1))
+            if dl_sha1 == file_sha1:
+                if args.verbose >= 1:
+                    print("Info: hashes match!")
+                sys.exit(0)
+            else:
+                print("Error: hash mismatch! Downloaded file may be corrupt.")
+                sys.exit(1)
+
     else:
         # no file information returned
         print("Target does not appear to be a valid file.")
@@ -189,3 +208,18 @@ def valid_site(search_string):
     """
     site_regex = re.compile(r"wiki[mp]edia\.org$", re.I)
     return site_regex.search(search_string)
+
+
+def verify_hash(filename):
+    """
+    Calculates the SHA1 hash of the given file for comparison with a known value.
+    :param filename: name of the file to calculate a hash for
+    :return: hash digest
+    """
+    hasher = hashlib.sha1()
+    with open(filename, "rb") as dl:
+        buf = dl.read(BLOCKSIZE)
+        while len(buf) > 0:
+            hasher.update(buf)
+            buf = dl.read(BLOCKSIZE)
+    return hasher.hexdigest()
