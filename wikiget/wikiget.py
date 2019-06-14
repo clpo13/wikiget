@@ -163,7 +163,7 @@ def main():
                 print(e)
                 sys.exit(1)
 
-            # verify file integrity
+            # verify file integrity and optionally print details
             dl_sha1 = verify_hash(dest)
 
             if args.verbose >= 1:
@@ -193,7 +193,7 @@ def valid_file(search_string):
     """
     # second group could also restrict to file extensions with three or more
     # letters with ([^/\r\n\t\f\v]+\.\w{3,})
-    file_regex = re.compile(r"([Ff]ile:|[Ii]mage:)([^/\r\n\t\f\v]+\.\w+)$")
+    file_regex = re.compile(r"(File:|Image:)([^/\r\n\t\f\v]+\.\w+)$", re.I)
     return file_regex.search(search_string)
 
 

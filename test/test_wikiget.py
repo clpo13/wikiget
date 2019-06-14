@@ -60,7 +60,7 @@ def test_valid_file_input():
     Valid file strings should return regex match objects.
     """
     valid_input = ["Image:example.jpg", "file:example.jpg",
-                   "File:example.file-01.jpg",
+                   "File:example.file-01.jpg", "FILE:FOO.BMP",
                    "File:ß handwritten sample.gif", "File:A (1).jpeg"]
     for i in valid_input:
         file_match = wikiget.valid_file(i)
