@@ -20,7 +20,7 @@ import re
 import sys
 from urllib.parse import unquote, urlparse
 
-from mwclient import InvalidResponse, Site, __ver__ as mwclient_version
+from mwclient import InvalidResponse, Site, __version__ as mwclient_version
 from requests import ConnectionError
 from tqdm import tqdm
 
