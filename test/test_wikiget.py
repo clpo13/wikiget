@@ -5,6 +5,10 @@ Copyright (C) 2018-2019 Cody Logan; licensed GPLv3+
 SPDX-License-Identifier: GPL-3.0-or-later
 """
 
+import os
+
+import pytest
+
 from wikiget import wikiget
 
 
@@ -65,3 +69,23 @@ def test_valid_file_input():
     for i in valid_input:
         file_match = wikiget.valid_file(i)
         assert file_match is not None
+
+
+def test_verify_hash():
+    """
+    Confirm that verify_hash returns the proper SHA1 hash.
+    """
+    # TODO: do we need to actually create a file?
+    file_name = "testfile"
+    file_contents = "foobar"
+    file_sha1 = "8843d7f92416211de9ebb963ff4ce28125932878"
+
+    try:
+        with open(file_name, "w") as dl:
+            dl.write(file_contents)
+    except PermissionError:
+        pytest.skip("need write access to create test file")
+
+    assert wikiget.verify_hash(file_name) == file_sha1
+
+    os.remove(file_name)
