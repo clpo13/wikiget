@@ -1,8 +1,8 @@
-"""wikiget
-Simple wget clone for downloading files from Wikimedia sites.
-Copyright (C) 2018-2019 Cody Logan; licensed GPLv3+
-SPDX-License-Identifier: GPL-3.0-or-later
-"""
+# wikiget - simple CLI tool for downloading files from Wikimedia sites.
+# Copyright (C) 2018-2019 Cody Logan; licensed GPLv3+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+"""Python setuptools metadata and dependencies."""
 
 from io import open
 from os import path
@@ -22,24 +22,27 @@ setup(
     version=version["__version__"],
     author="Cody Logan",
     author_email="clpo13@gmail.com",
-    description="Tool for downloading files from MediaWiki sites",
+    description="CLI tool for downloading files from MediaWiki sites",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/clpo13/python-wikiget",
-    keywords="mediawiki wikimedia wikipedia",
+    keywords="download mediawiki wikimedia wikipedia",
     packages=find_packages(),
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: End Users/Desktop",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Utilities",
     ],
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*',
-    install_requires=["future", "mwclient", "pytest-runner", "requests", "tqdm"],
+    install_requires=["future", "mwclient>=0.10.0", "pytest-runner", "requests", "tqdm"],
     tests_require=["pytest"],
     project_urls={
         "Bug Reports": "https://github.com/clpo13/python-wikiget/issues",
