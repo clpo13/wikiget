@@ -3,11 +3,11 @@
 [![Build Status](https://travis-ci.org/clpo13/python-wikiget.svg?branch=master)](https://travis-ci.org/clpo13/python-wikiget)
 [![PyPI version](https://badge.fury.io/py/wikiget.svg)](https://badge.fury.io/py/wikiget)
 
-Something like a wget clone for downloading files from MediaWiki sites (like
-Wikipedia or Wikimedia Commons) using only the file name or the URL of its
-description page.
+Something like wget for downloading a file from MediaWiki sites (like Wikipedia
+or Wikimedia Commons) using only the file name or the URL of its description
+page.
 
-Requires Python 2.7 or 3.5+. Install with `pip install --user -U wikiget`.
+Requires Python 2.7 or 3.5+. Install with `pip install --user wikiget`.
 
 ## Usage
 
@@ -48,14 +48,21 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 
 ## Contributing
 
-It's recommended that you use a virtual environment manager (like
-[virtualenv](https://virtualenv.pypa.io/en/latest/)) to install dependencies:
+It's recommended that you use a
+[virtual environment manager](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
+like venv or [virtualenv](https://virtualenv.pypa.io/en/latest/)) to
+install dependencies:
 
 ```bash
-pip install --user -U virtualenv
 git clone https://github.com/clpo13/python-wikiget.git
 cd python-wikiget
+
+# Python 2 or 3
+pip install --user virtualenv
 virtualenv venv
+
+# Python 3
+python3 -m venv venv
 ```
 
 To activate the virtual environment, use one of the following commands:
@@ -85,4 +92,5 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+along with this program (see [LICENSE](LICENSE)). If not, see
+<https://www.gnu.org/licenses/>.
