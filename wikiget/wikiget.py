@@ -1,8 +1,8 @@
-"""wikiget
-Simple wget clone for downloading files from Wikimedia sites.
-Copyright (C) 2018-2019 Cody Logan; licensed GPLv3+
-SPDX-License-Identifier: GPL-3.0-or-later
-"""
+# wikiget - simple CLI tool for downloading files from Wikimedia sites.
+# Copyright (C) 2018-2019 Cody Logan; licensed GPLv3+
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+"""Main wikiget functions."""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -46,7 +46,8 @@ def main():
                                      Copyright (C) 2018-2019 Cody Logan. License GPLv3+: GNU GPL
                                      version 3 or later <http://www.gnu.org/licenses/gpl.html>.
                                      This is free software; you are free to change and redistribute
-                                     it. There is NO WARRANTY, to the extent permitted by law.
+                                     it under certain conditions. There is NO WARRANTY, to the
+                                     extent permitted by law.
                                      """)
     parser.add_argument("FILE", help="""
                         name of the file to download with the File: or Image: prefix,
