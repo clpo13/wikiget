@@ -35,7 +35,7 @@ def main():
     when installed with `pip install` or `python setup.py install`.
     """
     default_site = "en.wikipedia.org"
-    user_agent = "wikiget/{} (https://github.com/clpo13/wikiget) " \
+    user_agent = "wikiget/{} (https://github.com/clpo13/python-wikiget) " \
                  "mwclient/{}".format(__version__, mwclient_version)
 
     parser = argparse.ArgumentParser(description="""
