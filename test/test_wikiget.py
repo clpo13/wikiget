@@ -81,10 +81,12 @@ def test_verify_hash():
     file_sha1 = "8843d7f92416211de9ebb963ff4ce28125932878"
 
     try:
-        with open(file_name, "w") as dl:
-            dl.write(file_contents)
+        dl = open(file_name, "w")
     except PermissionError:
         pytest.skip("need write access to create test file")
+    else:
+        with dl:
+            dl.write(file_contents)
 
     assert wikiget.verify_hash(file_name) == file_sha1
 

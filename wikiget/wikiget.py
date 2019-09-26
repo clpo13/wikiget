@@ -27,6 +27,9 @@ from tqdm import tqdm
 from wikiget.version import __version__
 
 BLOCKSIZE = 65536
+DEFAULT_SITE = "en.wikipedia.org"
+USER_AGENT = "wikiget/{} (https://github.com/clpo13/python-wikiget) " \
+             "mwclient/{}".format(__version__, mwclient_version)
 
 
 def main():
@@ -34,9 +37,6 @@ def main():
     Main entry point for console script. Automatically compiled by setuptools
     when installed with `pip install` or `python setup.py install`.
     """
-    default_site = "en.wikipedia.org"
-    user_agent = "wikiget/{} (https://github.com/clpo13/python-wikiget) " \
-                 "mwclient/{}".format(__version__, mwclient_version)
 
     parser = argparse.ArgumentParser(description="""
                                      A tool for downloading files from MediaWiki sites
@@ -63,9 +63,12 @@ def main():
                                 action="count", default=0)
     parser.add_argument("-f", "--force", help="force overwriting existing files",
                         action="store_true")
-    parser.add_argument("-s", "--site", default=default_site,
+    parser.add_argument("-s", "--site", default=DEFAULT_SITE,
                         help="MediaWiki site to download from (default: %(default)s)")
     parser.add_argument("-o", "--output", help="write download to OUTPUT")
+    parser.add_argument("-a", "--batch", help="treat FILE as a textfile containing multiple files to download, one URL or filename per line",
+                        action="store_true")
+
     args = parser.parse_args()
 
     # print API and debug messages in verbose mode
@@ -74,16 +77,39 @@ def main():
     elif args.verbose >= 1:
         logging.basicConfig(level=logging.WARNING)
 
-    url = urlparse(args.FILE)
+    if args.batch:
+        # batch download mode
+        input_file = args.FILE
+        if args.verbose >= 1:
+            print("Info: using batch file '{}'".format(input_file))
+        try:
+            fd = open(input_file, "r")
+        except IOError as e:
+            print("File could not be read. The following error was encountered:")
+            print(e)
+            sys.exit(1)
+        else:
+            with fd:
+                for _, line in enumerate(fd):
+                    line = line.strip()
+                    download(line, args)
+    else:
+        # single download mode
+        dl = args.FILE
+        download(dl, args)
+
+
+def download(dl, args):
+    url = urlparse(dl)
 
     if url.netloc:
         filename = url.path
         site_name = url.netloc
-        if args.site is not default_site and not args.quiet:
+        if args.site is not DEFAULT_SITE and not args.quiet:
             # this will work even if the user specifies 'en.wikipedia.org'
             print("Warning: target is a URL, ignoring site specified with --site")
     else:
-        filename = args.FILE
+        filename = dl
         site_name = args.site
 
     file_match = valid_file(filename)
@@ -114,11 +140,11 @@ def main():
     dest = args.output or filename
 
     if args.verbose >= 2:
-        print("User agent: {}".format(user_agent))
+        print("User agent: {}".format(USER_AGENT))
 
     # connect to site and identify ourselves
     try:
-        site = Site(site_name, clients_useragent=user_agent)
+        site = Site(site_name, clients_useragent=USER_AGENT)
     except ConnectionError:
         # usually this means there is no such site, or there's no network connection
         print("Error: couldn't connect to specified site.")
@@ -150,19 +176,21 @@ def main():
             print("File '{}' already exists, skipping download (use -f to ignore)".format(dest))
         else:
             try:
+                fd = open(dest, "wb")
+            except IOError as e:
+                print("File could not be written. The following error was encountered:")
+                print(e)
+                sys.exit(1)
+            else:
                 # download the file
                 with tqdm(total=file_size, unit="B",
                           unit_scale=True, unit_divisor=1024) as progress_bar:
-                    with open(dest, "wb") as fd:
+                    with fd:
                         res = site.connection.get(file_url, stream=True)
                         progress_bar.set_postfix(file=dest, refresh=False)
                         for chunk in res.iter_content(1024):
                             fd.write(chunk)
                             progress_bar.update(len(chunk))
-            except IOError as e:
-                print("File could not be written. The following error was encountered:")
-                print(e)
-                sys.exit(1)
 
             # verify file integrity and optionally print details
             dl_sha1 = verify_hash(dest)
@@ -173,14 +201,14 @@ def main():
             if dl_sha1 == file_sha1:
                 if args.verbose >= 1:
                     print("Info: hashes match!")
-                sys.exit(0)
+                # at this point, we've successfully downloaded the file
             else:
                 print("Error: hash mismatch! Downloaded file may be corrupt.")
                 sys.exit(1)
 
     else:
         # no file information returned
-        print("Target does not appear to be a valid file.")
+        print("Target '{}' does not appear to be a valid file.".format(filename))
         sys.exit(1)
 
 
