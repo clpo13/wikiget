@@ -41,7 +41,7 @@ from wikiget.version import __version__
 
 BLOCKSIZE = 65536
 DEFAULT_SITE = "en.wikipedia.org"
-USER_AGENT = "wikiget/{} (https://github.com/clpo13/python-wikiget) " \
+USER_AGENT = "wikiget/{} (https://github.com/clpo13/wikiget) " \
              "mwclient/{}".format(__version__, mwclient_version)
 
 

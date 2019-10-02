@@ -38,7 +38,7 @@ setup(
     description="CLI tool for downloading files from MediaWiki sites",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/clpo13/python-wikiget",
+    url="https://github.com/clpo13/wikiget",
     keywords="download mediawiki wikimedia wikipedia",
     packages=find_packages(),
     classifiers=[
@@ -58,7 +58,7 @@ setup(
     install_requires=["future", "mwclient>=0.10.0", "pytest-runner", "requests", "tqdm"],
     tests_require=["pytest"],
     project_urls={
-        "Bug Reports": "https://github.com/clpo13/python-wikiget/issues",
+        "Bug Reports": "https://github.com/clpo13/wikiget/issues",
     },
     entry_points={
         "console_scripts": [

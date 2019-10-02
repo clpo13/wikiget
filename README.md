@@ -1,6 +1,6 @@
 # wikiget
 
-[![Build Status](https://travis-ci.org/clpo13/python-wikiget.svg?branch=master)](https://travis-ci.org/clpo13/python-wikiget)
+[![Build Status](https://travis-ci.org/clpo13/wikiget.svg?branch=master)](https://travis-ci.org/clpo13/wikiget)
 [![PyPI version](https://badge.fury.io/py/wikiget.svg)](https://badge.fury.io/py/wikiget)
 
 Something like wget for downloading a file from MediaWiki sites (like Wikipedia
@@ -59,8 +59,8 @@ like venv or [virtualenv](https://virtualenv.pypa.io/en/latest/)) to
 install dependencies:
 
 ```bash
-git clone https://github.com/clpo13/python-wikiget.git
-cd python-wikiget
+git clone https://github.com/clpo13/wikiget.git  # if you plan on submitting pull requests, fork the repo instead
+cd wikiget
 
 # Python 2 or 3
 pip install --user virtualenv
