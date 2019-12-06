@@ -15,9 +15,9 @@ Requires Python 2.7 or 3.5+. Install with `pip install --user wikiget` or, if yo
 `wikiget [-h] [-V] [-q | -v] [-f] [-a] [--site SITE] [-o OUTPUT] FILE`
 
 If `FILE` is in the form `File:Example.jpg` or `Example.jpg`, it will be fetched
-from the default site, which is "en.wikipedia.org". If it's the fully-qualified
-URL of a file description page, like `https://commons.wikimedia.org/wiki/File:Example.jpg`,
-the file is fetched from the specified site, in this case "commons.wikimedia.org".
+from the default site, which is "commons.wikimedia.org". If it's the fully-qualified
+URL of a file description page, like `https://en.wikipedia.org/wiki/File:Example.jpg`,
+the file is fetched from the specified site, in this case "en.wikipedia.org".
 Full URLs may contain characters your shell interprets differently, so you can
 either escape those characters with a backslash `\` or surround the entire URL
 with single `'` or double `"` quotes.
@@ -42,7 +42,7 @@ offending filename is printed.
 
 ```bash
 wikiget File:Example.jpg
-wikiget --site commons.wikimedia.org File:Example.jpg
+wikiget --site en.wikipedia.org File:Example.jpg
 wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 ```
 
