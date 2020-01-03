@@ -62,12 +62,6 @@ install dependencies:
 ```bash
 git clone https://github.com/clpo13/wikiget.git  # if you plan on submitting pull requests, fork the repo instead
 cd wikiget
-
-# Python 2 or 3
-pip install --user virtualenv
-virtualenv venv
-
-# Python 3
 python3 -m venv venv
 ```
 
