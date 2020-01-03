@@ -7,38 +7,40 @@ Something like wget for downloading a file from MediaWiki sites (like Wikipedia
 or Wikimedia Commons) using only the file name or the URL of its description
 page.
 
-Requires Python 3.5+. Install with `pip install --user wikiget` or, if you're using
-[Homebrew](https://brew.sh/), `brew tap clpo13/wikiget && brew install wikiget`.
+Requires Python 3.5+. Install with `pip install --user wikiget` or, if you're
+using [Homebrew](https://brew.sh/),
+`brew tap clpo13/wikiget && brew install wikiget`.
 
 ## Usage
 
 `wikiget [-h] [-V] [-q | -v] [-f] [-a] [--site SITE] [-o OUTPUT] FILE`
 
 If `FILE` is in the form `File:Example.jpg` or `Example.jpg`, it will be fetched
-from the default site, which is "commons.wikimedia.org". If it's the fully-qualified
-URL of a file description page, like `https://en.wikipedia.org/wiki/File:Example.jpg`,
-the file is fetched from the specified site, in this case "en.wikipedia.org".
-Full URLs may contain characters your shell interprets differently, so you can
-either escape those characters with a backslash `\` or surround the entire URL
-with single `'` or double `"` quotes.
+from the default site, which is "commons.wikimedia.org". If it's the
+fully-qualified URL of a file description page, like
+`https://en.wikipedia.org/wiki/File:Example.jpg`, the file is fetched from the
+specified site, in this case "en.wikipedia.org".  Full URLs may contain
+characters your shell interprets differently, so you can either escape those
+characters with a backslash `\` or surround the entire URL with single `'` or
+double `"` quotes.
 
 The site can also be specified with the `--site` flag, though this will not have
 any effect if the full URL is given.
 
-More detailed information, such as the site used and full URL of the file, can be
-displayed with `-v` or `--verbose`. Use `-vv` to display even more detail. `-q` can
-be used to silence warnings.
+More detailed information, such as the site used and full URL of the file, can
+be displayed with `-v` or `--verbose`. Use `-vv` to display even more detail.
+`-q` can be used to silence warnings.
 
 By default, the program won't overwrite existing files with the same name as the
-target, but this can be forced with `-f` or `--force`. Additionally, the file can
-be downloaded to a different name with `-o`.
+target, but this can be forced with `-f` or `--force`. Additionally, the file
+can be downloaded to a different name with `-o`.
 
-Files can be batch downloaded with the `-a` or `--batch` flag. In this mode, `FILE`
-will be treated as an input file containing multiple files to download, one filename
-or URL per line. If an error is encountered, execution stops immediately and the
-offending filename is printed.
+Files can be batch downloaded with the `-a` or `--batch` flag. In this mode,
+`FILE` will be treated as an input file containing multiple files to download,
+one filename or URL per line. If an error is encountered, execution stops
+immediately and the offending filename is printed.
 
-### Examples
+### Example usage
 
 ```bash
 wikiget File:Example.jpg
@@ -56,11 +58,14 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 
 It's recommended that you use a
 [virtual environment manager](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
-like venv or [virtualenv](https://virtualenv.pypa.io/en/latest/)) to
-install dependencies:
+like venv or [virtualenv](https://virtualenv.pypa.io/en/latest/) to create an
+isolated environment in which to install this package's dependencies so as not
+to clutter your system Python environment:
 
 ```bash
-git clone https://github.com/clpo13/wikiget  # if you plan on submitting pull requests, fork the repo instead
+# if you plan on submitting pull requests, fork the repo on GitHub
+# and clone that instead
+git clone https://github.com/clpo13/wikiget
 cd wikiget
 python3 -m venv venv
 ```
@@ -68,8 +73,11 @@ python3 -m venv venv
 To activate the virtual environment, use one of the following commands:
 
 ```bash
-source venv/bin/activate  # Linux and macOS; activate.csh and activate.fish are also available
-.\venv\Scripts\activate   # Windows (Command Prompt or PowerShell)
+# Linux and macOS; activate.csh and activate.fish are also available
+source venv/bin/activate
+
+# Windows (Command Prompt or PowerShell)
+.\venv\Scripts\activate
 ```
 
 Then run `pip install -e .` to invoke an
