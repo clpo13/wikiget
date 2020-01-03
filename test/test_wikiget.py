@@ -51,7 +51,6 @@ def test_file_regex():
     """
     File regex should return a match object with match groups corresponding
     to the file prefix and name.
-    :return:
     """
     i = 'File:Example.jpg'
     file_match = wikiget.valid_file(i)
