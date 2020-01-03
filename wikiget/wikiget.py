@@ -32,7 +32,7 @@ from tqdm import tqdm
 from wikiget.version import __version__
 
 BLOCKSIZE = 65536
-DEFAULT_SITE = 'en.wikipedia.org'
+DEFAULT_SITE = 'commons.wikimedia.org'
 USER_AGENT = 'wikiget/{} (https://github.com/clpo13/wikiget) ' \
              'mwclient/{}'.format(__version__, mwclient_version)
 
@@ -120,7 +120,7 @@ def download(dl, args):
         filename = url.path
         site_name = url.netloc
         if args.site is not DEFAULT_SITE and not args.quiet:
-            # this will work even if the user specifies 'en.wikipedia.org'
+            # this will work even if the user specifies 'commons.wikimedia.org'
             print('Warning: target is a URL, ignoring site specified with '
                   '--site')
     else:
