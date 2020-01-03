@@ -1,7 +1,6 @@
 language: python
 dist: xenial
 python:
-- '2.7'
 - '3.5'
 - '3.6'
 - '3.7'
@@ -17,5 +16,5 @@ deploy:
     secure: KvcviHqqT4YprtmzAtf9w8BkKPfwJ53LIOXmUFotzT1Qjt3FSE7bWVzDItFjy54zZM+tqKAniL91R+2tM5uQFn4fVS/yykN1Akts6ZnkJdq99Lgdb1V3gEv366K5AWoYKgjZX+PRvmOk8BXSrqbVtXN0lhmoemmeJVDqDHg2HJZNYFwvmr/g64amm2d/cdfLxKHpduwciNY6xUhOFIdlbrJ1T767mpC+gnqfzmJeNF7K95pmyBF6Wvl4AkKzwJJkyZULQF2VFtIT6bzSuM6G26ZT6H7UyoP+8+CvI4Fe6h8Ol7sWSuVC5gz+5istRORUy8RQ22HWW1ZZKOw1+8/dHuBPvIZOnfcTvNw07e7267KUoO4FfGLvTxU2likorr5gZh1YaCNut6XJkjzwNddkutCXv65H7zOhSn2gl7vMFkUUf+kEM9pSBcA1zf7Y9+7U3HgyD1OH+a5jRIOe0Vy9r3PPaMXuDgsHxZkrVlsr3LgtGwFD0jWMDZtROXds6OXW6/n6cN30IPSf/qWdgduNIq3wj0JbALI5AB0rugNNPhePMVOfF90W9WLPFlxQCjLji8NpvM5341bS8aLhFIgIfRGDgG9AN+I/dZNIwD2J0vfw/BDaLVNc2XUAGLa359Lbz9bFYUp0J5B8hdMMyR6YULaN5alz2VsUC5sD6kPiqTo=
   on:
     tags: true
-  distributions: sdist bdist_wheel --universal
+  distributions: sdist bdist_wheel
   skip_existing: true
