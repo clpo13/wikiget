@@ -7,7 +7,7 @@ Something like wget for downloading a file from MediaWiki sites (like Wikipedia
 or Wikimedia Commons) using only the file name or the URL of its description
 page.
 
-Requires Python 2.7 or 3.5+. Install with `pip install --user wikiget` or, if you're using
+Requires Python 3.5+. Install with `pip install --user wikiget` or, if you're using
 [Homebrew](https://brew.sh/), `brew tap clpo13/wikiget && brew install wikiget`.
 
 ## Usage
@@ -60,14 +60,8 @@ like venv or [virtualenv](https://virtualenv.pypa.io/en/latest/)) to
 install dependencies:
 
 ```bash
-git clone https://github.com/clpo13/wikiget.git  # if you plan on submitting pull requests, fork the repo instead
+git clone https://github.com/clpo13/wikiget  # if you plan on submitting pull requests, fork the repo instead
 cd wikiget
-
-# Python 2 or 3
-pip install --user virtualenv
-virtualenv venv
-
-# Python 3
 python3 -m venv venv
 ```
 
@@ -85,7 +79,7 @@ executable script. Unit tests can be run with `python setup.py test`.
 
 ## License
 
-Copyright (C) 2018, 2019 Cody Logan
+Copyright (C) 2018, 2019, 2020 Cody Logan
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
