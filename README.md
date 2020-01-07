@@ -12,7 +12,7 @@ Requires Python 3.5+. Get it with `pip install --user wikiget` or, if you prefer
 
 ## Usage
 
-`wikiget [-h] [-V] [-q | -v] [-f] [-a] [--site SITE] [-o OUTPUT] FILE`
+`wikiget [-h] [-V] [-q | -v] [-f] [--site SITE] [-o OUTPUT | -a] FILE`
 
 If `FILE` is in the form `File:Example.jpg` or `Example.jpg`, it will be fetched
 from the default site, which is "commons.wikimedia.org". If it's the
