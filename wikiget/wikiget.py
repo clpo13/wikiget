@@ -63,25 +63,27 @@ def main():
                         """)
     parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s {}'.format(__version__))
-    output_options = parser.add_mutually_exclusive_group()
-    output_options.add_argument('-q', '--quiet',
-                                help='suppress warning messages',
-                                action='store_true')
-    output_options.add_argument('-v', '--verbose',
-                                help='print detailed information; '
-                                'use -vv for even more detail',
-                                action='count', default=0)
+    message_options = parser.add_mutually_exclusive_group()
+    message_options.add_argument('-q', '--quiet',
+                                 help='suppress warning messages',
+                                 action='store_true')
+    message_options.add_argument('-v', '--verbose',
+                                 help='print detailed information; '
+                                 'use -vv for even more detail',
+                                 action='count', default=0)
     parser.add_argument('-f', '--force',
                         help='force overwriting existing files',
                         action='store_true')
     parser.add_argument('-s', '--site', default=DEFAULT_SITE,
                         help='MediaWiki site to download from '
                         '(default: %(default)s)')
-    parser.add_argument('-o', '--output', help='write download to OUTPUT')
-    parser.add_argument('-a', '--batch',
-                        help='treat FILE as a textfile containing multiple '
-                        'files to download, one URL or filename per line',
-                        action='store_true')
+    output_options = parser.add_mutually_exclusive_group()
+    output_options.add_argument('-o', '--output',
+                                help='write download to OUTPUT')
+    output_options.add_argument('-a', '--batch',
+                                help='treat FILE as a textfile containing '
+                                'multiple files to download, one URL or '
+                                'filename per line', action='store_true')
 
     args = parser.parse_args()
 
