@@ -49,6 +49,8 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 
 ## Future plans
 
+- continue batch download even if input is malformed or file doesn't exist
+  (possibly by raising exceptions in `download()`)
 - batch download by (Commons) category or user uploads
 - download from any MediaWiki-powered site, not just Wikimedia projects
 - maybe: download Wikipedia articles, in plain text, wikitext, or other formats

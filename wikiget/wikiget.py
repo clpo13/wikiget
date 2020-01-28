@@ -19,9 +19,8 @@ import argparse
 import logging
 import sys
 
-from . import DEFAULT_SITE
+from . import DEFAULT_SITE, __version__
 from .dl import download
-from .version import __version__
 
 
 def main():

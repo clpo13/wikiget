@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
-"""Defines test functions to run with pytest."""
-
 import os
 
 import pytest

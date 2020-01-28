@@ -15,6 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from mwclient import __version__ as mwclient_version
+
+from .version import __version__
+
 # set some global constants
 BLOCKSIZE = 65536
 DEFAULT_SITE = 'commons.wikimedia.org'
+USER_AGENT = 'wikiget/{} (https://github.com/clpo13/wikiget) ' \
+             'mwclient/{}'.format(__version__, mwclient_version)

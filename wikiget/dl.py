@@ -19,16 +19,12 @@ import os
 import sys
 from urllib.parse import unquote, urlparse
 
-from mwclient import InvalidResponse, Site, __version__ as mwclient_version
+from mwclient import InvalidResponse, Site
 from requests import ConnectionError
 from tqdm import tqdm
 
-from . import DEFAULT_SITE
+from . import DEFAULT_SITE, USER_AGENT
 from .validations import valid_file, valid_site, verify_hash
-from .version import __version__
-
-USER_AGENT = 'wikiget/{} (https://github.com/clpo13/wikiget) ' \
-             'mwclient/{}'.format(__version__, mwclient_version)
 
 
 def download(dl, args):
