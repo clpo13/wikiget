@@ -26,13 +26,13 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), 'r') as fr:
     long_description = fr.read()
 
-version = {}
+version_file = {}
 with open(path.join(here, 'wikiget', 'version.py'), 'r') as fv:
-    exec(fv.read(), version)
+    exec(fv.read(), version_file)
 
 setup(
     name='wikiget',
-    version=version['__version__'],
+    version=version_file['__version__'],
     author='Cody Logan',
     author_email='clpo13@gmail.com',
     description='CLI tool for downloading files from MediaWiki sites',

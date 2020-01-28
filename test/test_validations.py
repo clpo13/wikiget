@@ -22,7 +22,7 @@ import os
 
 import pytest
 
-from wikiget import wikiget
+from wikiget.validations import valid_file, valid_site, verify_hash
 
 
 def test_invalid_site_input():
@@ -32,7 +32,7 @@ def test_invalid_site_input():
     invalid_input = ['example.com', 'vim.wikia.com',
                      'en.wikipedia.com', 'en.wikimpedia.org']
     for i in invalid_input:
-        site_match = wikiget.valid_site(i)
+        site_match = valid_site(i)
         assert site_match is None
 
 
@@ -43,7 +43,7 @@ def test_valid_site_input():
     valid_input = ['en.wikipedia.org', 'commons.wikimedia.org',
                    'de.wikipedia.org', 'meta.wikimedia.org']
     for i in valid_input:
-        site_match = wikiget.valid_site(i)
+        site_match = valid_site(i)
         assert site_match is not None
 
 
@@ -53,7 +53,7 @@ def test_file_regex():
     to the file prefix and name.
     """
     i = 'File:Example.jpg'
-    file_match = wikiget.valid_file(i)
+    file_match = valid_file(i)
     assert file_match is not None
     assert file_match.group(0) == 'File:Example.jpg'  # entire match
     assert file_match.group(1) == 'File:'             # first group
@@ -67,7 +67,7 @@ def test_invalid_file_input():
     invalid_input = ['file:example', 'example.jpg', 'Foo Bar.gif',
                      'Fil:Example.jpg']
     for i in invalid_input:
-        file_match = wikiget.valid_file(i)
+        file_match = valid_file(i)
         assert file_match is None
 
 
@@ -79,7 +79,7 @@ def test_valid_file_input():
                    'File:example.file-01.jpg', 'FILE:FOO.BMP',
                    'File:ß handwritten sample.gif', 'File:A (1).jpeg']
     for i in valid_input:
-        file_match = wikiget.valid_file(i)
+        file_match = valid_file(i)
         assert file_match is not None
 
 
@@ -100,6 +100,6 @@ def test_verify_hash():
         with dl:
             dl.write(file_contents)
 
-    assert wikiget.verify_hash(file_name) == file_sha1
+    assert verify_hash(file_name) == file_sha1
 
     os.remove(file_name)
