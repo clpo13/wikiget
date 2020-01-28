@@ -114,8 +114,12 @@ def download(dl, args):
                 print(e)
                 sys.exit(1)
             else:
-                # download the file
-                with tqdm(total=file_size, unit='B',
+                # download the file(s)
+                if args.verbose >= 1:
+                    leave_bars = True
+                else:
+                    leave_bars = False
+                with tqdm(leave=leave_bars, total=file_size, unit='B',
                           unit_scale=True, unit_divisor=1024) as progress_bar:
                     with fd:
                         res = site.connection.get(file_url, stream=True)
