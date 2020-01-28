@@ -60,15 +60,7 @@ def download(dl, args):
         filename = file_match.group(2)
     else:
         # no file extension and/or prefix, probably an article
-        print('Downloading Wikipedia articles is not currently supported.',
-              end='')
-        if file_match and not file_match.group(1):
-            # file extension detected, but no prefix
-            # TODO: no longer possible to get to this point since
-            # file_match is None with no prefix
-            print(" If this is a file, please add the 'File:' prefix.")
-        else:
-            print('\n', end='')
+        print("Could not parse input '{}' as a file. ".format(filename))
         sys.exit(1)
 
     filename = unquote(filename)  # remove URL encoding for special characters
