@@ -66,6 +66,12 @@ def main():
     parser.add_argument('-p', '--path', default=DEFAULT_PATH,
                         help='MediaWiki site path to download from '
                         '(default: %(default)s)')
+    parser.add_argument('--username', default="",
+                        help='MediaWiki site username '
+                        '(default: %(default)s)')
+    parser.add_argument('--password', default="",
+                        help='MediaWiki site password '
+                        '(default: %(default)s)')
     output_options = parser.add_mutually_exclusive_group()
     output_options.add_argument('-o', '--output',
                                 help='write download to OUTPUT')

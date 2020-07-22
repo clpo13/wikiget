@@ -70,6 +70,8 @@ def download(dl, args):
     try:
         print("Site name: {}".format(site_name))
         site = Site(site_name, path=args.path, clients_useragent=USER_AGENT)
+        if args.username and args.password:
+            site.login(args.username, args.password)
     except ConnectionError:
         # usually this means there is no such site,
         # or there's no network connection
