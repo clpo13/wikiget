@@ -14,14 +14,15 @@ Requires Python 3.5+. Get it with `pip install --user wikiget`.
 `wikiget [-h] [-V] [-q | -v] [-f] [-s SITE] [-p PATH] [--username USERNAME]
 [--password PASSWORD] [-o OUTPUT | -a] FILE`
 
-If `FILE` is in the form `File:Example.jpg` or `Example.jpg`, it will be fetched
-from the default site, which is "commons.wikimedia.org". If it's the
+If `FILE` is in the form `File:Example.jpg` or `Image:Example.jpg`, it will be
+fetched from the default site, which is "commons.wikimedia.org". If it's the
 fully-qualified URL of a file description page, like
 `https://en.wikipedia.org/wiki/File:Example.jpg`, the file is fetched from the
 specified site, in this case "en.wikipedia.org".  Full URLs may contain
 characters your shell interprets differently, so you can either escape those
 characters with a backslash `\` or surround the entire URL with single `'` or
-double `"` quotes.
+double `"` quotes. Use of a fully-qualified URL like this may require setting
+the `--path` flag (see next paragraph).
 
 The site can also be specified with the `--site` flag, though this will not have
 any effect if the full URL is given. Non-Wikimedia sites should work, but you
