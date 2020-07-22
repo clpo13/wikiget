@@ -45,10 +45,10 @@ def download(dl, args):
     site_match = valid_site(site_name)
 
     # check for valid site parameter
-    if not site_match:
-        print('Only Wikimedia sites (wikipedia.org and wikimedia.org) '
-              'are currently supported.')
-        sys.exit(1)
+    # if not site_match:
+    #     print('Only Wikimedia sites (wikipedia.org and wikimedia.org) '
+    #           'are currently supported.')
+    #     sys.exit(1)
 
     # check if this is a valid file
     if file_match and file_match.group(1):
@@ -68,7 +68,10 @@ def download(dl, args):
 
     # connect to site and identify ourselves
     try:
-        site = Site(site_name, clients_useragent=USER_AGENT)
+        print("Site name: {}".format(site_name))
+        site = Site(site_name, path=args.path, clients_useragent=USER_AGENT)
+        if args.username and args.password:
+            site.login(args.username, args.password)
     except ConnectionError:
         # usually this means there is no such site,
         # or there's no network connection
