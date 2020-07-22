@@ -22,6 +22,6 @@ from .version import __version__
 # set some global constants
 BLOCKSIZE = 65536
 DEFAULT_SITE = 'commons.wikimedia.org'
-DEFAULT_PATH = '/'
+DEFAULT_PATH = '/w/'
 USER_AGENT = 'wikiget/{} (https://github.com/clpo13/wikiget) ' \
              'mwclient/{}'.format(__version__, mwclient_version)
