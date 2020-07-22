@@ -19,7 +19,7 @@ import argparse
 import logging
 import sys
 
-from . import DEFAULT_SITE, __version__
+from . import DEFAULT_SITE, DEFAULT_PATH, __version__
 from .dl import download
 
 
@@ -62,6 +62,9 @@ def main():
                         action='store_true')
     parser.add_argument('-s', '--site', default=DEFAULT_SITE,
                         help='MediaWiki site to download from '
+                        '(default: %(default)s)')
+    parser.add_argument('-p', '--path', default=DEFAULT_PATH,
+                        help='MediaWiki site path to download from '
                         '(default: %(default)s)')
     output_options = parser.add_mutually_exclusive_group()
     output_options.add_argument('-o', '--output',
