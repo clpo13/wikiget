@@ -7,12 +7,12 @@ Something like wget for downloading a file from MediaWiki sites (like Wikipedia
 or Wikimedia Commons) using only the file name or the URL of its description
 page.
 
-Requires Python 3.5+. Get it with `pip install --user wikiget` or, if you prefer
-[Homebrew](https://brew.sh/), `brew tap clpo13/brew && brew install wikiget`.
+Requires Python 3.5+. Get it with `pip install --user wikiget`.
 
 ## Usage
 
-`wikiget [-h] [-V] [-q | -v] [-f] [--site SITE] [-o OUTPUT | -a] FILE`
+`wikiget [-h] [-V] [-q | -v] [-f] [-s SITE] [-p PATH] [--username USERNAME]
+[--password PASSWORD] [-o OUTPUT | -a] FILE`
 
 If `FILE` is in the form `File:Example.jpg` or `Example.jpg`, it will be fetched
 from the default site, which is "commons.wikimedia.org". If it's the
@@ -24,7 +24,12 @@ characters with a backslash `\` or surround the entire URL with single `'` or
 double `"` quotes.
 
 The site can also be specified with the `--site` flag, though this will not have
-any effect if the full URL is given.
+any effect if the full URL is given. Non-Wikimedia sites should work, but you
+may need to specify the wiki's script path with `--path` (where `index.php` and
+`api.php` live; on Wikimedia sites it's `/w/`, but other sites may use `/` or
+something else entirely). Private wikis (those requiring login even for read
+access) are also supported with the use of the `--username` and `--password`
+flags.
 
 More detailed information, such as the site used and full URL of the file, can
 be displayed with `-v` or `--verbose`. Use `-vv` to display even more detail.
@@ -52,10 +57,11 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 - continue batch download even if input is malformed or file doesn't exist
   (possibly by raising exceptions in `download()`)
 - batch download by (Commons) category or user uploads
-- download from any MediaWiki-powered site, not just Wikimedia projects
 - maybe: download Wikipedia articles, in plain text, wikitext, or other formats
 
 ## Contributing
+
+Pull requests or bug reports are more than welcome.
 
 It's recommended that you use a
 [virtual environment manager](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
@@ -88,7 +94,7 @@ executable script. Unit tests can be run with `python setup.py test`.
 
 ## License
 
-Copyright (C) 2018, 2019, 2020 Cody Logan
+Copyright (C) 2018, 2019, 2020 Cody Logan and contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
