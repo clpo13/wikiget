@@ -45,7 +45,7 @@ def main():
                                      extent permitted by law.
                                      """)
     parser.add_argument('FILE', help="""
-                        name of the file to download with the File: or Image:
+                        name of the file to download with the File:
                         prefix, or the URL of its file description page
                         """)
     parser.add_argument('-V', '--version', action='version',
@@ -65,14 +65,12 @@ def main():
                         help='MediaWiki site to download from '
                         '(default: %(default)s)')
     parser.add_argument('-p', '--path', default=DEFAULT_PATH,
-                        help='MediaWiki site path to download from '
+                        help='MediaWiki site path, where api.php is located '
                         '(default: %(default)s)')
-    parser.add_argument('--username', default="",
-                        help='MediaWiki site username '
-                        '(default: %(default)s)')
-    parser.add_argument('--password', default="",
-                        help='MediaWiki site password '
-                        '(default: %(default)s)')
+    parser.add_argument('--username', default='',
+                        help='MediaWiki site username, for private wikis')
+    parser.add_argument('--password', default='',
+                        help='MediaWiki site password, for private wikis')
     output_options = parser.add_mutually_exclusive_group()
     output_options.add_argument('-o', '--output',
                                 help='write download to OUTPUT')
