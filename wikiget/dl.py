@@ -19,8 +19,8 @@ import os
 import sys
 from urllib.parse import unquote, urlparse
 
-from mwclient import InvalidResponse, Site
-from requests import ConnectionError
+from mwclient import APIError, InvalidResponse, LoginError, Site
+from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
 from . import DEFAULT_SITE, USER_AGENT
@@ -44,12 +44,6 @@ def download(dl, args):
     file_match = valid_file(filename)
     site_match = valid_site(site_name)
 
-    # check for valid site parameter
-    # if not site_match:
-    #     print('Only Wikimedia sites (wikipedia.org and wikimedia.org) '
-    #           'are currently supported.')
-    #     sys.exit(1)
-
     # check if this is a valid file
     if file_match and file_match.group(1):
         # has File:/Image: prefix and extension
@@ -67,26 +61,55 @@ def download(dl, args):
         print('User agent: {}'.format(USER_AGENT))
 
     # connect to site and identify ourselves
+    if args.verbose >= 1:
+        print('Site name: {}'.format(site_name))
     try:
-        print("Site name: {}".format(site_name))
         site = Site(site_name, path=args.path, clients_useragent=USER_AGENT)
         if args.username and args.password:
             site.login(args.username, args.password)
-    except ConnectionError:
-        # usually this means there is no such site,
-        # or there's no network connection
+    except ConnectionError as e:
+        # usually this means there is no such site, or there's no network
+        # connection, though it could be a certificate problem
         print("Error: couldn't connect to specified site.")
+        if args.verbose >= 2:
+            print('Full error message:')
+            print(e)
+        sys.exit(1)
+    except HTTPError as e:
+        # most likely a 403 forbidden or 404 not found error for api.php
+        print("Error: couldn't find the specified wiki's api.php. "
+              'Check the value of --path.')
+        if args.verbose >= 2:
+            print('Full error message:')
+            print(e)
         sys.exit(1)
     except InvalidResponse as e:
         # site exists, but we couldn't communicate with the API endpoint
+        # for some reason other than an HTTP error
+        print(e)
+        sys.exit(1)
+    except LoginError as e:
+        # missing or invalid credentials
         print(e)
         sys.exit(1)
 
     # get info about the target file
-    file = site.images[filename]
+    try:
+        file = site.images[filename]
+    except APIError as e:
+        # an API error at this point likely means access is denied,
+        # which could happen with a private wiki
+        print('Error: access denied. Try providing credentials with '
+              '--username and --password.')
+        if args.verbose >= 2:
+            print('Full error message:')
+            for i in e.args:
+                print(i)
+        sys.exit(1)
 
     if file.imageinfo != {}:
-        # file exists either locally or at Wikimedia Commons
+        # file exists either locally or at a common repository,
+        # like Wikimedia Commons
         file_url = file.imageinfo['url']
         file_size = file.imageinfo['size']
         file_sha1 = file.imageinfo['sha1']
