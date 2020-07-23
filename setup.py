@@ -64,8 +64,9 @@ setup(
         'Topic :: Utilities',
     ],
     python_requires='>=3.5',
-    install_requires=['mwclient>=0.10.0', 'pytest-runner', 'requests', 'tqdm'],
-    tests_require=['pytest'],
+    install_requires=['mwclient>=0.10.0', 'requests', 'tqdm'],
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest', 'pytest-cov'],
     project_urls={
         'Bug Reports': 'https://github.com/clpo13/wikiget/issues',
     },
