@@ -17,11 +17,11 @@
 
 from mwclient import __version__ as mwclient_version
 
-from .version import __version__
+from .version import __version__ as wikiget_version
 
 # set some global constants
 BLOCKSIZE = 65536
 DEFAULT_SITE = 'commons.wikimedia.org'
 DEFAULT_PATH = '/w/'
-USER_AGENT = 'wikiget/{} (https://github.com/clpo13/wikiget) ' \
-             'mwclient/{}'.format(__version__, mwclient_version)
+USER_AGENT = ('wikiget/{} (https://github.com/clpo13/wikiget) '
+              'mwclient/{}'.format(wikiget_version, mwclient_version))

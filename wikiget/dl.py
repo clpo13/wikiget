@@ -77,18 +77,15 @@ def download(dl, args):
     except HTTPError as e:
         # most likely a 403 forbidden or 404 not found error for api.php
         print("Error: couldn't find the specified wiki's api.php. "
-              'Check the value of --path.')
+              "Check the value of --path.")
         if args.verbose >= 2:
             print('Full error message:')
             print(e)
         sys.exit(1)
-    except InvalidResponse as e:
-        # site exists, but we couldn't communicate with the API endpoint
-        # for some reason other than an HTTP error
-        print(e)
-        sys.exit(1)
-    except LoginError as e:
-        # missing or invalid credentials
+    except (InvalidResponse, LoginError) as e:
+        # InvalidResponse: site exists, but we couldn't communicate with the
+        # API endpoint for some reason other than an HTTP error.
+        # LoginError: missing or invalid credentials
         print(e)
         sys.exit(1)
 
@@ -115,7 +112,7 @@ def download(dl, args):
 
         if args.verbose >= 1:
             print("Info: downloading '{}' "
-                  '({} bytes) from {}'.format(filename, file_size, site.host),
+                  "({} bytes) from {}".format(filename, file_size, site.host),
                   end='')
             if args.output:
                 print(" to '{}'".format(dest))
@@ -125,7 +122,7 @@ def download(dl, args):
 
         if os.path.isfile(dest) and not args.force:
             print("File '{}' already exists, skipping download "
-                  '(use -f to ignore)'.format(dest))
+                  "(use -f to ignore)".format(dest))
         else:
             try:
                 fd = open(dest, 'wb')

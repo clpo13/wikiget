@@ -19,7 +19,7 @@ import argparse
 import logging
 import sys
 
-from . import DEFAULT_SITE, DEFAULT_PATH, __version__
+from . import DEFAULT_SITE, DEFAULT_PATH, wikiget_version
 from .dl import download
 
 
@@ -49,7 +49,7 @@ def main():
                         prefix, or the URL of its file description page
                         """)
     parser.add_argument('-V', '--version', action='version',
-                        version='%(prog)s {}'.format(__version__))
+                        version='%(prog)s {}'.format(wikiget_version))
     message_options = parser.add_mutually_exclusive_group()
     message_options.add_argument('-q', '--quiet',
                                  help='suppress warning messages',
