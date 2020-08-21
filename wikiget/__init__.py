@@ -21,6 +21,7 @@ from .version import __version__ as wikiget_version
 
 # set some global constants
 BLOCKSIZE = 65536
+CHUNKSIZE = 1024
 DEFAULT_SITE = 'commons.wikimedia.org'
 DEFAULT_PATH = '/w/'
 USER_AGENT = ('wikiget/{} (https://github.com/clpo13/wikiget) '

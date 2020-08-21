@@ -23,7 +23,7 @@ from mwclient import APIError, InvalidResponse, LoginError, Site
 from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
-from . import DEFAULT_SITE, USER_AGENT
+from . import CHUNKSIZE, DEFAULT_SITE, USER_AGENT
 from .validations import valid_file, verify_hash
 
 
@@ -137,12 +137,13 @@ def download(dl, args):
                     leave_bars = True
                 else:
                     leave_bars = False
-                with tqdm(leave=leave_bars, total=file_size, unit='B',
-                          unit_scale=True, unit_divisor=1024) as progress_bar:
+                with tqdm(leave=leave_bars, total=file_size,
+                          unit='B', unit_scale=True,
+                          unit_divisor=CHUNKSIZE) as progress_bar:
                     with fd:
                         res = site.connection.get(file_url, stream=True)
                         progress_bar.set_postfix(file=dest, refresh=False)
-                        for chunk in res.iter_content(1024):
+                        for chunk in res.iter_content(CHUNKSIZE):
                             fd.write(chunk)
                             progress_bar.update(len(chunk))
 
