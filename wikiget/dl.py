@@ -24,7 +24,7 @@ from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
 from . import DEFAULT_SITE, USER_AGENT
-from .validations import valid_file, valid_site, verify_hash
+from .validations import valid_file, verify_hash
 
 
 def download(dl, args):
@@ -42,7 +42,6 @@ def download(dl, args):
         site_name = args.site
 
     file_match = valid_file(filename)
-    site_match = valid_site(site_name)
 
     # check if this is a valid file
     if file_match and file_match.group(1):
