@@ -88,4 +88,6 @@ def test_verify_hash(tmp_path):
     tmp_file = tmp_path / file_name
     tmp_file.write_text(file_contents)
 
-    assert verify_hash(tmp_file) == file_sha1
+    # Convert tmp_file from PosixPath to string so this test works with
+    # Python 3.5 (see https://stackoverflow.com/a/42694113).
+    assert verify_hash(str(tmp_file)) == file_sha1
