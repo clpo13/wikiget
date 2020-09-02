@@ -16,10 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
-import os
-
-import pytest
-
 from wikiget.validations import valid_file, valid_site, verify_hash
 
 
@@ -81,23 +77,17 @@ def test_valid_file_input():
         assert file_match is not None
 
 
-def test_verify_hash():
+def test_verify_hash(tmp_path):
     """
     Confirm that verify_hash returns the proper SHA1 hash.
     """
-    # TODO: do we need to actually create a file?
     file_name = 'testfile'
     file_contents = 'foobar'
     file_sha1 = '8843d7f92416211de9ebb963ff4ce28125932878'
 
-    try:
-        dl = open(file_name, 'w')
-    except PermissionError:
-        pytest.skip('need write access to create test file')
-    else:
-        with dl:
-            dl.write(file_contents)
+    tmp_file = tmp_path / file_name
 
-    assert verify_hash(file_name) == file_sha1
+    with tmp_file.open('w') as f:
+        f.write(file_contents)
 
-    os.remove(file_name)
+    assert verify_hash(tmp_file) == file_sha1
