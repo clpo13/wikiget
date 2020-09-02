@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018, 2019 Cody Logan
+# Copyright (C) 2018, 2019, 2020 Cody Logan
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -86,8 +86,6 @@ def test_verify_hash(tmp_path):
     file_sha1 = '8843d7f92416211de9ebb963ff4ce28125932878'
 
     tmp_file = tmp_path / file_name
-
-    with tmp_file.open('w') as f:
-        f.write(file_contents)
+    tmp_file.write_text(file_contents)
 
     assert verify_hash(tmp_file) == file_sha1
