@@ -1,5 +1,5 @@
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018, 2019, 2020 Cody Logan
+# Copyright (C) 2018-2021 Cody Logan
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -51,10 +51,10 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Internet',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Multimedia',
@@ -63,7 +63,7 @@ setup(
         'Topic :: Multimedia :: Video',
         'Topic :: Utilities',
     ],
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     install_requires=['mwclient>=0.10.0', 'requests', 'tqdm'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest', 'pytest-cov'],

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018, 2019, 2020 Cody Logan
+# Copyright (C) 2018-2021 Cody Logan
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -88,6 +88,4 @@ def test_verify_hash(tmp_path):
     tmp_file = tmp_path / file_name
     tmp_file.write_text(file_contents)
 
-    # Convert tmp_file from PosixPath to string so this test works with
-    # Python 3.5 (see https://stackoverflow.com/a/42694113).
-    assert verify_hash(str(tmp_file)) == file_sha1
+    assert verify_hash(tmp_file) == file_sha1

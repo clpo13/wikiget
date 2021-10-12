@@ -7,7 +7,7 @@ Something like wget for downloading a file from MediaWiki sites (like Wikipedia
 or Wikimedia Commons) using only the file name or the URL of its description
 page.
 
-Requires Python 3.5+. Get it with `pip install --user wikiget`.
+Requires Python 3.6+. Get it with `pip install --user wikiget`.
 
 ## Usage
 
@@ -95,7 +95,7 @@ executable script. Unit tests can be run with `python setup.py test`.
 
 ## License
 
-Copyright (C) 2018, 2019, 2020 Cody Logan and contributors
+Copyright (C) 2018-2021 Cody Logan and contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

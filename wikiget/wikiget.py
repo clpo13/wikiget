@@ -1,5 +1,5 @@
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018, 2019, 2020 Cody Logan and contributors
+# Copyright (C) 2018-2021 Cody Logan and contributors
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ def main():
                         prefix, or the URL of its file description page
                         """)
     parser.add_argument('-V', '--version', action='version',
-                        version='%(prog)s {}'.format(wikiget_version))
+                        version=f'%(prog)s {wikiget_version}')
     message_options = parser.add_mutually_exclusive_group()
     message_options.add_argument('-q', '--quiet',
                                  help='suppress warning messages',
@@ -91,7 +91,7 @@ def main():
         # batch download mode
         input_file = args.FILE
         if args.verbose >= 1:
-            print("Info: using batch file '{}'".format(input_file))
+            print(f"Info: using batch file '{input_file}'")
         try:
             fd = open(input_file, 'r')
         except IOError as e:

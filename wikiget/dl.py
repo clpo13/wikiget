@@ -1,5 +1,5 @@
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018, 2019, 2020 Cody Logan and contributors
+# Copyright (C) 2018-2021 Cody Logan and contributors
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ def download(dl, args):
         filename = file_match.group(2)
     else:
         # no file extension and/or prefix, probably an article
-        print("Could not parse input '{}' as a file. ".format(filename))
+        print(f"Could not parse input '{filename}' as a file. ")
         sys.exit(1)
 
     filename = unquote(filename)  # remove URL encoding for special characters
@@ -57,11 +57,11 @@ def download(dl, args):
     dest = args.output or filename
 
     if args.verbose >= 2:
-        print('User agent: {}'.format(USER_AGENT))
+        print(f'User agent: {USER_AGENT}')
 
     # connect to site and identify ourselves
     if args.verbose >= 1:
-        print('Site name: {}'.format(site_name))
+        print(f'Site name: {site_name}')
     try:
         site = Site(site_name, path=args.path, clients_useragent=USER_AGENT)
         if args.username and args.password:
@@ -111,18 +111,18 @@ def download(dl, args):
         file_sha1 = file.imageinfo['sha1']
 
         if args.verbose >= 1:
-            print("Info: downloading '{}' "
-                  "({} bytes) from {}".format(filename, file_size, site.host),
+            print(f"Info: downloading '{filename}' "
+                  f"({file_size} bytes) from {site.host}",
                   end='')
             if args.output:
-                print(" to '{}'".format(dest))
+                print(f" to '{dest}'")
             else:
                 print('\n', end='')
-            print('Info: {}'.format(file_url))
+            print(f'Info: {file_url}')
 
         if os.path.isfile(dest) and not args.force:
-            print("File '{}' already exists, skipping download "
-                  "(use -f to ignore)".format(dest))
+            print(f"File '{dest}' already exists, skipping download "
+                  "(use -f to ignore)")
         else:
             try:
                 fd = open(dest, 'wb')
@@ -151,8 +151,8 @@ def download(dl, args):
             dl_sha1 = verify_hash(dest)
 
             if args.verbose >= 1:
-                print('Info: downloaded file SHA1 is {}'.format(dl_sha1))
-                print('Info: server file SHA1 is {}'.format(file_sha1))
+                print(f'Info: downloaded file SHA1 is {dl_sha1}')
+                print(f'Info: server file SHA1 is {file_sha1}')
             if dl_sha1 == file_sha1:
                 if args.verbose >= 1:
                     print('Info: hashes match!')
@@ -163,6 +163,5 @@ def download(dl, args):
 
     else:
         # no file information returned
-        print("Target '{}' does not appear to be a valid file."
-              .format(filename))
+        print(f"Target '{filename}' does not appear to be a valid file.")
         sys.exit(1)
