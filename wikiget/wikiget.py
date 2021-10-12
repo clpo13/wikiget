@@ -35,7 +35,7 @@ def main():
                                      description page URL
                                      """,
                                      epilog="""
-                                     Copyright (C) 2018, 2019, 2020 Cody Logan
+                                     Copyright (C) 2018-2021 Cody Logan
                                      and contributors.
                                      License GPLv3+: GNU GPL version 3 or later
                                      <http://www.gnu.org/licenses/gpl.html>.
