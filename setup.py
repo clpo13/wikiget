@@ -23,56 +23,56 @@ from os import path
 from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
-with open(path.join(here, 'README.md'), 'r') as fr:
+with open(path.join(here, "README.md"), "r") as fr:
     long_description = fr.read()
 
 version_file = {}
-with open(path.join(here, 'wikiget', 'version.py'), 'r') as fv:
+with open(path.join(here, "wikiget", "version.py"), "r") as fv:
     exec(fv.read(), version_file)
 
 setup(
-    name='wikiget',
-    version=version_file['__version__'],
-    author='Cody Logan',
-    author_email='clpo13@gmail.com',
-    description='CLI tool for downloading files from MediaWiki sites',
+    name="wikiget",
+    version=version_file["__version__"],
+    author="Cody Logan",
+    author_email="clpo13@gmail.com",
+    description="CLI tool for downloading files from MediaWiki sites",
     long_description=long_description,
-    long_description_content_type='text/markdown',
-    url='https://github.com/clpo13/wikiget',
-    keywords='commons download mediawiki wikimedia wikipedia',
+    long_description_content_type="text/markdown",
+    url="https://github.com/clpo13/wikiget",
+    keywords="commons download mediawiki wikimedia wikipedia",
     packages=find_packages(),
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Environment :: Console',
-        'Intended Audience :: End Users/Desktop',
-        'License :: OSI Approved :: GNU General Public License v3 or later '
-        '(GPLv3+)',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Topic :: Internet',
-        'Topic :: Internet :: WWW/HTTP',
-        'Topic :: Multimedia',
-        'Topic :: Multimedia :: Graphics',
-        'Topic :: Multimedia :: Sound/Audio',
-        'Topic :: Multimedia :: Video',
-        'Topic :: Utilities',
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "Intended Audience :: End Users/Desktop",
+        "License :: OSI Approved :: GNU General Public License v3 or later "
+        "(GPLv3+)",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Topic :: Internet",
+        "Topic :: Internet :: WWW/HTTP",
+        "Topic :: Multimedia",
+        "Topic :: Multimedia :: Graphics",
+        "Topic :: Multimedia :: Sound/Audio",
+        "Topic :: Multimedia :: Video",
+        "Topic :: Utilities",
     ],
-    python_requires='>=3.6',
-    install_requires=['mwclient>=0.10.0', 'requests', 'tqdm'],
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'pytest-cov'],
+    python_requires=">=3.6",
+    install_requires=["mwclient>=0.10.0", "requests", "tqdm"],
+    setup_requires=["pytest-runner"],
+    tests_require=["pytest", "pytest-cov"],
     project_urls={
-        'Bug Reports': 'https://github.com/clpo13/wikiget/issues',
+        "Bug Reports": "https://github.com/clpo13/wikiget/issues",
     },
     entry_points={
-        'console_scripts': [
-            'wikiget=wikiget.wikiget:main',
+        "console_scripts": [
+            "wikiget=wikiget.wikiget:main",
         ],
     },
 )

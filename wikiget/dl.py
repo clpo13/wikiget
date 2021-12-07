@@ -102,11 +102,12 @@ def download(dl, args):
     if file.imageinfo != {}:
         # file exists either locally or at a common repository,
         # like Wikimedia Commons
-        file_url = file.imageinfo['url']
-        file_size = file.imageinfo['size']
-        file_sha1 = file.imageinfo['sha1']
+        file_url = file.imageinfo["url"]
+        file_size = file.imageinfo["size"]
+        file_sha1 = file.imageinfo["sha1"]
 
-        filename_log = f"Downloading '{filename}' ({file_size} bytes) from {site.host}"
+        filename_log = (f"Downloading '{filename}' ({file_size} bytes) "
+                        f"from {site.host}")
         if args.output:
             filename_log += f" to '{dest}'"
         logging.info(filename_log)
@@ -117,7 +118,7 @@ def download(dl, args):
                             "(use -f to ignore)")
         else:
             try:
-                fd = open(dest, 'wb')
+                fd = open(dest, "wb")
             except IOError as e:
                 logging.error("File could not be written. "
                               "The following error was encountered:")
@@ -130,7 +131,7 @@ def download(dl, args):
                 else:
                     leave_bars = False
                 with tqdm(leave=leave_bars, total=file_size,
-                          unit='B', unit_scale=True,
+                          unit="B", unit_scale=True,
                           unit_divisor=CHUNKSIZE) as progress_bar:
                     with fd:
                         res = site.connection.get(file_url, stream=True)

@@ -44,42 +44,42 @@ def main():
                                      conditions. There is NO WARRANTY, to the
                                      extent permitted by law.
                                      """)
-    parser.add_argument('FILE', help="""
+    parser.add_argument("FILE", help="""
                         name of the file to download with the File:
                         prefix, or the URL of its file description page
                         """)
-    parser.add_argument('-V', '--version', action='version',
-                        version=f'%(prog)s {wikiget_version}')
+    parser.add_argument("-V", "--version", action="version",
+                        version=f"%(prog)s {wikiget_version}")
     message_options = parser.add_mutually_exclusive_group()
-    message_options.add_argument('-q', '--quiet',
-                                 help='suppress warning messages',
-                                 action='store_true')
-    message_options.add_argument('-v', '--verbose',
-                                 help='print detailed information; '
-                                 'use -vv for even more detail',
-                                 action='count', default=0)
-    parser.add_argument('-f', '--force',
-                        help='force overwriting existing files',
-                        action='store_true')
-    parser.add_argument('-s', '--site', default=DEFAULT_SITE,
-                        help='MediaWiki site to download from '
-                        '(default: %(default)s)')
-    parser.add_argument('-p', '--path', default=DEFAULT_PATH,
-                        help='MediaWiki site path, where api.php is located '
-                        '(default: %(default)s)')
-    parser.add_argument('--username', default='',
-                        help='MediaWiki site username, for private wikis')
-    parser.add_argument('--password', default='',
-                        help='MediaWiki site password, for private wikis')
+    message_options.add_argument("-q", "--quiet",
+                                 help="suppress warning messages",
+                                 action="store_true")
+    message_options.add_argument("-v", "--verbose",
+                                 help="print detailed information; "
+                                 "use -vv for even more detail",
+                                 action="count", default=0)
+    parser.add_argument("-f", "--force",
+                        help="force overwriting existing files",
+                        action="store_true")
+    parser.add_argument("-s", "--site", default=DEFAULT_SITE,
+                        help="MediaWiki site to download from "
+                        "(default: %(default)s)")
+    parser.add_argument("-p", "--path", default=DEFAULT_PATH,
+                        help="MediaWiki site path, where api.php is located "
+                        "(default: %(default)s)")
+    parser.add_argument("--username", default="",
+                        help="MediaWiki site username, for private wikis")
+    parser.add_argument("--password", default="",
+                        help="MediaWiki site password, for private wikis")
     output_options = parser.add_mutually_exclusive_group()
-    output_options.add_argument('-o', '--output',
-                                help='write download to OUTPUT')
-    output_options.add_argument('-a', '--batch',
-                                help='treat FILE as a textfile containing '
-                                'multiple files to download, one URL or '
-                                'filename per line', action='store_true')
-    parser.add_argument('-l', '--logfile', default='',
-                        help='save log output to LOGFILE')
+    output_options.add_argument("-o", "--output",
+                                help="write download to OUTPUT")
+    output_options.add_argument("-a", "--batch",
+                                help="treat FILE as a textfile containing "
+                                "multiple files to download, one URL or "
+                                "filename per line", action="store_true")
+    parser.add_argument("-l", "--logfile", default="",
+                        help="save log output to LOGFILE")
 
     args = parser.parse_args()
 
@@ -131,7 +131,7 @@ def main():
         logging.info(f"Using batch file '{input_file}'.")
 
         try:
-            fd = open(input_file, 'r')
+            fd = open(input_file, "r")
         except IOError as e:
             logging.error("File could not be read. "
                           "The following error was encountered:")
