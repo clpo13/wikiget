@@ -78,6 +78,8 @@ def main():
                                 help='treat FILE as a textfile containing '
                                 'multiple files to download, one URL or '
                                 'filename per line', action='store_true')
+    parser.add_argument('-l', '--logfile', default='',
+                        help='save log output to LOGFILE')
 
     args = parser.parse_args()
 
@@ -91,12 +93,17 @@ def main():
         loglevel = logging.ERROR
 
     # set up logger
-    # TODO: optionally save to log file
-    logging.basicConfig(
-        level=loglevel,
-        # format="%(asctime)s [%(levelname)s] %(message)s"
-        format="[%(levelname)s] %(message)s"
-    )
+    if args.logfile:
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s [%(levelname)s] %(message)s",
+            filename=args.logfile
+        )
+    else:
+        logging.basicConfig(
+            level=loglevel,
+            format="[%(levelname)s] %(message)s"
+        )
 
     if args.batch:
         # batch download mode
