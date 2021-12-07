@@ -92,18 +92,36 @@ def main():
     elif args.quiet:
         loglevel = logging.ERROR
 
-    # set up logger
+    # configure logging:
+    # console log level is set via -v, -vv, and -q options
+    # file log level is always info (TODO: add debug option)
     if args.logfile:
+        # log to console and file
         logging.basicConfig(
             level=logging.INFO,
-            format="%(asctime)s [%(levelname)s] %(message)s",
+            format="%(asctime)s [%(levelname)-7s] %(message)s",
             filename=args.logfile
         )
+
+        console = logging.StreamHandler()
+        # TODO: even when loglevel is set to logging.DEBUG,
+        # debug messages aren't printing to console
+        console.setLevel(loglevel)
+        console.setFormatter(
+            logging.Formatter("[%(levelname)s] %(message)s")
+        )
+        logging.getLogger("").addHandler(console)
     else:
+        # log only to console
         logging.basicConfig(
             level=loglevel,
             format="[%(levelname)s] %(message)s"
         )
+
+    # log events are appended to the file if it already exists,
+    # so note the start of a new download session
+    logging.info(f"Starting download session using wikiget {wikiget_version}")
+    # logging.info(f"Log level is set to {loglevel}")
 
     if args.batch:
         # batch download mode
@@ -131,7 +149,7 @@ def main():
             url = url.strip()
             # keep track of batch file line numbers for
             # debugging/logging purposes
-            logging.info(f"Downloading file {line_num} ({url}):")
+            logging.info(f"Downloading '{url}' at line {line_num}:")
             download(url, args)
     else:
         # single download mode
