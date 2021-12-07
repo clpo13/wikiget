@@ -81,29 +81,51 @@ def main():
 
     args = parser.parse_args()
 
-    # print API and debug messages in verbose mode
+    loglevel = logging.WARNING
     if args.verbose >= 2:
-        logging.basicConfig(level=logging.DEBUG)
+        # this includes API and library messages
+        loglevel = logging.DEBUG
     elif args.verbose >= 1:
-        logging.basicConfig(level=logging.WARNING)
+        loglevel = logging.INFO
+    elif args.quiet:
+        loglevel = logging.ERROR
+
+    # set up logger
+    # TODO: optionally save to log file
+    logging.basicConfig(
+        level=loglevel,
+        # format="%(asctime)s [%(levelname)s] %(message)s"
+        format="[%(levelname)s] %(message)s"
+    )
 
     if args.batch:
         # batch download mode
         input_file = args.FILE
-        if args.verbose >= 1:
-            print(f"Info: using batch file '{input_file}'")
+        dl_list = []
+
+        logging.info(f"Using batch file '{input_file}'.")
+
         try:
             fd = open(input_file, 'r')
         except IOError as e:
-            print('File could not be read. '
-                  'The following error was encountered:')
-            print(e)
+            logging.error("File could not be read. "
+                          "The following error was encountered:")
+            logging.error(e)
             sys.exit(1)
         else:
             with fd:
+                # store file contents in memory in case something
+                # happens to the file while we're downloading
                 for _, line in enumerate(fd):
-                    line = line.strip()
-                    download(line, args)
+                    dl_list.append(line)
+
+        # TODO: validate file contents before download process starts
+        for line_num, url in enumerate(dl_list, start=1):
+            url = url.strip()
+            # keep track of batch file line numbers for
+            # debugging/logging purposes
+            logging.info(f"Downloading file {line_num} ({url}):")
+            download(url, args)
     else:
         # single download mode
         dl = args.FILE
