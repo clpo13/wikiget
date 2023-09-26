@@ -19,7 +19,7 @@ import argparse
 import logging
 import sys
 
-from wikiget import DEFAULT_SITE, DEFAULT_PATH, wikiget_version
+from wikiget import DEFAULT_PATH, DEFAULT_SITE, wikiget_version
 from wikiget.dl import download
 
 
@@ -74,13 +74,13 @@ def main():
         "-s",
         "--site",
         default=DEFAULT_SITE,
-        help="MediaWiki site to download from " "(default: %(default)s)",
+        help="MediaWiki site to download from (default: %(default)s)",
     )
     parser.add_argument(
         "-p",
         "--path",
         default=DEFAULT_PATH,
-        help="MediaWiki site path, where api.php is located " "(default: %(default)s)",
+        help="MediaWiki site path, where api.php is located (default: %(default)s)",
     )
     parser.add_argument(
         "--username", default="", help="MediaWiki site username, for private wikis"
@@ -113,9 +113,9 @@ def main():
         if args.verbose >= 1:
             print(f"Info: using batch file '{input_file}'")
         try:
-            fd = open(input_file, "r")
-        except IOError as e:
-            print("File could not be read. " "The following error was encountered:")
+            fd = open(input_file)
+        except OSError as e:
+            print("File could not be read. The following error was encountered:")
             print(e)
             sys.exit(1)
         else:

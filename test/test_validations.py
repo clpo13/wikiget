@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # wikiget - CLI tool for downloading files from Wikimedia sites
 # Copyright (C) 2018-2021 Cody Logan
 # SPDX-License-Identifier: GPL-3.0-or-later

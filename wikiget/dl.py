@@ -130,7 +130,7 @@ def download(dl, args):
         else:
             try:
                 fd = open(dest, "wb")
-            except IOError as e:
+            except OSError as e:
                 print("File could not be written. The following error was encountered:")
                 print(e)
                 sys.exit(1)
