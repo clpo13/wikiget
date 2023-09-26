@@ -180,7 +180,7 @@ omit = [
 ]
 
 [tool.coverage.paths]
-hatchtest = ["wikiget"]
+wikiget = ["wikiget"]
 tests = ["test"]
 
 [tool.coverage.report]
