@@ -35,8 +35,7 @@ def download(dl, args):
         site_name = url.netloc
         if args.site is not DEFAULT_SITE and not args.quiet:
             # this will work even if the user specifies 'commons.wikimedia.org'
-            print('Warning: target is a URL, '
-                  'ignoring site specified with --site')
+            print("Warning: target is a URL, ignoring site specified with --site")
     else:
         filename = dl
         site_name = args.site
@@ -57,11 +56,11 @@ def download(dl, args):
     dest = args.output or filename
 
     if args.verbose >= 2:
-        print(f'User agent: {USER_AGENT}')
+        print(f"User agent: {USER_AGENT}")
 
     # connect to site and identify ourselves
     if args.verbose >= 1:
-        print(f'Site name: {site_name}')
+        print(f"Site name: {site_name}")
     try:
         site = Site(site_name, path=args.path, clients_useragent=USER_AGENT)
         if args.username and args.password:
@@ -71,15 +70,17 @@ def download(dl, args):
         # connection, though it could be a certificate problem
         print("Error: couldn't connect to specified site.")
         if args.verbose >= 2:
-            print('Full error message:')
+            print("Full error message:")
             print(e)
         sys.exit(1)
     except HTTPError as e:
         # most likely a 403 forbidden or 404 not found error for api.php
-        print("Error: couldn't find the specified wiki's api.php. "
-              "Check the value of --path.")
+        print(
+            "Error: couldn't find the specified wiki's api.php. "
+            "Check the value of --path."
+        )
         if args.verbose >= 2:
-            print('Full error message:')
+            print("Full error message:")
             print(e)
         sys.exit(1)
     except (InvalidResponse, LoginError) as e:
@@ -95,10 +96,12 @@ def download(dl, args):
     except APIError as e:
         # an API error at this point likely means access is denied,
         # which could happen with a private wiki
-        print('Error: access denied. Try providing credentials with '
-              '--username and --password.')
+        print(
+            "Error: access denied. Try providing credentials with "
+            "--username and --password."
+        )
         if args.verbose >= 2:
-            print('Full error message:')
+            print("Full error message:")
             for i in e.args:
                 print(i)
         sys.exit(1)
@@ -106,29 +109,29 @@ def download(dl, args):
     if file.imageinfo != {}:
         # file exists either locally or at a common repository,
         # like Wikimedia Commons
-        file_url = file.imageinfo['url']
-        file_size = file.imageinfo['size']
-        file_sha1 = file.imageinfo['sha1']
+        file_url = file.imageinfo["url"]
+        file_size = file.imageinfo["size"]
+        file_sha1 = file.imageinfo["sha1"]
 
         if args.verbose >= 1:
-            print(f"Info: downloading '{filename}' "
-                  f"({file_size} bytes) from {site.host}",
-                  end='')
+            print(
+                f"Info: downloading '{filename}' "
+                f"({file_size} bytes) from {site.host}",
+                end="",
+            )
             if args.output:
                 print(f" to '{dest}'")
             else:
-                print('\n', end='')
-            print(f'Info: {file_url}')
+                print("\n", end="")
+            print(f"Info: {file_url}")
 
         if os.path.isfile(dest) and not args.force:
-            print(f"File '{dest}' already exists, skipping download "
-                  "(use -f to ignore)")
+            print(f"File '{dest}' already exists, skipping download (use -f to ignore)")
         else:
             try:
-                fd = open(dest, 'wb')
+                fd = open(dest, "wb")
             except IOError as e:
-                print('File could not be written. '
-                      'The following error was encountered:')
+                print("File could not be written. The following error was encountered:")
                 print(e)
                 sys.exit(1)
             else:
@@ -137,9 +140,13 @@ def download(dl, args):
                     leave_bars = True
                 else:
                     leave_bars = False
-                with tqdm(leave=leave_bars, total=file_size,
-                          unit='B', unit_scale=True,
-                          unit_divisor=CHUNKSIZE) as progress_bar:
+                with tqdm(
+                    leave=leave_bars,
+                    total=file_size,
+                    unit="B",
+                    unit_scale=True,
+                    unit_divisor=CHUNKSIZE,
+                ) as progress_bar:
                     with fd:
                         res = site.connection.get(file_url, stream=True)
                         progress_bar.set_postfix(file=dest, refresh=False)
@@ -151,14 +158,14 @@ def download(dl, args):
             dl_sha1 = verify_hash(dest)
 
             if args.verbose >= 1:
-                print(f'Info: downloaded file SHA1 is {dl_sha1}')
-                print(f'Info: server file SHA1 is {file_sha1}')
+                print(f"Info: downloaded file SHA1 is {dl_sha1}")
+                print(f"Info: server file SHA1 is {file_sha1}")
             if dl_sha1 == file_sha1:
                 if args.verbose >= 1:
-                    print('Info: hashes match!')
+                    print("Info: hashes match!")
                 # at this point, we've successfully downloaded the file
             else:
-                print('Error: hash mismatch! Downloaded file may be corrupt.')
+                print("Error: hash mismatch! Downloaded file may be corrupt.")
                 sys.exit(1)
 
     else:

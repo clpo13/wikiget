@@ -31,7 +31,7 @@ def valid_file(search_string):
     """
     # second group could also restrict to file extensions with three or more
     # letters with ([^/\r\n\t\f\v]+\.\w{3,})
-    file_regex = re.compile(r'(File:|Image:)([^/\r\n\t\f\v]+\.\w+)$', re.I)
+    file_regex = re.compile(r"(File:|Image:)([^/\r\n\t\f\v]+\.\w+)$", re.I)
     return file_regex.search(search_string)
 
 
@@ -44,7 +44,7 @@ def valid_site(search_string):
     :param search_string: string to validate
     :returns: a regex Match object if there's a match or None otherwise
     """
-    site_regex = re.compile(r'wiki[mp]edia\.org$', re.I)
+    site_regex = re.compile(r"wiki[mp]edia\.org$", re.I)
     return site_regex.search(search_string)
 
 
@@ -56,7 +56,7 @@ def verify_hash(filename):
     :return: hash digest
     """
     hasher = hashlib.sha1()
-    with open(filename, 'rb') as dl:
+    with open(filename, "rb") as dl:
         buf = dl.read(BLOCKSIZE)
         while len(buf) > 0:
             hasher.update(buf)
