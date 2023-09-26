@@ -55,7 +55,7 @@ def verify_hash(filename):
     :param filename: name of the file to calculate a hash for
     :return: hash digest
     """
-    hasher = hashlib.sha1()
+    hasher = hashlib.sha1()  # noqa: S324
     with open(filename, "rb") as dl:
         buf = dl.read(BLOCKSIZE)
         while len(buf) > 0:

@@ -19,7 +19,7 @@ import argparse
 import logging
 import sys
 
-from wikiget import DEFAULT_PATH, DEFAULT_SITE, wikiget_version
+import wikiget
 from wikiget.dl import download
 
 
@@ -54,7 +54,10 @@ def main():
         """,
     )
     parser.add_argument(
-        "-V", "--version", action="version", version=f"%(prog)s {wikiget_version}"
+        "-V",
+        "--version",
+        action="version",
+        version=f"%(prog)s {wikiget.wikiget_version}",
     )
     message_options = parser.add_mutually_exclusive_group()
     message_options.add_argument(
@@ -73,13 +76,13 @@ def main():
     parser.add_argument(
         "-s",
         "--site",
-        default=DEFAULT_SITE,
+        default=wikiget.DEFAULT_SITE,
         help="MediaWiki site to download from (default: %(default)s)",
     )
     parser.add_argument(
         "-p",
         "--path",
-        default=DEFAULT_PATH,
+        default=wikiget.DEFAULT_PATH,
         help="MediaWiki site path, where api.php is located (default: %(default)s)",
     )
     parser.add_argument(
@@ -102,15 +105,15 @@ def main():
     args = parser.parse_args()
 
     # print API and debug messages in verbose mode
-    if args.verbose >= 2:
+    if args.verbose >= wikiget.VERY_VERBOSE:
         logging.basicConfig(level=logging.DEBUG)
-    elif args.verbose >= 1:
+    elif args.verbose >= wikiget.STD_VERBOSE:
         logging.basicConfig(level=logging.WARNING)
 
     if args.batch:
         # batch download mode
         input_file = args.FILE
-        if args.verbose >= 1:
+        if args.verbose >= wikiget.STD_VERBOSE:
             print(f"Info: using batch file '{input_file}'")
         try:
             fd = open(input_file)
@@ -121,8 +124,7 @@ def main():
         else:
             with fd:
                 for _, line in enumerate(fd):
-                    line = line.strip()
-                    download(line, args)
+                    download(line.strip(), args)
     else:
         # single download mode
         dl = args.FILE

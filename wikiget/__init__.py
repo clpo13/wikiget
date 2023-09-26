@@ -27,3 +27,5 @@ DEFAULT_PATH = "/w/"
 USER_AGENT = "wikiget/{} (https://github.com/clpo13/wikiget) mwclient/{}".format(
     wikiget_version, mwclient_version
 )
+STD_VERBOSE = 1
+VERY_VERBOSE = 2
