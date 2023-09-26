@@ -23,8 +23,8 @@ from mwclient import APIError, InvalidResponse, LoginError, Site
 from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
-from . import CHUNKSIZE, DEFAULT_SITE, USER_AGENT
-from .validations import valid_file, verify_hash
+from wikiget import CHUNKSIZE, DEFAULT_SITE, USER_AGENT
+from wikiget.validations import valid_file, verify_hash
 
 
 def download(dl, args):

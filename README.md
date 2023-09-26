@@ -1,13 +1,12 @@
 # wikiget
 
-[![Build Status](https://travis-ci.org/clpo13/wikiget.svg?branch=master)](https://travis-ci.org/clpo13/wikiget)
 [![PyPI version](https://badge.fury.io/py/wikiget.svg)](https://badge.fury.io/py/wikiget)
 
 Something like wget for downloading a file from MediaWiki sites (like Wikipedia
 or Wikimedia Commons) using only the file name or the URL of its description
 page.
 
-Requires Python 3.6+. Get it with `pip install --user wikiget`.
+Requires Python 3.7+. Get it with `pip install --user wikiget` or `pipx install wikiget`.
 
 ## Usage
 
@@ -75,7 +74,10 @@ to clutter your system Python environment:
 # and clone that instead
 git clone https://github.com/clpo13/wikiget
 cd wikiget
+
 python3 -m venv venv
+# or
+virtualenv venv
 ```
 
 To activate the virtual environment, use one of the following commands:
@@ -90,12 +92,13 @@ source venv/bin/activate
 
 Then run `pip install -e .` to invoke an
 ["editable" install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs),
-meaning any changes made to the source will be reflected immediately in the
-executable script. Unit tests can be run with `python setup.py test`.
+meaning any changes made to the source will be reflected immediately in the executable
+script. Unit tests can be run with `pytest` (make sure to run `pip install pytest-cov`
+in the virtual environment first.)
 
 ## License
 
-Copyright (C) 2018-2021 Cody Logan and contributors
+Copyright (C) 2018-2023 Cody Logan and contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

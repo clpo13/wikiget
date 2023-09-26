@@ -19,8 +19,8 @@ import argparse
 import logging
 import sys
 
-from . import DEFAULT_SITE, DEFAULT_PATH, wikiget_version
-from .dl import download
+from wikiget import DEFAULT_SITE, DEFAULT_PATH, wikiget_version
+from wikiget.dl import download
 
 
 def main():
