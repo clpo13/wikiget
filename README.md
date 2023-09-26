@@ -92,7 +92,7 @@ source venv/bin/activate
 ```
 
 Then run `pip install -e .` to invoke an
-["editable" install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs),
+["editable" install](https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs)
 meaning any changes made to the source will be reflected immediately in the executable
 script. Unit tests can be run with `pytest` (make sure to run `pip install pytest`
 in the virtual environment first.)
