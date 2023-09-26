@@ -33,8 +33,11 @@ access) are also supported with the use of the `--username` and `--password`
 flags.
 
 More detailed information, such as the site used and full URL of the file, can
-be displayed with `-v` or `--verbose`. Use `-vv` to display even more detail.
-`-q` can be used to silence warnings.
+be displayed with `-v` or `--verbose`. Use `-vv` to display even more detail,
+mainly debugging information or API messages. `-q` can be used to silence warnings.
+A logfile can be specified with `-l` or `--logfile`. If this option is present, the
+logfile will contain the same information as `-v` along with timestamps. New log
+entries will be appended to an existing logfile.
 
 By default, the program won't overwrite existing files with the same name as the
 target, but this can be forced with `-f` or `--force`. Additionally, the file
@@ -55,6 +58,7 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 
 ## Future plans
 
+- download multiple files at once in batch mode
 - continue batch download even if input is malformed or file doesn't exist
   (possibly by raising exceptions in `download()`)
 - batch download by (Commons) category or user uploads
@@ -62,7 +66,7 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 
 ## Contributing
 
-Pull requests or bug reports are more than welcome.
+Pull requests, bug reports, or feature requests are more than welcome.
 
 It's recommended that you use a
 [virtual environment manager](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
