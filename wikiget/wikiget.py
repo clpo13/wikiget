@@ -19,7 +19,7 @@ import argparse
 import logging
 import sys
 
-from wikiget import DEFAULT_SITE, DEFAULT_PATH, wikiget_version
+import wikiget
 from wikiget.dl import download
 
 
@@ -29,81 +29,102 @@ def main():
     when installed with `pip install` or `python setup.py install`.
     """
 
-    parser = argparse.ArgumentParser(description="""
-                                     A tool for downloading files from
-                                     MediaWiki sites using the file name or
-                                     description page URL
-                                     """,
-                                     epilog="""
-                                     Copyright (C) 2018-2021 Cody Logan
-                                     and contributors.
-                                     License GPLv3+: GNU GPL version 3 or later
-                                     <http://www.gnu.org/licenses/gpl.html>.
-                                     This is free software; you are free to
-                                     change and redistribute it under certain
-                                     conditions. There is NO WARRANTY, to the
-                                     extent permitted by law.
-                                     """)
-    parser.add_argument('FILE', help="""
-                        name of the file to download with the File:
-                        prefix, or the URL of its file description page
-                        """)
-    parser.add_argument('-V', '--version', action='version',
-                        version=f'%(prog)s {wikiget_version}')
+    parser = argparse.ArgumentParser(
+        description="""
+        A tool for downloading files from
+        MediaWiki sites using the file name or
+        description page URL
+        """,
+        epilog="""
+        Copyright (C) 2018-2023 Cody Logan
+        and contributors.
+        License GPLv3+: GNU GPL version 3 or later
+        <http://www.gnu.org/licenses/gpl.html>.
+        This is free software; you are free to
+        change and redistribute it under certain
+        conditions. There is NO WARRANTY, to the
+        extent permitted by law.
+        """,
+    )
+    parser.add_argument(
+        "FILE",
+        help="""
+        name of the file to download with the File:
+        prefix, or the URL of its file description page
+        """,
+    )
+    parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=f"%(prog)s {wikiget.wikiget_version}",
+    )
     message_options = parser.add_mutually_exclusive_group()
-    message_options.add_argument('-q', '--quiet',
-                                 help='suppress warning messages',
-                                 action='store_true')
-    message_options.add_argument('-v', '--verbose',
-                                 help='print detailed information; '
-                                 'use -vv for even more detail',
-                                 action='count', default=0)
-    parser.add_argument('-f', '--force',
-                        help='force overwriting existing files',
-                        action='store_true')
-    parser.add_argument('-s', '--site', default=DEFAULT_SITE,
-                        help='MediaWiki site to download from '
-                        '(default: %(default)s)')
-    parser.add_argument('-p', '--path', default=DEFAULT_PATH,
-                        help='MediaWiki site path, where api.php is located '
-                        '(default: %(default)s)')
-    parser.add_argument('--username', default='',
-                        help='MediaWiki site username, for private wikis')
-    parser.add_argument('--password', default='',
-                        help='MediaWiki site password, for private wikis')
+    message_options.add_argument(
+        "-q", "--quiet", help="suppress warning messages", action="store_true"
+    )
+    message_options.add_argument(
+        "-v",
+        "--verbose",
+        help="print detailed information; use -vv for even more detail",
+        action="count",
+        default=0,
+    )
+    parser.add_argument(
+        "-f", "--force", help="force overwriting existing files", action="store_true"
+    )
+    parser.add_argument(
+        "-s",
+        "--site",
+        default=wikiget.DEFAULT_SITE,
+        help="MediaWiki site to download from (default: %(default)s)",
+    )
+    parser.add_argument(
+        "-p",
+        "--path",
+        default=wikiget.DEFAULT_PATH,
+        help="MediaWiki site path, where api.php is located (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--username", default="", help="MediaWiki site username, for private wikis"
+    )
+    parser.add_argument(
+        "--password", default="", help="MediaWiki site password, for private wikis"
+    )
     output_options = parser.add_mutually_exclusive_group()
-    output_options.add_argument('-o', '--output',
-                                help='write download to OUTPUT')
-    output_options.add_argument('-a', '--batch',
-                                help='treat FILE as a textfile containing '
-                                'multiple files to download, one URL or '
-                                'filename per line', action='store_true')
+    output_options.add_argument("-o", "--output", help="write download to OUTPUT")
+    output_options.add_argument(
+        "-a",
+        "--batch",
+        help="treat FILE as a textfile containing "
+        "multiple files to download, one URL or "
+        "filename per line",
+        action="store_true",
+    )
 
     args = parser.parse_args()
 
     # print API and debug messages in verbose mode
-    if args.verbose >= 2:
+    if args.verbose >= wikiget.VERY_VERBOSE:
         logging.basicConfig(level=logging.DEBUG)
-    elif args.verbose >= 1:
+    elif args.verbose >= wikiget.STD_VERBOSE:
         logging.basicConfig(level=logging.WARNING)
 
     if args.batch:
         # batch download mode
         input_file = args.FILE
-        if args.verbose >= 1:
+        if args.verbose >= wikiget.STD_VERBOSE:
             print(f"Info: using batch file '{input_file}'")
         try:
-            fd = open(input_file, 'r')
-        except IOError as e:
-            print('File could not be read. '
-                  'The following error was encountered:')
+            fd = open(input_file)
+        except OSError as e:
+            print("File could not be read. The following error was encountered:")
             print(e)
             sys.exit(1)
         else:
             with fd:
                 for _, line in enumerate(fd):
-                    line = line.strip()
-                    download(line, args)
+                    download(line.strip(), args)
     else:
         # single download mode
         dl = args.FILE
