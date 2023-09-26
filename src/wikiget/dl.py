@@ -36,8 +36,7 @@ def download(dl, args):
         site_name = url.netloc
         if args.site is not wikiget.DEFAULT_SITE:
             # this will work even if the user specifies 'commons.wikimedia.org'
-            logging.warning("target is a URL, "
-                            "ignoring site specified with --site")
+            logging.warning("target is a URL, ignoring site specified with --site")
     else:
         filename = dl
         site_name = args.site
@@ -74,8 +73,9 @@ def download(dl, args):
         sys.exit(1)
     except HTTPError as e:
         # most likely a 403 forbidden or 404 not found error for api.php
-        logging.error("Couldn't find the specified wiki's api.php. "
-                      "Check the value of --path.")
+        logging.error(
+            "Couldn't find the specified wiki's api.php. Check the value of --path."
+        )
         logging.debug("Full error message:")
         logging.debug(e)
         sys.exit(1)
@@ -92,8 +92,10 @@ def download(dl, args):
     except APIError as e:
         # an API error at this point likely means access is denied,
         # which could happen with a private wiki
-        logging.error("Access denied. Try providing credentials with "
-                      "--username and --password.")
+        logging.error(
+            "Access denied. Try providing credentials with "
+            "--username and --password."
+        )
         logging.debug("Full error message:")
         for i in e.args:
             logging.debug(i)
@@ -106,22 +108,23 @@ def download(dl, args):
         file_size = file.imageinfo["size"]
         file_sha1 = file.imageinfo["sha1"]
 
-        filename_log = (f"Downloading '{filename}' ({file_size} bytes) "
-                        f"from {site.host}")
+        filename_log = f"Downloading '{filename}' ({file_size} bytes) from {site.host}"
         if args.output:
             filename_log += f" to '{dest}'"
         logging.info(filename_log)
         logging.info(f"{file_url}")
 
         if os.path.isfile(dest) and not args.force:
-            logging.warning(f"File '{dest}' already exists, skipping download "
-                            "(use -f to ignore)")
+            logging.warning(
+                f"File '{dest}' already exists, skipping download (use -f to ignore)"
+            )
         else:
             try:
                 fd = open(dest, "wb")
             except OSError as e:
-                logging.error("File could not be written. "
-                              "The following error was encountered:")
+                logging.error(
+                    "File could not be written. The following error was encountered:"
+                )
                 logging.error(e)
                 sys.exit(1)
             else:
@@ -158,6 +161,5 @@ def download(dl, args):
 
     else:
         # no file information returned
-        logging.error(f"Target '{filename}' does not appear to be "
-                      "a valid file.")
+        logging.error(f"Target '{filename}' does not appear to be a valid file.")
         sys.exit(1)

@@ -102,10 +102,7 @@ def main():
         action="store_true",
     )
     parser.add_argument(
-        "-l",
-        "--logfile",
-        default="",
-        help="save log output to LOGFILE"
+        "-l", "--logfile", default="", help="save log output to LOGFILE"
     )
 
     args = parser.parse_args()
@@ -127,23 +124,18 @@ def main():
         logging.basicConfig(
             level=logging.INFO,
             format="%(asctime)s [%(levelname)-7s] %(message)s",
-            filename=args.logfile
+            filename=args.logfile,
         )
 
         console = logging.StreamHandler()
         # TODO: even when loglevel is set to logging.DEBUG,
         # debug messages aren't printing to console
         console.setLevel(loglevel)
-        console.setFormatter(
-            logging.Formatter("[%(levelname)s] %(message)s")
-        )
+        console.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
         logging.getLogger("").addHandler(console)
     else:
         # log only to console
-        logging.basicConfig(
-            level=loglevel,
-            format="[%(levelname)s] %(message)s"
-        )
+        logging.basicConfig(level=loglevel, format="[%(levelname)s] %(message)s")
 
     # log events are appended to the file if it already exists,
     # so note the start of a new download session
@@ -158,10 +150,11 @@ def main():
         logging.info(f"Using batch file '{input_file}'.")
 
         try:
-            fd = open(input_file, "r")
+            fd = open(input_file)
         except OSError as e:
-            logging.error("File could not be read. "
-                          "The following error was encountered:")
+            logging.error(
+                "File could not be read. The following error was encountered:"
+            )
             logging.error(e)
             sys.exit(1)
         else:
@@ -173,11 +166,11 @@ def main():
 
         # TODO: validate file contents before download process starts
         for line_num, url in enumerate(dl_list, start=1):
-            url = url.strip()
+            s_url = url.strip()
             # keep track of batch file line numbers for
             # debugging/logging purposes
-            logging.info(f"Downloading '{url}' at line {line_num}:")
-            download(url, args)
+            logging.info(f"Downloading '{s_url}' at line {line_num}:")
+            download(s_url, args)
     else:
         # single download mode
         dl = args.FILE

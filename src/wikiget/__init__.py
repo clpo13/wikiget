@@ -24,8 +24,9 @@ BLOCKSIZE = 65536
 CHUNKSIZE = 1024
 DEFAULT_SITE = "commons.wikimedia.org"
 DEFAULT_PATH = "/w/"
-USER_AGENT = "wikiget/{} (https://github.com/clpo13/wikiget) mwclient/{}".format(
-    wikiget_version, mwclient_version
+USER_AGENT = (
+    f"wikiget/{wikiget_version} (https://github.com/clpo13/wikiget) "
+    f"mwclient/{mwclient_version}"
 )
 STD_VERBOSE = 1
 VERY_VERBOSE = 2
