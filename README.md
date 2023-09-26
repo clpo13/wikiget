@@ -1,5 +1,6 @@
 # wikiget
 
+[![Python package](https://github.com/clpo13/wikiget/actions/workflows/python.yml/badge.svg?branch=master)](https://github.com/clpo13/wikiget/actions/workflows/python.yml)
 [![PyPI version](https://badge.fury.io/py/wikiget.svg)](https://badge.fury.io/py/wikiget)
 
 Something like wget for downloading a file from MediaWiki sites (like Wikipedia
@@ -93,8 +94,12 @@ source venv/bin/activate
 Then run `pip install -e .` to invoke an
 ["editable" install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs),
 meaning any changes made to the source will be reflected immediately in the executable
-script. Unit tests can be run with `pytest` (make sure to run `pip install pytest-cov`
+script. Unit tests can be run with `pytest` (make sure to run `pip install pytest`
 in the virtual environment first.)
+
+Alternatively, using [Hatch](https://hatch.pypa.io/latest/), simply clone the repository
+and run `hatch run test` to create the environment and run pytest. Also try `hatch shell`
+or `hatch run wikiget --help`.
 
 ## License
 
