@@ -17,7 +17,7 @@
 
 from mwclient import __version__ as mwclient_version
 
-from .version import __version__ as wikiget_version
+from wikiget.version import __version__ as wikiget_version
 
 # set some global constants
 BLOCKSIZE = 65536

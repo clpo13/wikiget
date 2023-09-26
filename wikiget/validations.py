@@ -18,7 +18,7 @@
 import hashlib
 import re
 
-from . import BLOCKSIZE
+from wikiget import BLOCKSIZE
 
 
 def valid_file(search_string):
