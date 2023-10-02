@@ -4,11 +4,21 @@
 .SH NAME
 wikiget - download files from MediaWiki sites
 .SH SYNOPSIS
-\f[B]wikiget\f[R] [-\f[B]h\f[R]] [-\f[B]V\f[R]]
-[-\f[B]q\f[R]|-\f[B]v\f[R]] [-\f[B]f\f[R]] [-\f[B]s\f[R] \f[I]SITE\f[R]]
-[-\f[B]p\f[R] \f[I]PATH\f[R]] [--\f[B]username\f[R] \f[I]USERNAME\f[R]]
-[--\f[B]password\f[R] \f[I]PASSWORD\f[R]] [-\f[B]o\f[R] \f[I]OUTPUT\f[R]
-| -\f[B]a\f[R]] [-\f[B]l\f[R] \f[I]LOGFILE\f[R]] \f[I]FILE\f[R]
+.PP
+\f[B]wikiget\f[R] [\f[I]options\f[R]] \f[I]FILE\f[R]
+.PD 0
+.P
+.PD
+\f[B]wikiget\f[R] [\f[I]options\f[R]] [-\f[B]a\f[R]|--\f[B]batch\f[R]]
+\f[I]BATCHFILE\f[R]
+.PD 0
+.P
+.PD
+\f[B]wikiget\f[R] [-\f[B]V\f[R]|--\f[B]version\f[R]]
+.PD 0
+.P
+.PD
+\f[B]wikiget\f[R] [-\f[B]h\f[R]|--\f[B]help\f[R]]
 .SH DESCRIPTION
 Something like \f[B]wget\f[R](1) for downloading a file from MediaWiki
 sites (like Wikipedia or Wikimedia Commons) using only the file name or
@@ -24,6 +34,13 @@ If it\[cq]s the fully-qualified URL of a file description page, like
 \f[I]https://en.wikipedia.org/wiki/File:Example.jpg\f[R], the file is
 fetched from the site in the URL, in this case
 \[lq]en.wikipedia.org\[rq].
+.TP
+\f[I]BATCHFILE\f[R]
+In batch download mode (activated with -\f[B]a\f[R] or
+--\f[B]batch\f[R]), this is a text file containing multiple file names
+or URLs to be downloaded, one per line.
+If an error is encountered during download, execution stops immediately
+and the offending filename is printed.
 .TP
 -\f[B]s\f[R], --\f[B]site\f[R] \f[I]SITE\f[R]
 MediaWiki site to download from.
@@ -56,11 +73,8 @@ If the logfile already exists, new log information is appended to it.
 Force overwritng of existing files.
 .TP
 -\f[B]a\f[R], --\f[B]batch\f[R]
-If this flag is set, \f[I]FILE\f[R] will be treated as an input text
-file containing multiple files to be downloaded, one filename or URL per
-line.
-If an error is encountered during download, execution stops immediately
-and the offending filename is printed.
+If this flag is set, \f[B]wikiget\f[R] will run in batch download mode
+(see \f[I]BATCHFILE\f[R]).
 .TP
 -\f[B]v\f[R], --\f[B]verbose\f[R]
 Print additional information, such as the site used and the full URL of

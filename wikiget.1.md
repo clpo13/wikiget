@@ -8,11 +8,10 @@ wikiget - download files from MediaWiki sites
 
 # SYNOPSIS
 
-**wikiget**
-[\-**h**] [\-**V**] [\-**q**|\-**v**] [\-**f**] [\-**s** *SITE*] [\-**p** *PATH*]
-[\-\-**username** *USERNAME*] [\-\-**password** *PASSWORD*]
-[\-**o** *OUTPUT* | \-**a**] [\-**l** *LOGFILE*]
-*FILE*
+| **wikiget** \[*options*] *FILE*
+| **wikiget** \[*options*] \[\-**a**|\-\-**batch**] *BATCHFILE*
+| **wikiget** \[\-**V**|\-\-**version**]
+| **wikiget** \[\-**h**|\-\-**help**]
 
 # DESCRIPTION
 
@@ -27,6 +26,12 @@ using only the file name or the URL of its description page.
     fetched from the default site, which is "commons.wikimedia.org". If it's the fully-qualified URL of a file
     description page, like *https://en.wikipedia.org/wiki/File:Example.jpg*, the file is fetched from the site
     in the URL, in this case "en.wikipedia.org".
+
+*BATCHFILE*
+
+:   In batch download mode (activated with \-**a** or \-\-**batch**), this is a text file containing multiple
+    file names or URLs to be downloaded, one per line. If an error is encountered during download, execution
+    stops immediately and the offending filename is printed.
 
 \-**s**, \-\-**site** *SITE*
 
@@ -61,9 +66,7 @@ using only the file name or the URL of its description page.
 
 \-**a**, \-\-**batch**
 
-:   If this flag is set, *FILE* will be treated as an input text file containing multiple files to be downloaded,
-    one filename or URL per line. If an error is encountered during download, execution stops immediately and the
-    offending filename is printed.
+:   If this flag is set, **wikiget** will run in batch download mode (see *BATCHFILE*).
 
 \-**v**, \-\-**verbose**
 
