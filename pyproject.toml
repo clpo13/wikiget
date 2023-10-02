@@ -61,6 +61,11 @@ exclude = [
     "/.github",
 ]
 
+[tool.hatch.build.targets.wheel.shared-data]
+"wikiget.1" = "share/man/man1/wikiget.1"
+"README.md" = "share/doc/wikiget/README.md"
+"LICENSE" = "share/doc/wikiget/LICENSE"
+
 [tool.hatch.envs.default]
 dependencies = [
   "coverage[toml]>=6.5",
