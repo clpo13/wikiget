@@ -12,7 +12,7 @@ Requires Python 3.7+. Get it with `pip install --user wikiget` or `pipx install 
 ## Usage
 
 `wikiget [-h] [-V] [-q | -v] [-f] [-s SITE] [-p PATH] [--username USERNAME]
-[--password PASSWORD] [-o OUTPUT | -a] FILE`
+[--password PASSWORD] [-o OUTPUT | -a] [-l LOGFILE] FILE`
 
 If `FILE` is in the form `File:Example.jpg` or `Image:Example.jpg`, it will be
 fetched from the default site, which is "commons.wikimedia.org". If it's the
