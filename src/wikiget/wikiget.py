@@ -127,11 +127,13 @@ def main():
     # configure logging:
     # console log level is set via -v, -vv, and -q options;
     # file log level is always info (TODO: add debug option)
+    base_format = "%(threadName)s - %(message)s"
+    log_format = "[%(levelname)s] " + base_format
     if args.logfile:
         # log to console and file
         logging.basicConfig(
             level=logging.INFO,
-            format="%(asctime)s [%(levelname)-7s] %(message)s",
+            format="%(asctime)s [%(levelname)-7s] " + base_format,
             filename=args.logfile,
         )
 
@@ -139,11 +141,11 @@ def main():
         # TODO: even when loglevel is set to logging.DEBUG, debug messages aren't
         # printing to console
         console.setLevel(loglevel)
-        console.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
+        console.setFormatter(logging.Formatter(log_format))
         logging.getLogger("").addHandler(console)
     else:
         # log only to console
-        logging.basicConfig(level=loglevel, format="[%(levelname)s] %(message)s")
+        logging.basicConfig(level=loglevel, format=log_format)
 
     # log events are appended to the file if it already exists, so note the start of a
     # new download session
@@ -173,7 +175,10 @@ def main():
                     dl_list.append(line)
 
         # TODO: validate file contents before download process starts
-        with ThreadPoolExecutor(max_workers=args.threads) as executor:
+        with ThreadPoolExecutor(
+            max_workers=args.threads,
+            thread_name_prefix="download",
+        ) as executor:
             futures = []
             for line_num, line in enumerate(dl_list, start=1):
                 url = line.strip()
