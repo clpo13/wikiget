@@ -75,16 +75,22 @@ def main():
         help="MediaWiki site to download from (default: %(default)s)",
     )
     parser.add_argument(
-        "-p",
+        "-P",
         "--path",
         default=wikiget.DEFAULT_PATH,
         help="MediaWiki site path, where api.php is located (default: %(default)s)",
     )
     parser.add_argument(
-        "--username", default="", help="MediaWiki site username, for private wikis"
+        "-u",
+        "--username",
+        default="",
+        help="MediaWiki site username, for private wikis"
     )
     parser.add_argument(
-        "--password", default="", help="MediaWiki site password, for private wikis"
+        "-p",
+        "--password",
+        default="",
+        help="MediaWiki site password, for private wikis"
     )
     output_options = parser.add_mutually_exclusive_group()
     output_options.add_argument("-o", "--output", help="write download to OUTPUT")

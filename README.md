@@ -10,7 +10,7 @@ Requires Python 3.7+. Get it with `pip install --user wikiget` or `pipx install 
 
 ## Usage
 
-`wikiget [-h] [-V] [-q | -v] [-f] [-s SITE] [-p PATH] [--username USERNAME] [--password PASSWORD] [-o OUTPUT | -a] [-l LOGFILE] FILE`
+`wikiget [-h] [-V] [-q | -v] [-f] [-s SITE] [-P PATH] [-u USERNAME] [-p PASSWORD] [-o OUTPUT | -a] [-l LOGFILE] FILE`
 
 The only required parameter is `FILE`, which is the file you want to download. It can either be the name of the file on
 the wiki, including the namespace prefix, or a link to the file description page. If `FILE` is in the form

@@ -37,16 +37,16 @@ the file name or the URL of its description page.
 
 :   MediaWiki site to download from. Will not have any effect if the full URL is given in the *FILE* parameter.
 
-\-**p**, \-\-**path** *PATH*
+\-**P**, \-\-**path** *PATH*
 
 :   Script path for the wiki, where "index.php" and "api.php" live. On Wikimedia sites, it's "/w/", the default, but
     other sites may use "/" or something else entirely.
 
-\-\-**username** *USERNAME*
+\-**u**, \-\-**username** *USERNAME*
 
 :   Username for private wikis that require a login even for read access.
 
-\-\-**password** *PASSWORD*
+\-**p**, \-\-**password** *PASSWORD*
 
 :   Password for private wikis that require a login even for read access.
 
