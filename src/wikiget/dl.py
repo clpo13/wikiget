@@ -1,5 +1,5 @@
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018-2021 Cody Logan and contributors
+# Copyright (C) 2018-2023 Cody Logan and contributors
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -65,8 +65,8 @@ def download(dl, args):
         if args.username and args.password:
             site.login(args.username, args.password)
     except ConnectionError as e:
-        # usually this means there is no such site, or there's no network
-        # connection, though it could be a certificate problem
+        # usually this means there is no such site, or there's no network connection,
+        # though it could be a certificate problem
         logging.error("Couldn't connect to specified site.")
         logging.debug("Full error message:")
         logging.debug(e)
@@ -80,8 +80,8 @@ def download(dl, args):
         logging.debug(e)
         sys.exit(1)
     except (InvalidResponse, LoginError) as e:
-        # InvalidResponse: site exists, but we couldn't communicate with the
-        # API endpoint for some reason other than an HTTP error.
+        # InvalidResponse: site exists, but we couldn't communicate with the API
+        # endpoint for some reason other than an HTTP error.
         # LoginError: missing or invalid credentials
         logging.error(e)
         sys.exit(1)
@@ -90,8 +90,8 @@ def download(dl, args):
     try:
         file = site.images[filename]
     except APIError as e:
-        # an API error at this point likely means access is denied,
-        # which could happen with a private wiki
+        # an API error at this point likely means access is denied, which could happen
+        # with a private wiki
         logging.error(
             "Access denied. Try providing credentials with "
             "--username and --password."
@@ -102,8 +102,7 @@ def download(dl, args):
         sys.exit(1)
 
     if file.imageinfo != {}:
-        # file exists either locally or at a common repository,
-        # like Wikimedia Commons
+        # file exists either locally or at a common repository, like Wikimedia Commons
         file_url = file.imageinfo["url"]
         file_size = file.imageinfo["size"]
         file_sha1 = file.imageinfo["sha1"]

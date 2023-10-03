@@ -1,5 +1,5 @@
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018-2021 Cody Logan and contributors
+# Copyright (C) 2018-2023 Cody Logan and contributors
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -25,32 +25,27 @@ from wikiget.dl import download
 
 def main():
     """
-    Main entry point for console script. Automatically compiled by setuptools
-    when installed with `pip install` or `python setup.py install`.
+    Main entry point for console script. Automatically compiled by setuptools when
+    installed with `pip install` or `python setup.py install`.
     """
 
     parser = argparse.ArgumentParser(
         description="""
-        A tool for downloading files from
-        MediaWiki sites using the file name or
+        A tool for downloading files from MediaWiki sites using the file name or
         description page URL
         """,
         epilog="""
-        Copyright (C) 2018-2023 Cody Logan
-        and contributors.
-        License GPLv3+: GNU GPL version 3 or later
-        <http://www.gnu.org/licenses/gpl.html>.
-        This is free software; you are free to
-        change and redistribute it under certain
-        conditions. There is NO WARRANTY, to the
-        extent permitted by law.
+        Copyright (C) 2018-2023 Cody Logan and contributors. License GPLv3+: GNU GPL
+        version 3 or later <http://www.gnu.org/licenses/gpl.html>. This is free
+        software; you are free to change and redistribute it under certain conditions.
+        There is NO WARRANTY, to the extent permitted by law.
         """,
     )
     parser.add_argument(
         "FILE",
         help="""
-        name of the file to download with the File:
-        prefix, or the URL of its file description page
+        name of the file to download with the File: prefix, or the URL of its file
+        description page
         """,
     )
     parser.add_argument(
@@ -96,9 +91,8 @@ def main():
     output_options.add_argument(
         "-a",
         "--batch",
-        help="treat FILE as a textfile containing "
-        "multiple files to download, one URL or "
-        "filename per line",
+        help="treat FILE as a textfile containing multiple files to download, one URL "
+        "or filename per line",
         action="store_true",
     )
     parser.add_argument(
@@ -117,7 +111,7 @@ def main():
         loglevel = logging.ERROR
 
     # configure logging:
-    # console log level is set via -v, -vv, and -q options
+    # console log level is set via -v, -vv, and -q options;
     # file log level is always info (TODO: add debug option)
     if args.logfile:
         # log to console and file
@@ -128,8 +122,8 @@ def main():
         )
 
         console = logging.StreamHandler()
-        # TODO: even when loglevel is set to logging.DEBUG,
-        # debug messages aren't printing to console
+        # TODO: even when loglevel is set to logging.DEBUG, debug messages aren't
+        # printing to console
         console.setLevel(loglevel)
         console.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
         logging.getLogger("").addHandler(console)
@@ -137,8 +131,8 @@ def main():
         # log only to console
         logging.basicConfig(level=loglevel, format="[%(levelname)s] %(message)s")
 
-    # log events are appended to the file if it already exists,
-    # so note the start of a new download session
+    # log events are appended to the file if it already exists, so note the start of a
+    # new download session
     logging.info(f"Starting download session using wikiget {wikiget.wikiget_version}")
     # logging.info(f"Log level is set to {loglevel}")
 
@@ -159,16 +153,15 @@ def main():
             sys.exit(1)
         else:
             with fd:
-                # store file contents in memory in case something
-                # happens to the file while we're downloading
+                # store file contents in memory in case something happens to the file
+                # while we're downloading
                 for _, line in enumerate(fd):
                     dl_list.append(line)
 
         # TODO: validate file contents before download process starts
         for line_num, url in enumerate(dl_list, start=1):
             s_url = url.strip()
-            # keep track of batch file line numbers for
-            # debugging/logging purposes
+            # keep track of batch file line numbers for debugging/logging purposes
             logging.info(f"Downloading '{s_url}' at line {line_num}:")
             download(s_url, args)
     else:

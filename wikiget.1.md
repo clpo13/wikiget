@@ -1,6 +1,6 @@
 % WIKIGET(1) Version 0.5.1 | Wikiget User Manual
 % Cody Logan <clpo13@gmail.com>
-% October 2, 2023
+% October 3, 2023
 
 # NAME
 
@@ -15,23 +15,23 @@ wikiget - download files from MediaWiki sites
 
 # DESCRIPTION
 
-Something like **wget**(1) for downloading a file from MediaWiki sites (like Wikipedia or Wikimedia Commons)
-using only the file name or the URL of its description page.
+Something like **wget**(1) for downloading a file from MediaWiki sites (like Wikipedia or Wikimedia Commons) using only
+the file name or the URL of its description page.
 
 # OPTIONS
 
 *FILE*
 
-:   The file to be downloaded. If *FILE* is in the form *File:Example.jpg* or *Image:Example.jpg*, it will be
-    fetched from the default site, which is "commons.wikimedia.org". If it's the fully-qualified URL of a file
-    description page, like *https://en.wikipedia.org/wiki/File:Example.jpg*, the file is fetched from the site
-    in the URL, in this case "en.wikipedia.org".
+:   The file to be downloaded. If *FILE* is in the form *File:Example.jpg* or *Image:Example.jpg*, it will be fetched
+    from the default site, which is "commons.wikimedia.org". If it's the fully-qualified URL of a file description page,
+    like *https://en.wikipedia.org/wiki/File:Example.jpg*, the file is fetched from the site in the URL, in this case
+    "en.wikipedia.org".
 
 *BATCHFILE*
 
-:   In batch download mode (activated with \-**a** or \-\-**batch**), this is a text file containing multiple
-    file names or URLs to be downloaded, one per line. If an error is encountered during download, execution
-    stops immediately and the offending filename is printed.
+:   In batch download mode (activated with \-**a** or \-\-**batch**), this is a text file containing multiple file names
+    or URLs to be downloaded, one per line. If an error is encountered during download, execution stops immediately and
+    the offending filename is printed.
 
 \-**s**, \-\-**site** *SITE*
 
@@ -39,8 +39,8 @@ using only the file name or the URL of its description page.
 
 \-**p**, \-\-**path** *PATH*
 
-:   Script path for the wiki, where "index.php" and "api.php" live. On Wikimedia sites, it's "/w/", the default,
-    but other sites may use "/" or something else entirely.
+:   Script path for the wiki, where "index.php" and "api.php" live. On Wikimedia sites, it's "/w/", the default, but
+    other sites may use "/" or something else entirely.
 
 \-\-**username** *USERNAME*
 
@@ -52,8 +52,8 @@ using only the file name or the URL of its description page.
 
 \-**o**, \-\-**output** *OUTPUT*
 
-:   By default, the output filename is the same as the remote filename (without the File: or Image: prefix),
-    but this can be changed with this option.
+:   By default, the output filename is the same as the remote filename (without the File: or Image: prefix), but this
+    can be changed with this option.
 
 \-**l**, \-\-**logfile** *LOGFILE*
 
@@ -62,7 +62,7 @@ using only the file name or the URL of its description page.
 
 \-**f**, \-\-**force**
 
-:   Force overwritng of existing files.
+:   Force existing files to be overwritten.
 
 \-**a**, \-\-**batch**
 
@@ -91,21 +91,18 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 
 # BUG REPORTS
 
-<https://github.com/clpo13/wikiget/issues>
+https://github.com/clpo13/wikiget/issues
 
 # LICENSE
 
 Copyright (C) 2018-2023 Cody Logan and contributors
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with this program. If not, see
+https://www.gnu.org/licenses/.
