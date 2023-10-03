@@ -25,10 +25,11 @@ from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
 import wikiget
+from wikiget.file import File
 from wikiget.validations import valid_file, verify_hash
 
 
-def download(dl, args):
+def get_dest(dl, args):
     url = urlparse(dl)
 
     if url.netloc:
@@ -56,6 +57,10 @@ def download(dl, args):
 
     dest = args.output or filename
 
+    return filename, dest, site_name
+
+
+def query_api(filename, site_name, args):
     logging.debug(f"User agent: {wikiget.USER_AGENT}")
 
     # connect to site and identify ourselves
@@ -100,6 +105,22 @@ def download(dl, args):
         for i in e.args:
             logging.debug(i)
         sys.exit(1)
+
+    return file, site
+
+
+def prep_download(dl, args):
+    filename, dest, site_name = get_dest(dl, args)
+    file = File(filename, dest)
+    file.object, file.site = query_api(file.name, site_name, args)
+    return file
+
+
+def download(f, args):
+    file = f.object
+    filename = f.name
+    site = f.site
+    dest = f.dest
 
     if file.imageinfo != {}:
         # file exists either locally or at a common repository, like Wikimedia Commons

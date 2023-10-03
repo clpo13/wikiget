@@ -20,15 +20,10 @@ import logging
 import sys
 
 import wikiget
-from wikiget.dl import download
+from wikiget.dl import download, prep_download
 
 
-def main():
-    """
-    Main entry point for console script. Automatically compiled by setuptools when
-    installed with `pip install` or `python setup.py install`.
-    """
-
+def construct_parser():
     parser = argparse.ArgumentParser(
         description="""
         A tool for downloading files from MediaWiki sites using the file name or
@@ -84,13 +79,13 @@ def main():
         "-u",
         "--username",
         default="",
-        help="MediaWiki site username, for private wikis"
+        help="MediaWiki site username, for private wikis",
     )
     parser.add_argument(
         "-p",
         "--password",
         default="",
-        help="MediaWiki site password, for private wikis"
+        help="MediaWiki site password, for private wikis",
     )
     output_options = parser.add_mutually_exclusive_group()
     output_options.add_argument("-o", "--output", help="write download to OUTPUT")
@@ -104,7 +99,19 @@ def main():
     parser.add_argument(
         "-l", "--logfile", default="", help="save log output to LOGFILE"
     )
+    parser.add_argument(
+        "-j",
+        "--threads",
+        default=1,
+        help="Number of parallel downloads to attempt in batch mode",
+        type=int,
+    )
 
+    return parser
+
+
+def main():
+    parser = construct_parser()
     args = parser.parse_args()
 
     loglevel = logging.WARNING
@@ -165,12 +172,13 @@ def main():
                     dl_list.append(line)
 
         # TODO: validate file contents before download process starts
-        for line_num, url in enumerate(dl_list, start=1):
-            s_url = url.strip()
+        for line_num, line in enumerate(dl_list, start=1):
+            url = line.strip()
             # keep track of batch file line numbers for debugging/logging purposes
-            logging.info(f"Downloading '{s_url}' at line {line_num}:")
-            download(s_url, args)
+            logging.info(f"Downloading '{url}' at line {line_num}:")
+            file = prep_download(url, args)
+            download(file, args)
     else:
         # single download mode
-        dl = args.FILE
-        download(dl, args)
+        file = prep_download(args.FILE, args)
+        download(file, args)
