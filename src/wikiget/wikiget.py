@@ -18,6 +18,7 @@
 import argparse
 import logging
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 import wikiget
 from wikiget.dl import download, prep_download
@@ -172,12 +173,18 @@ def main():
                     dl_list.append(line)
 
         # TODO: validate file contents before download process starts
-        for line_num, line in enumerate(dl_list, start=1):
-            url = line.strip()
-            # keep track of batch file line numbers for debugging/logging purposes
-            logging.info(f"Downloading '{url}' at line {line_num}:")
-            file = prep_download(url, args)
-            download(file, args)
+        with ThreadPoolExecutor(max_workers=args.threads) as executor:
+            futures = []
+            for line_num, line in enumerate(dl_list, start=1):
+                url = line.strip()
+                # keep track of batch file line numbers for debugging/logging purposes
+                logging.info(f"Downloading '{url}' at line {line_num}:")
+                file = prep_download(url, args)
+                future = executor.submit(download, file, args)
+                futures.append(future)
+            # wait for downloads to finish
+            for future in futures:
+                future.result()
     else:
         # single download mode
         file = prep_download(args.FILE, args)
