@@ -10,7 +10,7 @@ Requires Python 3.7+. Get it with `pip install --user wikiget` or `pipx install 
 
 ## Usage
 
-`wikiget [-h] [-V] [-q | -v] [-f] [-s SITE] [-P PATH] [-u USERNAME] [-p PASSWORD] [-o OUTPUT | -a] [-l LOGFILE] FILE`
+`wikiget [-h] [-V] [-q | -v] [-f] [-s SITE] [-P PATH] [-u USERNAME] [-p PASSWORD] [-o OUTPUT | -a] [-l LOGFILE] [-j THREADS] FILE`
 
 The only required parameter is `FILE`, which is the file you want to download. It can either be the name of the file on
 the wiki, including the namespace prefix, or a link to the file description page. If `FILE` is in the form
@@ -36,7 +36,10 @@ By default, the program won't overwrite existing files with the same name as the
 
 Files can be batch downloaded with the `-a` or `--batch` flag. In this mode, `FILE` will be treated as an input file
 containing multiple files to download, one filename or URL per line. If an error is encountered, execution stops
-immediately and the offending filename is printed.
+immediately and the offending filename is printed. For large batches, the process can be sped up by downloading files
+in parallel. The number of parallel downloads can be set with `-j`. For instance, with `-a -j4`, wikiget will download
+four files at once. Without `-j` or with `-j` by itself without a number, wikiget will download the files one at a
+time.
 
 ### Example usage
 
@@ -48,7 +51,6 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 
 ## Future plans
 
-- download multiple files at once in batch mode
 - continue batch download even if input is malformed or file doesn't exist
   (possibly by raising exceptions in `download()`)
 - batch download by (Commons) category or user uploads

@@ -1,6 +1,6 @@
 % WIKIGET(1) Version 0.5.1 | Wikiget User Manual
 % Cody Logan <clpo13@gmail.com>
-% October 3, 2023
+% October 5, 2023
 
 # NAME
 
@@ -68,6 +68,10 @@ the file name or the URL of its description page.
 
 :   If this flag is set, **wikiget** will run in batch download mode (see *BATCHFILE*).
 
+\-**j**, \-\-**threads**
+
+:   Number of parallel downloads to attempt in batch mode. This option has no effect if \-**a** is not also set.
+
 \-**v**, \-\-**verbose**
 
 :   Print additional information, such as the site used and the full URL of the file. Additional invocations will
@@ -76,6 +80,10 @@ the file name or the URL of its description page.
 \-**q**, \-\-**quiet**
 
 :   Silence warnings and minimize printed output.
+
+\-**V**, \-\-**version**
+
+:   Print the version number of the program.
 
 \-**h**, \-\-**help**
 
