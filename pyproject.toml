@@ -79,9 +79,11 @@ cov-report = [
   "- coverage combine",
   "coverage report",
 ]
+htmlcov = "coverage html"
 cov = [
   "test-cov",
   "cov-report",
+  "htmlcov",
 ]
 
 [[tool.hatch.envs.all.matrix]]
