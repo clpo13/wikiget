@@ -15,13 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
-# import logging
 import pytest
 
-# from wikiget import USER_AGENT
-from wikiget.wikiget import construct_parser
-# from wikiget.dl import get_dest, query_api, prep_download
 from wikiget.dl import get_dest
+from wikiget.wikiget import construct_parser
 
 
 class TestGetDest:
@@ -35,9 +32,11 @@ class TestGetDest:
         assert site_name == "commons.wikimedia.org"
 
     def test_get_dest_with_url(self):
-        args = self.parser.parse_args([
-            "https://en.wikipedia.org/wiki/File:Example.jpg",
-        ])
+        args = self.parser.parse_args(
+            [
+                "https://en.wikipedia.org/wiki/File:Example.jpg",
+            ]
+        )
         filename, dest, site_name = get_dest(args.FILE, args)
         assert filename == "Example.jpg"
         assert dest == "Example.jpg"
@@ -48,12 +47,14 @@ class TestGetDest:
         with pytest.raises(SystemExit):
             filename, dest, site_name = get_dest(args.FILE, args)
 
-    def test_get_dest_with_different_site(self, caplog):
-        args = self.parser.parse_args([
-            "https://commons.wikimedia.org/wiki/File:Example.jpg",
-            "--site",
-            "commons.wikimedia.org",
-        ])
+    def test_get_dest_with_different_site(self, caplog: pytest.LogCaptureFixture):
+        args = self.parser.parse_args(
+            [
+                "https://commons.wikimedia.org/wiki/File:Example.jpg",
+                "--site",
+                "commons.wikimedia.org",
+            ]
+        )
         filename, dest, site_name = get_dest(args.FILE, args)
         assert "target is a URL, ignoring site specified with --site" in caplog.text
 

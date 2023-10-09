@@ -104,7 +104,7 @@ def construct_parser():
         "-j",
         "--threads",
         default=1,
-        help="Number of parallel downloads to attempt in batch mode",
+        help="number of parallel downloads to attempt in batch mode",
         type=int,
     )
 

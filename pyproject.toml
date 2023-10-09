@@ -188,5 +188,5 @@ exclude_lines = [
 ]
 
 [[tool.mypy.overrides]]
-module = ["mwclient"]
+module = ["mwclient", "pytest"]
 ignore_missing_imports = true
