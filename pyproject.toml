@@ -63,7 +63,7 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"wikiget.1" = "share/man/man1/wikiget.1"
+"docs/wikiget.1" = "share/man/man1/wikiget.1"
 "README.md" = "share/doc/wikiget/README.md"
 "LICENSE" = "share/doc/wikiget/LICENSE"
 
