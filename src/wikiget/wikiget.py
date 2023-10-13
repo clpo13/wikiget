@@ -111,10 +111,7 @@ def construct_parser():
     return parser
 
 
-def main():
-    parser = construct_parser()
-    args = parser.parse_args()
-
+def configure_logging(args):
     loglevel = logging.WARNING
     if args.verbose >= wikiget.VERY_VERBOSE:
         # this includes API and library messages
@@ -147,6 +144,51 @@ def main():
         # log only to console
         logging.basicConfig(level=loglevel, format=log_format)
 
+
+def batch_download(args):
+    input_file = args.FILE
+    dl_list = []
+
+    logging.info(f"Using batch file '{input_file}'.")
+
+    try:
+        fd = open(input_file)
+    except OSError as e:
+        logging.error("File could not be read. The following error was encountered:")
+        logging.error(e)
+        sys.exit(1)
+    else:
+        with fd:
+            # store file contents in memory in case something happens to the file
+            # while we're downloading
+            for _, line in enumerate(fd):
+                dl_list.append(line)
+
+    # TODO: validate file contents before download process starts
+    with ThreadPoolExecutor(
+        max_workers=args.threads,
+        thread_name_prefix="download",
+    ) as executor:
+        futures = []
+        for line_num, line in enumerate(dl_list, start=1):
+            url = line.strip()
+            # keep track of batch file line numbers for debugging/logging purposes
+            logging.info(f"Downloading '{url}' at line {line_num}:")
+            file = prep_download(url, args)
+            future = executor.submit(download, file, args)
+            futures.append(future)
+        # wait for downloads to finish
+        for future in futures:
+            future.result()
+
+
+def main():
+    # setup
+    parser = construct_parser()
+    args = parser.parse_args()
+
+    configure_logging(args)
+
     # log events are appended to the file if it already exists, so note the start of a
     # new download session
     logging.info(f"Starting download session using wikiget {wikiget.wikiget_version}")
@@ -154,42 +196,7 @@ def main():
 
     if args.batch:
         # batch download mode
-        input_file = args.FILE
-        dl_list = []
-
-        logging.info(f"Using batch file '{input_file}'.")
-
-        try:
-            fd = open(input_file)
-        except OSError as e:
-            logging.error(
-                "File could not be read. The following error was encountered:"
-            )
-            logging.error(e)
-            sys.exit(1)
-        else:
-            with fd:
-                # store file contents in memory in case something happens to the file
-                # while we're downloading
-                for _, line in enumerate(fd):
-                    dl_list.append(line)
-
-        # TODO: validate file contents before download process starts
-        with ThreadPoolExecutor(
-            max_workers=args.threads,
-            thread_name_prefix="download",
-        ) as executor:
-            futures = []
-            for line_num, line in enumerate(dl_list, start=1):
-                url = line.strip()
-                # keep track of batch file line numbers for debugging/logging purposes
-                logging.info(f"Downloading '{url}' at line {line_num}:")
-                file = prep_download(url, args)
-                future = executor.submit(download, file, args)
-                futures.append(future)
-            # wait for downloads to finish
-            for future in futures:
-                future.result()
+        batch_download(args)
     else:
         # single download mode
         file = prep_download(args.FILE, args)

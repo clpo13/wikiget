@@ -17,11 +17,17 @@
 
 
 class File:
-    def __init__(self, name, dest=None):
+    def __init__(self, name, dest=""):
+        """
+        Initializes a new file with the specified name and an optional destination name.
+
+        :param name: name of the file
+        :type name: str
+        :param dest: destination of the file, if different from the name; if not
+            specified, defaults to the name
+        :type dest: str, optional
+        """
         self.object = None
         self.site = None
         self.name = name
-        if dest is None:
-            self.dest = name
-        else:
-            self.dest = dest
+        self.dest = dest if dest else name
