@@ -35,11 +35,11 @@ By default, the program won't overwrite existing files with the same name as the
 `-f` or `--force`. Additionally, the file can be downloaded to a different name with `-o`.
 
 Files can be batch downloaded with the `-a` or `--batch` flag. In this mode, `FILE` will be treated as an input file
-containing multiple files to download, one filename or URL per line. If an error is encountered, execution stops
-immediately and the offending filename is printed. For large batches, the process can be sped up by downloading files
-in parallel. The number of parallel downloads can be set with `-j`. For instance, with `-a -j4`, wikiget will download
-four files at once. Without `-j` or with `-j` by itself without a number, wikiget will download the files one at a
-time.
+containing multiple files to download, one filename or URL per line. Blank lines and lines starting with "#" are
+ignored. If an error is encountered, execution stops immediately and the offending filename is printed. For large
+batches, the process can be sped up by downloading files in parallel. The number of parallel downloads can be set with
+`-j`. For instance, with `-a -j4`, wikiget will download four files at once. Without `-j` or with `-j` by itself without
+a number, wikiget will download the files one at a time.
 
 ### Example usage
 

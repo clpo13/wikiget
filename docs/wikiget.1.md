@@ -30,8 +30,8 @@ the file name or the URL of its description page.
 *BATCHFILE*
 
 :   In batch download mode (activated with \-**a** or \-\-**batch**), this is a text file containing multiple file names
-    or URLs to be downloaded, one per line. If an error is encountered during download, execution stops immediately and
-    the offending filename is printed.
+    or URLs to be downloaded, one per line. Blank lines and lines starting with "#" are ignored. If an error is
+    encountered during download, execution stops immediately and the offending filename is printed.
 
 \-**s**, \-\-**site** *SITE*
 

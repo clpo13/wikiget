@@ -145,7 +145,7 @@ def configure_logging(args):
 
 def batch_download(args):
     input_file = args.FILE
-    dl_list = []
+    dl_list = {}
 
     logging.info(f"Using batch file '{input_file}'.")
 
@@ -157,10 +157,12 @@ def batch_download(args):
         sys.exit(1)
     else:
         with fd:
-            # store file contents in memory in case something happens to the file
-            # while we're downloading
-            for _, line in enumerate(fd):
-                dl_list.append(line)
+            # read the file into memory and process each line as we go
+            for line_num, line in enumerate(fd, start=1):
+                line_s = line.strip()
+                # ignore blank lines and lines starting with "#" (for comments)
+                if line_s and not line_s.startswith("#"):
+                    dl_list[line_num] = line_s
 
     # TODO: validate file contents before download process starts
     with ThreadPoolExecutor(
@@ -168,11 +170,10 @@ def batch_download(args):
         thread_name_prefix="download",
     ) as executor:
         futures = []
-        for line_num, line in enumerate(dl_list, start=1):
-            url = line.strip()
+        for line_num, line in dl_list.items():
             # keep track of batch file line numbers for debugging/logging purposes
-            logging.info(f"Downloading '{url}' at line {line_num}:")
-            file = prep_download(url, args)
+            logging.info(f"Downloading '{line}' at line {line_num}")
+            file = prep_download(line, args)
             future = executor.submit(download, file, args)
             futures.append(future)
         # wait for downloads to finish
