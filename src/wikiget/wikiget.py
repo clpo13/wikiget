@@ -123,20 +123,18 @@ def configure_logging(args):
 
     # configure logging:
     # console log level is set via -v, -vv, and -q options;
-    # file log level is always info (TODO: add debug option)
+    # file log level is always debug (TODO: make this user configurable)
     base_format = "%(threadName)s - %(message)s"
     log_format = "[%(levelname)s] " + base_format
     if args.logfile:
         # log to console and file
         logging.basicConfig(
-            level=logging.INFO,
+            level=logging.DEBUG,
             format="%(asctime)s [%(levelname)-7s] " + base_format,
             filename=args.logfile,
         )
 
         console = logging.StreamHandler()
-        # TODO: even when loglevel is set to logging.DEBUG, debug messages aren't
-        # printing to console
         console.setLevel(loglevel)
         console.setFormatter(logging.Formatter(log_format))
         logging.getLogger("").addHandler(console)
@@ -192,7 +190,6 @@ def main():
     # log events are appended to the file if it already exists, so note the start of a
     # new download session
     logging.info(f"Starting download session using wikiget {wikiget.wikiget_version}")
-    # logging.info(f"Log level is set to {loglevel}")
 
     if args.batch:
         # batch download mode
