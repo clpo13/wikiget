@@ -18,46 +18,16 @@
 import logging
 import os
 import sys
-from urllib.parse import unquote, urlparse
 
 from mwclient import APIError, InvalidResponse, LoginError, Site
 from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
 import wikiget
+from wikiget.exceptions import ParseError
 from wikiget.file import File
-from wikiget.validations import valid_file, verify_hash
-
-
-def get_dest(dl, args):
-    url = urlparse(dl)
-
-    if url.netloc:
-        filename = url.path
-        site_name = url.netloc
-        if args.site is not wikiget.DEFAULT_SITE:
-            # this will work even if the user specifies 'commons.wikimedia.org'
-            logging.warning("target is a URL, ignoring site specified with --site")
-    else:
-        filename = dl
-        site_name = args.site
-
-    file_match = valid_file(filename)
-
-    # check if this is a valid file
-    if file_match and file_match.group(1):
-        # has File:/Image: prefix and extension
-        filename = file_match.group(2)
-    else:
-        # no file extension and/or prefix, probably an article
-        logging.error(f"Could not parse input '{filename}' as a file.")
-        sys.exit(1)
-
-    filename = unquote(filename)  # remove URL encoding for special characters
-
-    dest = args.output or filename
-
-    return filename, dest, site_name
+from wikiget.parse import get_dest
+from wikiget.validations import verify_hash
 
 
 def query_api(filename, site_name, args):
@@ -98,8 +68,7 @@ def query_api(filename, site_name, args):
         # an API error at this point likely means access is denied, which could happen
         # with a private wiki
         logging.error(
-            "Access denied. Try providing credentials with "
-            "--username and --password."
+            "Access denied. Try providing credentials with --username and --password."
         )
         logging.debug("Full error message:")
         for i in e.args:
@@ -110,7 +79,10 @@ def query_api(filename, site_name, args):
 
 
 def prep_download(dl, args):
-    filename, dest, site_name = get_dest(dl, args)
+    try:
+        filename, dest, site_name = get_dest(dl, args)
+    except ParseError:
+        raise
     file = File(filename, dest)
     file.object, file.site = query_api(file.name, site_name, args)
     return file
@@ -136,7 +108,7 @@ def download(f, args):
 
         if os.path.isfile(dest) and not args.force:
             logging.warning(
-                f"File '{dest}' already exists, skipping download (use -f to ignore)"
+                f"File '{dest}' already exists, skipping download (use -f to force)"
             )
         else:
             try:
@@ -167,19 +139,25 @@ def download(f, args):
                             fd.write(chunk)
                             progress_bar.update(len(chunk))
 
-            # verify file integrity and optionally print details
+            # verify file integrity and log details
             dl_sha1 = verify_hash(dest)
 
-            logging.info(f"Downloaded file SHA1 is {dl_sha1}")
-            logging.info(f"Server file SHA1 is {file_sha1}")
+            logging.info(f"Remote file SHA1 is {file_sha1}")
+            logging.info(f"Local file SHA1 is {dl_sha1}")
             if dl_sha1 == file_sha1:
                 logging.info("Hashes match!")
                 # at this point, we've successfully downloaded the file
+                success_log = f"'{filename}' downloaded"
+                if args.output:
+                    success_log += f" to '{dest}'"
+                logging.info(success_log)
             else:
                 logging.error("Hash mismatch! Downloaded file may be corrupt.")
+                # TODO: log but don't quit while in batch mode
                 sys.exit(1)
 
     else:
         # no file information returned
         logging.error(f"Target '{filename}' does not appear to be a valid file.")
+        # TODO: log but don't quit while in batch mode
         sys.exit(1)

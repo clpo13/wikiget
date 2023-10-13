@@ -22,6 +22,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 import wikiget
 from wikiget.dl import download, prep_download
+from wikiget.exceptions import ParseError
 
 
 def construct_parser():
@@ -173,7 +174,10 @@ def batch_download(args):
         for line_num, line in dl_list.items():
             # keep track of batch file line numbers for debugging/logging purposes
             logging.info(f"Downloading '{line}' at line {line_num}")
-            file = prep_download(line, args)
+            try:
+                file = prep_download(line, args)
+            except ParseError as e:
+                logging.warning(f"{e} (line {line_num})")
             future = executor.submit(download, file, args)
             futures.append(future)
         # wait for downloads to finish
@@ -197,5 +201,9 @@ def main():
         batch_download(args)
     else:
         # single download mode
-        file = prep_download(args.FILE, args)
+        try:
+            file = prep_download(args.FILE, args)
+        except ParseError as e:
+            logging.error(e)
+            sys.exit(1)
         download(file, args)

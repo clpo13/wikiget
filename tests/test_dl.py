@@ -15,65 +15,32 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+import logging
+
 import pytest
 
-from wikiget.dl import get_dest
+from wikiget import USER_AGENT
+from wikiget.dl import prep_download, query_api
 from wikiget.wikiget import construct_parser
 
 
-class TestGetDest:
+# TODO: don't hit the actual API when doing tests
+@pytest.mark.skip
+class TestQueryApi:
     parser = construct_parser()
 
-    def test_get_dest_with_filename(self):
+    def test_query_api(self, caplog):
+        caplog.set_level(logging.DEBUG)
         args = self.parser.parse_args(["File:Example.jpg"])
-        filename, dest, site_name = get_dest(args.FILE, args)
-        assert filename == "Example.jpg"
-        assert dest == "Example.jpg"
-        assert site_name == "commons.wikimedia.org"
-
-    def test_get_dest_with_url(self):
-        args = self.parser.parse_args(
-            [
-                "https://en.wikipedia.org/wiki/File:Example.jpg",
-            ]
-        )
-        filename, dest, site_name = get_dest(args.FILE, args)
-        assert filename == "Example.jpg"
-        assert dest == "Example.jpg"
-        assert site_name == "en.wikipedia.org"
-
-    def test_get_dest_with_bad_filename(self):
-        args = self.parser.parse_args(["Example.jpg"])
-        with pytest.raises(SystemExit):
-            filename, dest, site_name = get_dest(args.FILE, args)
-
-    def test_get_dest_with_different_site(self, caplog: pytest.LogCaptureFixture):
-        args = self.parser.parse_args(
-            [
-                "https://commons.wikimedia.org/wiki/File:Example.jpg",
-                "--site",
-                "commons.wikimedia.org",
-            ]
-        )
-        filename, dest, site_name = get_dest(args.FILE, args)
-        assert "target is a URL, ignoring site specified with --site" in caplog.text
+        file, site = query_api("Example.jpg", "commons.wikimedia.org", args)
+        assert USER_AGENT in caplog.text
 
 
-# TODO: don't hit the actual API when doing tests
-# class TestQueryApi:
-#     parser = construct_parser()
-#
-#     def test_query_api(self, caplog):
-#         caplog.set_level(logging.DEBUG)
-#         args = self.parser.parse_args(["File:Example.jpg"])
-#         file, site = query_api("Example.jpg", "commons.wikimedia.org", args)
-#         assert USER_AGENT in caplog.text
-#
-#
-# class TestPrepDownload():
-#     parser = construct_parser()
-#
-#     def test_prep_download(self):
-#         args = self.parser.parse_args(["File:Example.jpg"])
-#         file = prep_download(args.FILE, args)
-#         assert file is not None
+@pytest.mark.skip
+class TestPrepDownload:
+    parser = construct_parser()
+
+    def test_prep_download(self):
+        args = self.parser.parse_args(["File:Example.jpg"])
+        file = prep_download(args.FILE, args)
+        assert file is not None
