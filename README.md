@@ -6,7 +6,9 @@
 Something like wget for downloading a file from MediaWiki sites (like Wikipedia or Wikimedia Commons) using only the
 file name or the URL of its description page.
 
-Requires Python 3.7+. Get it with `pip install --user wikiget` or `pipx install wikiget`.
+Requires Python 3.7+ and pip. Get it with `pip install wikiget` or `pipx install wikiget`. For the latest features, at
+the risk of bugs and undocumented behavior, you can try the dev branch:
+`pip install https://github.com/clpo13/wikiget/archive/refs/heads/dev.zip`
 
 ## Usage
 
