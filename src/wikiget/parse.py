@@ -30,8 +30,9 @@ def get_dest(dl, args):
         filename = url.path
         site_name = url.netloc
         if args.site is not wikiget.DEFAULT_SITE:
-            # this will work even if the user specifies 'commons.wikimedia.org'
-            logging.warning("target is a URL, ignoring site specified with --site")
+            # this will work even if the user specifies 'commons.wikimedia.org' since
+            # we're comparing objects instead of values (is not vs. !=)
+            logging.warning("Target is a URL, ignoring site specified with --site")
     else:
         filename = dl
         site_name = args.site

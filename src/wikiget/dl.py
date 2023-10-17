@@ -24,7 +24,6 @@ from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
 import wikiget
-from wikiget.exceptions import ParseError
 from wikiget.file import File
 from wikiget.parse import get_dest
 from wikiget.validations import verify_hash
@@ -42,24 +41,22 @@ def query_api(filename, site_name, args):
     except ConnectionError as e:
         # usually this means there is no such site, or there's no network connection,
         # though it could be a certificate problem
-        logging.error("Couldn't connect to specified site.")
-        logging.debug("Full error message:")
+        logging.error("Could not connect to specified site")
         logging.debug(e)
-        sys.exit(1)
+        raise
     except HTTPError as e:
         # most likely a 403 forbidden or 404 not found error for api.php
         logging.error(
-            "Couldn't find the specified wiki's api.php. Check the value of --path."
+            "Could not find the specified wiki's api.php. Check the value of --path."
         )
-        logging.debug("Full error message:")
         logging.debug(e)
-        sys.exit(1)
+        raise
     except (InvalidResponse, LoginError) as e:
         # InvalidResponse: site exists, but we couldn't communicate with the API
         # endpoint for some reason other than an HTTP error.
         # LoginError: missing or invalid credentials
         logging.error(e)
-        sys.exit(1)
+        raise
 
     # get info about the target file
     try:
@@ -70,19 +67,15 @@ def query_api(filename, site_name, args):
         logging.error(
             "Access denied. Try providing credentials with --username and --password."
         )
-        logging.debug("Full error message:")
         for i in e.args:
             logging.debug(i)
-        sys.exit(1)
+        raise
 
     return file, site
 
 
 def prep_download(dl, args):
-    try:
-        filename, dest, site_name = get_dest(dl, args)
-    except ParseError:
-        raise
+    filename, dest, site_name = get_dest(dl, args)
     file = File(filename, dest)
     file.object, file.site = query_api(file.name, site_name, args)
     return file
@@ -158,6 +151,6 @@ def download(f, args):
 
     else:
         # no file information returned
-        logging.error(f"Target '{filename}' does not appear to be a valid file.")
+        logging.error(f"Target '{filename}' does not appear to be a valid file")
         # TODO: log but don't quit while in batch mode
         sys.exit(1)

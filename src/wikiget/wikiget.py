@@ -20,6 +20,9 @@ import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor
 
+from mwclient import APIError, InvalidResponse, LoginError
+from requests import ConnectionError, HTTPError
+
 import wikiget
 from wikiget.dl import download, prep_download
 from wikiget.exceptions import ParseError
@@ -178,6 +181,10 @@ def batch_download(args):
                 file = prep_download(line, args)
             except ParseError as e:
                 logging.warning(f"{e} (line {line_num})")
+            except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
+                logging.error(
+                    f"Unable to download '{line}' (line {line_num}) due to an error"
+                )
             future = executor.submit(download, file, args)
             futures.append(future)
         # wait for downloads to finish
@@ -198,6 +205,8 @@ def main():
 
     if args.batch:
         # batch download mode
+        # TODO: return non-zero exit code if any errors were encountered, even if some
+        # downloads completed successfully
         batch_download(args)
     else:
         # single download mode
@@ -205,5 +214,7 @@ def main():
             file = prep_download(args.FILE, args)
         except ParseError as e:
             logging.error(e)
+            sys.exit(1)
+        except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
             sys.exit(1)
         download(file, args)
