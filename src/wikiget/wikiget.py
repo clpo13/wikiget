@@ -25,6 +25,7 @@ from requests import ConnectionError, HTTPError
 import wikiget
 from wikiget.dl import batch_download, download, prep_download
 from wikiget.exceptions import ParseError
+from wikiget.logging import configure_logging
 
 
 def construct_parser():
@@ -114,36 +115,6 @@ def construct_parser():
     return parser
 
 
-def configure_logging(args):
-    loglevel = logging.WARNING
-    if args.verbose >= wikiget.VERY_VERBOSE:
-        # this includes API and library messages
-        loglevel = logging.DEBUG
-    elif args.verbose >= wikiget.STD_VERBOSE:
-        loglevel = logging.INFO
-    elif args.quiet:
-        loglevel = logging.ERROR
-
-    # configure logging:
-    # console log level is set via -v, -vv, and -q options;
-    # file log level is always debug (TODO: make this user configurable)
-    base_format = "%(threadName)s - %(message)s"
-    log_format = "[%(levelname)s] " + base_format
-    if args.logfile:
-        # log to console and file
-        logging.basicConfig(
-            level=logging.DEBUG,
-            format="%(asctime)s [%(levelname)-7s] " + base_format,
-            filename=args.logfile,
-        )
-
-        console = logging.StreamHandler()
-        console.setLevel(loglevel)
-        console.setFormatter(logging.Formatter(log_format))
-        logging.getLogger("").addHandler(console)
-    else:
-        # log only to console
-        logging.basicConfig(level=loglevel, format=log_format)
 def main():
     # setup our environment
     parser = construct_parser()

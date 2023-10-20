@@ -27,6 +27,7 @@ from tqdm import tqdm
 import wikiget
 from wikiget.exceptions import ParseError
 from wikiget.file import File
+from wikiget.logging import FileLogAdapter
 from wikiget.parse import get_dest
 from wikiget.validations import verify_hash
 
@@ -136,6 +137,9 @@ def download(f, args):
 
     errors = 0
 
+    logger = logging.getLogger("")
+    adapter = FileLogAdapter(logger, {"filename": filename})
+
     if file.exists:
         # file exists either locally or at a common repository, like Wikimedia Commons
         file_url = file.imageinfo["url"]
@@ -145,22 +149,17 @@ def download(f, args):
         filename_log = f"Downloading '{filename}' ({file_size} bytes) from {site.host}"
         if args.output:
             filename_log += f" to '{dest}'"
-        logging.info(filename_log)
-        logging.info(f"{file_url}")
+        adapter.info(filename_log)
+        adapter.info(f"{file_url}")
 
         if os.path.isfile(dest) and not args.force:
-            logging.warning(
-                f"File '{dest}' already exists, skipping download (use -f to force)"
-            )
+            adapter.warning("File already exists, skipping download (use -f to force)")
             errors += 1
         else:
             try:
                 fd = open(dest, "wb")
             except OSError as e:
-                logging.error(
-                    "File could not be written. The following error was encountered:"
-                )
-                logging.error(e)
+                adapter.error(f"File could not be written. {e}")
                 errors += 1
             else:
                 # download the file(s)
@@ -185,22 +184,22 @@ def download(f, args):
             # verify file integrity and log details
             dl_sha1 = verify_hash(dest)
 
-            logging.info(f"Remote file SHA1 is {file_sha1}")
-            logging.info(f"Local file SHA1 is {dl_sha1}")
+            adapter.info(f"Remote file SHA1 is {file_sha1}")
+            adapter.info(f"Local file SHA1 is {dl_sha1}")
             if dl_sha1 == file_sha1:
-                logging.info("Hashes match!")
+                adapter.info("Hashes match!")
                 # at this point, we've successfully downloaded the file
                 success_log = f"'{filename}' downloaded"
                 if args.output:
                     success_log += f" to '{dest}'"
-                logging.info(success_log)
+                adapter.info(success_log)
             else:
-                logging.error("Hash mismatch! Downloaded file may be corrupt.")
+                adapter.error("Hash mismatch! Downloaded file may be corrupt.")
                 errors += 1
 
     else:
         # no file information returned
-        logging.error(f"Target '{filename}' does not appear to be a valid file")
+        adapter.warning("Target does not appear to be a valid file")
         errors += 1
 
     return errors
