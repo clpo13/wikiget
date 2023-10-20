@@ -8,37 +8,37 @@ dynamic = ["version"]
 description = "CLI tool for downloading files from MediaWiki sites"
 readme = "README.md"
 authors = [
-    {name = "Cody Logan", email = "clpo13@gmail.com"}
+  {name = "Cody Logan", email = "clpo13@gmail.com"}
 ]
 requires-python = ">=3.7"
 license = {text = "GPL-3.0-or-later"}
 keywords = ["commons", "mediawiki", "wikimedia", "wikipedia"]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Environment :: Console",
-    "Intended Audience :: End Users/Desktop",
-    "Operating System :: OS Independent",
-    "Topic :: Internet",
-    "Topic :: Internet :: WWW/HTTP",
-    "Topic :: Multimedia",
-    "Topic :: Multimedia :: Graphics",
-    "Topic :: Multimedia :: Sound/Audio",
-    "Topic :: Multimedia :: Video",
-    "Topic :: Utilities",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: End Users/Desktop",
+  "Operating System :: OS Independent",
+  "Topic :: Internet",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Multimedia",
+  "Topic :: Multimedia :: Graphics",
+  "Topic :: Multimedia :: Sound/Audio",
+  "Topic :: Multimedia :: Video",
+  "Topic :: Utilities",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "mwclient>=0.10.0",
-    "requests",
-    "tqdm",
+  "mwclient>=0.10.0",
+  "requests",
+  "tqdm",
 ]
 
 [project.urls]
@@ -53,13 +53,13 @@ path = "src/wikiget/version.py"
 
 [tool.pytest.ini_options]
 addopts = [
-    "--import-mode=importlib",
+  "--import-mode=importlib",
 ]
 testpaths = ["tests"]
 
 [tool.hatch.build.targets.sdist]
 exclude = [
-    "/.github",
+  "/.github",
 ]
 
 [tool.hatch.build.targets.wheel.shared-data]
@@ -188,5 +188,9 @@ exclude_lines = [
 ]
 
 [[tool.mypy.overrides]]
-module = ["mwclient", "pytest"]
+module = [
+  "mwclient",
+  "mwclient.image",
+  "pytest",
+]
 ignore_missing_imports = true
