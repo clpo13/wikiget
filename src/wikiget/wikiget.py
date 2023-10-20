@@ -195,15 +195,15 @@ def batch_download(args):
 
 
 def main():
-    # setup
+    # setup our environment
     parser = construct_parser()
     args = parser.parse_args()
-
     configure_logging(args)
 
     # log events are appended to the file if it already exists, so note the start of a
     # new download session
     logging.info(f"Starting download session using wikiget {wikiget.wikiget_version}")
+    logging.debug(f"User agent: {wikiget.USER_AGENT}")
 
     if args.batch:
         # batch download mode

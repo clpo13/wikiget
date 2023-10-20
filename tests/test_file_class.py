@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from wikiget import DEFAULT_SITE
 from wikiget.file import File
 
 
@@ -22,10 +23,15 @@ def test_file_with_name_only():
     file = File("foobar.jpg")
     assert file.name == "foobar.jpg"
     assert file.dest == file.name
+    assert file.site == DEFAULT_SITE
 
 
 def test_file_with_name_and_dest():
-    file = File("foobar.jpg", "bazqux.jpg")
-    assert file.name == "foobar.jpg"
+    file = File("foobar.jpg", dest="bazqux.jpg")
     assert file.dest == "bazqux.jpg"
     assert file.dest != file.name
+
+
+def test_file_with_name_and_site():
+    file = File("foobar.jpg", site="en.wikipedia.org")
+    assert file.site == "en.wikipedia.org"

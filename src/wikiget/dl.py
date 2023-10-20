@@ -30,10 +30,8 @@ from wikiget.validations import verify_hash
 
 
 def query_api(filename, site_name, args):
-    logging.debug(f"User agent: {wikiget.USER_AGENT}")
-
     # connect to site and identify ourselves
-    logging.info(f"Site name: {site_name}")
+    logging.info(f"Connecting to {site_name}")
     try:
         site = Site(site_name, path=args.path, clients_useragent=wikiget.USER_AGENT)
         if args.username and args.password:
@@ -60,7 +58,7 @@ def query_api(filename, site_name, args):
 
     # get info about the target file
     try:
-        file = site.images[filename]
+        image = site.images[filename]
     except APIError as e:
         # an API error at this point likely means access is denied, which could happen
         # with a private wiki
@@ -71,23 +69,22 @@ def query_api(filename, site_name, args):
             logging.debug(i)
         raise
 
-    return file, site
+    return image
 
 
 def prep_download(dl, args):
-    filename, dest, site_name = get_dest(dl, args)
-    file = File(filename, dest)
-    file.object, file.site = query_api(file.name, site_name, args)
+    file = get_dest(dl, args)
+    file.image = query_api(file.name, file.site, args)
     return file
 
 
 def download(f, args):
-    file = f.object
+    file = f.image
     filename = f.name
-    site = f.site
     dest = f.dest
+    site = file.site
 
-    if file.imageinfo != {}:
+    if file.exists:
         # file exists either locally or at a common repository, like Wikimedia Commons
         file_url = file.imageinfo["url"]
         file_size = file.imageinfo["size"]

@@ -52,4 +52,6 @@ def get_dest(dl, args):
 
     dest = args.output or filename
 
-    return filename, dest, site_name
+    file = File(filename, dest, site_name)
+
+    return file

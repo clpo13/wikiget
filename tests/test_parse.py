@@ -27,10 +27,10 @@ class TestGetDest:
 
     def test_get_dest_with_filename(self):
         args = self.parser.parse_args(["File:Example.jpg"])
-        filename, dest, site_name = get_dest(args.FILE, args)
-        assert filename == "Example.jpg"
-        assert dest == "Example.jpg"
-        assert site_name == "commons.wikimedia.org"
+        file = get_dest(args.FILE, args)
+        assert file.name == "Example.jpg"
+        assert file.dest == "Example.jpg"
+        assert file.site == "commons.wikimedia.org"
 
     def test_get_dest_with_url(self):
         args = self.parser.parse_args(
@@ -38,15 +38,15 @@ class TestGetDest:
                 "https://en.wikipedia.org/wiki/File:Example.jpg",
             ]
         )
-        filename, dest, site_name = get_dest(args.FILE, args)
-        assert filename == "Example.jpg"
-        assert dest == "Example.jpg"
-        assert site_name == "en.wikipedia.org"
+        file = get_dest(args.FILE, args)
+        assert file.name == "Example.jpg"
+        assert file.dest == "Example.jpg"
+        assert file.site == "en.wikipedia.org"
 
     def test_get_dest_with_bad_filename(self):
         args = self.parser.parse_args(["Example.jpg"])
         with pytest.raises(ParseError):
-            filename, dest, site_name = get_dest(args.FILE, args)
+            _ = get_dest(args.FILE, args)
 
     def test_get_dest_with_different_site(self, caplog: pytest.LogCaptureFixture):
         args = self.parser.parse_args(
@@ -56,5 +56,5 @@ class TestGetDest:
                 "commons.wikimedia.org",
             ]
         )
-        filename, dest, site_name = get_dest(args.FILE, args)
+        _ = get_dest(args.FILE, args)
         assert "Target is a URL, ignoring site specified with --site" in caplog.text

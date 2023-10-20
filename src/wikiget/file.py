@@ -15,9 +15,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from mwclient.image import Image
+
+from wikiget import DEFAULT_SITE
+
 
 class File:
-    def __init__(self, name, dest=""):
+    def __init__(self, name: str, dest: str = "", site: str = "") -> None:
         """
         Initializes a new file with the specified name and an optional destination name.
 
@@ -26,8 +30,10 @@ class File:
         :param dest: destination of the file, if different from the name; if not
             specified, defaults to the name
         :type dest: str, optional
+        :param site: name of the site hosting the file; if not specified, defaults to
+            the global default site
         """
-        self.object = None
-        self.site = None
+        self.image: Image = None
         self.name = name
         self.dest = dest if dest else name
+        self.site = site if site else DEFAULT_SITE
