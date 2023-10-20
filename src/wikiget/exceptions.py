@@ -1,5 +1,5 @@
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018-2023 Cody Logan and contributors
+# Copyright (C) 2023 Cody Logan
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -15,4 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
-__version__ = "0.5.1"
+
+class ParseError(Exception):
+    pass

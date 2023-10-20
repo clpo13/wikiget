@@ -1,5 +1,5 @@
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018-2021 Cody Logan and contributors
+# Copyright (C) 2018-2023 Cody Logan and contributors
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -19,38 +19,33 @@ import argparse
 import logging
 import sys
 
+from mwclient import APIError, InvalidResponse, LoginError
+from requests import ConnectionError, HTTPError
+
 import wikiget
-from wikiget.dl import download
+from wikiget.dl import batch_download, download, prep_download
+from wikiget.exceptions import ParseError
+from wikiget.logging import configure_logging
 
 
-def main():
-    """
-    Main entry point for console script. Automatically compiled by setuptools
-    when installed with `pip install` or `python setup.py install`.
-    """
-
+def construct_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="""
-        A tool for downloading files from
-        MediaWiki sites using the file name or
+        A tool for downloading files from MediaWiki sites using the file name or
         description page URL
         """,
         epilog="""
-        Copyright (C) 2018-2023 Cody Logan
-        and contributors.
-        License GPLv3+: GNU GPL version 3 or later
-        <http://www.gnu.org/licenses/gpl.html>.
-        This is free software; you are free to
-        change and redistribute it under certain
-        conditions. There is NO WARRANTY, to the
-        extent permitted by law.
+        Copyright (C) 2018-2023 Cody Logan and contributors. License GPLv3+: GNU GPL
+        version 3 or later <http://www.gnu.org/licenses/gpl.html>. This is free
+        software; you are free to change and redistribute it under certain conditions.
+        There is NO WARRANTY, to the extent permitted by law.
         """,
     )
     parser.add_argument(
         "FILE",
         help="""
-        name of the file to download with the File:
-        prefix, or the URL of its file description page
+        name of the file to download with the File: prefix, or the URL of its file
+        description page
         """,
     )
     parser.add_argument(
@@ -80,52 +75,76 @@ def main():
         help="MediaWiki site to download from (default: %(default)s)",
     )
     parser.add_argument(
-        "-p",
+        "-P",
         "--path",
         default=wikiget.DEFAULT_PATH,
         help="MediaWiki site path, where api.php is located (default: %(default)s)",
     )
     parser.add_argument(
-        "--username", default="", help="MediaWiki site username, for private wikis"
+        "-u",
+        "--username",
+        default="",
+        help="MediaWiki site username, for private wikis",
     )
     parser.add_argument(
-        "--password", default="", help="MediaWiki site password, for private wikis"
+        "-p",
+        "--password",
+        default="",
+        help="MediaWiki site password, for private wikis",
     )
     output_options = parser.add_mutually_exclusive_group()
     output_options.add_argument("-o", "--output", help="write download to OUTPUT")
     output_options.add_argument(
         "-a",
         "--batch",
-        help="treat FILE as a textfile containing "
-        "multiple files to download, one URL or "
-        "filename per line",
+        help="treat FILE as a textfile containing multiple files to download, one URL "
+        "or filename per line",
         action="store_true",
     )
+    parser.add_argument(
+        "-l", "--logfile", default="", help="save log output to LOGFILE"
+    )
+    parser.add_argument(
+        "-j",
+        "--threads",
+        default=1,
+        help="number of parallel downloads to attempt in batch mode",
+        type=int,
+    )
 
+    return parser
+
+
+def main() -> None:
+    # setup our environment
+    parser = construct_parser()
     args = parser.parse_args()
+    configure_logging(args)
 
-    # print API and debug messages in verbose mode
-    if args.verbose >= wikiget.VERY_VERBOSE:
-        logging.basicConfig(level=logging.DEBUG)
-    elif args.verbose >= wikiget.STD_VERBOSE:
-        logging.basicConfig(level=logging.WARNING)
+    # log events are appended to the file if it already exists, so note the start of a
+    # new download session
+    logging.info(f"Starting download session using wikiget {wikiget.wikiget_version}")
+    logging.debug(f"User agent: {wikiget.USER_AGENT}")
 
     if args.batch:
         # batch download mode
-        input_file = args.FILE
-        if args.verbose >= wikiget.STD_VERBOSE:
-            print(f"Info: using batch file '{input_file}'")
-        try:
-            fd = open(input_file)
-        except OSError as e:
-            print("File could not be read. The following error was encountered:")
-            print(e)
+        errors = batch_download(args)
+        if errors:
+            # return non-zero exit code if any problems were encountered, even if some
+            # downloads completed successfully
+            logging.warning(
+                f"{errors} problem{'s'[:errors^1]} encountered during batch processing"
+            )
             sys.exit(1)
-        else:
-            with fd:
-                for _, line in enumerate(fd):
-                    download(line.strip(), args)
     else:
         # single download mode
-        dl = args.FILE
-        download(dl, args)
+        try:
+            file = prep_download(args.FILE, args)
+        except ParseError as e:
+            logging.error(e)
+            sys.exit(1)
+        except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
+            sys.exit(1)
+        errors = download(file, args)
+        if errors:
+            sys.exit(1)

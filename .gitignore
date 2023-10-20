@@ -107,3 +107,9 @@ venv.bak/
 .vs/
 .vscode/
 .idea/
+
+# downloaded images, batch test files
+*.jpg
+*.jpeg
+*.png
+batch.txt

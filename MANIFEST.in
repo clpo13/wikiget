@@ -1,3 +1,4 @@
-graft wikiget
-graft test
+graft src
+graft tests
+graft docs
 global-exclude *.py[cod]

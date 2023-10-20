@@ -1,5 +1,5 @@
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018, 2019, 2020 Cody Logan and contributors
+# Copyright (C) 2018-2023 Cody Logan and contributors
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -24,8 +24,9 @@ BLOCKSIZE = 65536
 CHUNKSIZE = 1024
 DEFAULT_SITE = "commons.wikimedia.org"
 DEFAULT_PATH = "/w/"
-USER_AGENT = "wikiget/{} (https://github.com/clpo13/wikiget) mwclient/{}".format(
-    wikiget_version, mwclient_version
+USER_AGENT = (
+    f"wikiget/{wikiget_version} (https://github.com/clpo13/wikiget) "
+    f"mwclient/{mwclient_version}"
 )
 STD_VERBOSE = 1
 VERY_VERBOSE = 2

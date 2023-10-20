@@ -1,5 +1,5 @@
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018, 2019, 2020 Cody Logan
+# Copyright (C) 2018-2023 Cody Logan
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -17,17 +17,21 @@
 
 import hashlib
 import re
+from typing import Optional
 
 from wikiget import BLOCKSIZE
 
 
-def valid_file(search_string):
+def valid_file(search_string: str) -> Optional[re.Match]:
     """
-    Determines if the given string contains a valid file name, defined as a
-    string ending with a '.' and at least one character, beginning with 'File:'
-    or 'Image:', the standard file prefixes in MediaWiki.
+    Determines if the given string contains a valid file name, defined as a string
+    ending with a '.' and at least one character, beginning with 'File:' or 'Image:',
+    the standard file prefixes in MediaWiki.
+
     :param search_string: string to validate
+    :type search_string: str
     :returns: a regex Match object if there's a match or None otherwise
+    :rtype: re.Match
     """
     # second group could also restrict to file extensions with three or more
     # letters with ([^/\r\n\t\f\v]+\.\w{3,})
@@ -35,25 +39,30 @@ def valid_file(search_string):
     return file_regex.search(search_string)
 
 
-def valid_site(search_string):
+def valid_site(search_string: str) -> Optional[re.Match]:
     """
-    Determines if the given string contains a valid site name, defined as a
-    string ending with 'wikipedia.org' or 'wikimedia.org'. This covers all
-    subdomains of those domains. Eventually, it should be possible to support
-    any MediaWiki site, regardless of domain name.
+    Determines if the given string contains a valid site name, defined as a string
+    ending with 'wikipedia.org' or 'wikimedia.org'. This covers all subdomains of those
+    domains. Eventually, it should be possible to support any MediaWiki site, regardless
+    of domain name.
+
     :param search_string: string to validate
+    :type search_string: str
     :returns: a regex Match object if there's a match or None otherwise
+    :rtype: re.Match
     """
     site_regex = re.compile(r"wiki[mp]edia\.org$", re.I)
     return site_regex.search(search_string)
 
 
-def verify_hash(filename):
+def verify_hash(filename: str) -> str:
     """
-    Calculates the SHA1 hash of the given file for comparison with a known
-    value.
+    Calculates the SHA1 hash of the given file for comparison with a known value.
+
     :param filename: name of the file to calculate a hash for
+    :type filename: str
     :return: hash digest
+    :rtype: str
     """
     hasher = hashlib.sha1()  # noqa: S324
     with open(filename, "rb") as dl:

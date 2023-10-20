@@ -1,5 +1,5 @@
 # wikiget - CLI tool for downloading files from Wikimedia sites
-# Copyright (C) 2018-2023 Cody Logan and contributors
+# Copyright (C) 2023 Cody Logan
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Wikiget is free software: you can redistribute it and/or modify
@@ -15,4 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
-__version__ = "0.5.1"
+from wikiget import DEFAULT_SITE
+from wikiget.file import File
+
+
+def test_file_with_name_only():
+    file = File("foobar.jpg")
+    assert file.name == "foobar.jpg"
+    assert file.dest == file.name
+    assert file.site == DEFAULT_SITE
+
+
+def test_file_with_name_and_dest():
+    file = File("foobar.jpg", dest="bazqux.jpg")
+    assert file.dest == "bazqux.jpg"
+    assert file.dest != file.name
+
+
+def test_file_with_name_and_site():
+    file = File("foobar.jpg", site="en.wikipedia.org")
+    assert file.site == "en.wikipedia.org"
