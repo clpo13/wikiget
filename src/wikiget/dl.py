@@ -18,12 +18,14 @@
 import logging
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 from mwclient import APIError, InvalidResponse, LoginError, Site
 from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
 import wikiget
+from wikiget.exceptions import ParseError
 from wikiget.file import File
 from wikiget.parse import get_dest
 from wikiget.validations import verify_hash
@@ -78,11 +80,61 @@ def prep_download(dl, args):
     return file
 
 
+def batch_download(args):
+    input_file = args.FILE
+    dl_list = {}
+    errors = 0
+
+    logging.info(f"Using batch file '{input_file}'.")
+
+    try:
+        fd = open(input_file)
+    except OSError as e:
+        logging.error("File could not be read. The following error was encountered:")
+        logging.error(e)
+        sys.exit(1)
+    else:
+        with fd:
+            # read the file into memory and process each line as we go
+            for line_num, line in enumerate(fd, start=1):
+                line_s = line.strip()
+                # ignore blank lines and lines starting with "#" (for comments)
+                if line_s and not line_s.startswith("#"):
+                    dl_list[line_num] = line_s
+
+    # TODO: validate file contents before download process starts
+    with ThreadPoolExecutor(max_workers=args.threads) as executor:
+        futures = []
+        for line_num, line in dl_list.items():
+            # keep track of batch file line numbers for debugging/logging purposes
+            logging.info(f"Processing '{line}' at line {line_num}")
+            try:
+                file = prep_download(line, args)
+            except ParseError as e:
+                logging.warning(f"{e} (line {line_num})")
+                errors += 1
+                continue
+            except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
+                logging.warning(
+                    f"Unable to download '{line}' (line {line_num}) due to an error"
+                )
+                errors += 1
+                continue
+            future = executor.submit(download, file, args)
+            futures.append(future)
+        # wait for downloads to finish
+        for future in futures:
+            errors += future.result()
+    return errors
+
+
 def download(f, args):
     file = f.image
     filename = f.name
     dest = f.dest
     site = file.site
+
+    errors = 0
 
     if file.exists:
         # file exists either locally or at a common repository, like Wikimedia Commons
@@ -100,6 +152,7 @@ def download(f, args):
             logging.warning(
                 f"File '{dest}' already exists, skipping download (use -f to force)"
             )
+            errors += 1
         else:
             try:
                 fd = open(dest, "wb")
@@ -108,7 +161,7 @@ def download(f, args):
                     "File could not be written. The following error was encountered:"
                 )
                 logging.error(e)
-                sys.exit(1)
+                errors += 1
             else:
                 # download the file(s)
                 if args.verbose >= wikiget.STD_VERBOSE:
@@ -143,11 +196,11 @@ def download(f, args):
                 logging.info(success_log)
             else:
                 logging.error("Hash mismatch! Downloaded file may be corrupt.")
-                # TODO: log but don't quit while in batch mode
-                sys.exit(1)
+                errors += 1
 
     else:
         # no file information returned
         logging.error(f"Target '{filename}' does not appear to be a valid file")
-        # TODO: log but don't quit while in batch mode
-        sys.exit(1)
+        errors += 1
+
+    return errors

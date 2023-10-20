@@ -18,13 +18,12 @@
 import argparse
 import logging
 import sys
-from concurrent.futures import ThreadPoolExecutor
 
 from mwclient import APIError, InvalidResponse, LoginError
 from requests import ConnectionError, HTTPError
 
 import wikiget
-from wikiget.dl import download, prep_download
+from wikiget.dl import batch_download, download, prep_download
 from wikiget.exceptions import ParseError
 
 
@@ -145,55 +144,6 @@ def configure_logging(args):
     else:
         # log only to console
         logging.basicConfig(level=loglevel, format=log_format)
-
-
-def batch_download(args):
-    input_file = args.FILE
-    dl_list = {}
-
-    logging.info(f"Using batch file '{input_file}'.")
-
-    try:
-        fd = open(input_file)
-    except OSError as e:
-        logging.error("File could not be read. The following error was encountered:")
-        logging.error(e)
-        sys.exit(1)
-    else:
-        with fd:
-            # read the file into memory and process each line as we go
-            for line_num, line in enumerate(fd, start=1):
-                line_s = line.strip()
-                # ignore blank lines and lines starting with "#" (for comments)
-                if line_s and not line_s.startswith("#"):
-                    dl_list[line_num] = line_s
-
-    # TODO: validate file contents before download process starts
-    with ThreadPoolExecutor(
-        max_workers=args.threads,
-        thread_name_prefix="download",
-    ) as executor:
-        futures = []
-        for line_num, line in dl_list.items():
-            # keep track of batch file line numbers for debugging/logging purposes
-            logging.info(f"Downloading '{line}' at line {line_num}")
-            try:
-                file = prep_download(line, args)
-            except ParseError as e:
-                logging.warning(f"{e} (line {line_num})")
-                continue
-            except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
-                logging.error(
-                    f"Unable to download '{line}' (line {line_num}) due to an error"
-                )
-                continue
-            future = executor.submit(download, file, args)
-            futures.append(future)
-        # wait for downloads to finish
-        for future in futures:
-            future.result()
-
-
 def main():
     # setup our environment
     parser = construct_parser()
@@ -207,9 +157,14 @@ def main():
 
     if args.batch:
         # batch download mode
-        # TODO: return non-zero exit code if any errors were encountered, even if some
-        # downloads completed successfully
-        batch_download(args)
+        errors = batch_download(args)
+        if errors:
+            # return non-zero exit code if any problems were encountered, even if some
+            # downloads completed successfully
+            logging.warning(
+                f"{errors} problem{'s'[:errors^1]} encountered during batch processing"
+            )
+            sys.exit(1)
     else:
         # single download mode
         try:
@@ -219,4 +174,6 @@ def main():
             sys.exit(1)
         except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
             sys.exit(1)
-        download(file, args)
+        errors = download(file, args)
+        if errors:
+            sys.exit(1)
