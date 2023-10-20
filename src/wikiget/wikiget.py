@@ -181,10 +181,12 @@ def batch_download(args):
                 file = prep_download(line, args)
             except ParseError as e:
                 logging.warning(f"{e} (line {line_num})")
+                continue
             except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
                 logging.error(
                     f"Unable to download '{line}' (line {line_num}) due to an error"
                 )
+                continue
             future = executor.submit(download, file, args)
             futures.append(future)
         # wait for downloads to finish
