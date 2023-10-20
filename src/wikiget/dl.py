@@ -18,9 +18,11 @@
 import logging
 import os
 import sys
+from argparse import Namespace
 from concurrent.futures import ThreadPoolExecutor
 
 from mwclient import APIError, InvalidResponse, LoginError, Site
+from mwclient.image import Image
 from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
@@ -32,7 +34,7 @@ from wikiget.parse import get_dest
 from wikiget.validations import verify_hash
 
 
-def query_api(filename, site_name, args):
+def query_api(filename: str, site_name: str, args: Namespace) -> Image:
     # connect to site and identify ourselves
     logging.info(f"Connecting to {site_name}")
     try:
@@ -75,13 +77,13 @@ def query_api(filename, site_name, args):
     return image
 
 
-def prep_download(dl, args):
+def prep_download(dl: str, args: Namespace) -> File:
     file = get_dest(dl, args)
     file.image = query_api(file.name, file.site, args)
     return file
 
 
-def batch_download(args):
+def batch_download(args: Namespace) -> int:
     input_file = args.FILE
     dl_list = {}
     errors = 0
@@ -129,7 +131,7 @@ def batch_download(args):
     return errors
 
 
-def download(f, args):
+def download(f: File, args: Namespace) -> int:
     file = f.image
     filename = f.name
     dest = f.dest

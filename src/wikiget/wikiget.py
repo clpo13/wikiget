@@ -28,7 +28,7 @@ from wikiget.exceptions import ParseError
 from wikiget.logging import configure_logging
 
 
-def construct_parser():
+def construct_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="""
         A tool for downloading files from MediaWiki sites using the file name or
@@ -115,7 +115,7 @@ def construct_parser():
     return parser
 
 
-def main():
+def main() -> None:
     # setup our environment
     parser = construct_parser()
     args = parser.parse_args()

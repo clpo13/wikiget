@@ -16,6 +16,7 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 import logging
+from argparse import Namespace
 
 import wikiget
 
@@ -25,7 +26,7 @@ class FileLogAdapter(logging.LoggerAdapter):
         return f"[{self.extra['filename']}] {msg}", kwargs
 
 
-def configure_logging(args):
+def configure_logging(args: Namespace) -> None:
     loglevel = logging.WARNING
     if args.verbose >= wikiget.VERY_VERBOSE:
         # this includes API and library messages

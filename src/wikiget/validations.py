@@ -17,11 +17,12 @@
 
 import hashlib
 import re
+from typing import Optional
 
 from wikiget import BLOCKSIZE
 
 
-def valid_file(search_string):
+def valid_file(search_string: str) -> Optional[re.Match]:
     """
     Determines if the given string contains a valid file name, defined as a string
     ending with a '.' and at least one character, beginning with 'File:' or 'Image:',
@@ -38,7 +39,7 @@ def valid_file(search_string):
     return file_regex.search(search_string)
 
 
-def valid_site(search_string):
+def valid_site(search_string: str) -> Optional[re.Match]:
     """
     Determines if the given string contains a valid site name, defined as a string
     ending with 'wikipedia.org' or 'wikimedia.org'. This covers all subdomains of those
@@ -54,7 +55,7 @@ def valid_site(search_string):
     return site_regex.search(search_string)
 
 
-def verify_hash(filename):
+def verify_hash(filename: str) -> str:
     """
     Calculates the SHA1 hash of the given file for comparison with a known value.
 

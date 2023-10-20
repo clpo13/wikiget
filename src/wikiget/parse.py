@@ -16,14 +16,16 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 import logging
+from argparse import Namespace
 from urllib.parse import unquote, urlparse
 
 import wikiget
 from wikiget.exceptions import ParseError
+from wikiget.file import File
 from wikiget.validations import valid_file
 
 
-def get_dest(dl, args):
+def get_dest(dl: str, args: Namespace) -> File:
     url = urlparse(dl)
 
     if url.netloc:
