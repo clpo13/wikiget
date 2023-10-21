@@ -6,8 +6,11 @@
 Something like wget for downloading a file from MediaWiki sites (like Wikipedia or Wikimedia Commons) using only the
 file name or the URL of its description page.
 
-Requires Python 3.7+ and pip. Get it with `pip install wikiget` or `pipx install wikiget`. For the latest features, at
-the risk of bugs and undocumented behavior, you can try the dev branch:
+## Installation
+
+Requires Python 3.7+ and pip. Get it with `pip install wikiget` or `pipx install wikiget`.
+
+For the latest features, at the risk of bugs and undocumented behavior, you can try the dev branch:
 `pip install https://github.com/clpo13/wikiget/archive/refs/heads/dev.zip`
 
 ## Usage
@@ -53,8 +56,7 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 
 ## Future plans
 
-- continue batch download even if input is malformed or file doesn't exist
-  (possibly by raising exceptions in `download()`)
+- optional machine-readable (JSON) log output
 - batch download by (Commons) category or user uploads
 - maybe: download Wikipedia articles, in plain text, wikitext, or other formats
 
@@ -62,10 +64,8 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 
 Pull requests, bug reports, or feature requests are more than welcome.
 
-It's recommended that you use a
-[virtual environment manager](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
-like venv or [virtualenv](https://virtualenv.pypa.io/en/latest/) to create an isolated environment in which to install
-this package's dependencies so as not to clutter your system Python environment:
+It's recommended that you use a [virtual environment manager][venv] like venv or [virtualenv][virtualenv] to create an
+isolated environment in which to install this package's dependencies as not to clutter your system Python environment:
 
 ```bash
 # if you plan on submitting pull requests, fork the repo on GitHub and clone that instead
@@ -87,13 +87,12 @@ source venv/bin/activate
 .\venv\Scripts\activate
 ```
 
-Then run `pip install -e .` to invoke an
-["editable" install](https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs)
-meaning any changes made to the source will be reflected immediately in the executable script. Unit tests can be run
-with `pytest` (make sure to run `pip install pytest` in the virtual environment first.)
+Then run `pip install -e .` to invoke an ["editable" install][editable], meaning any changes made to the source will be
+reflected immediately in the executable script. Unit tests can be run with `pytest` (make sure to run
+`pip install pytest` in the virtual environment first.)
 
-Alternatively, using [Hatch](https://hatch.pypa.io/latest/), simply clone the repository and run `hatch run test` to
-create the environment and run pytest. Also try `hatch shell` or `hatch run wikiget --help`.
+Alternatively, using [Hatch][hatch], simply clone the repository and run `hatch run test` to create the environment and
+run pytest all in one go. Also try `hatch shell` or `hatch run wikiget --help`.
 
 ## License
 
@@ -106,5 +105,10 @@ version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program (see [LICENSE](LICENSE)).
-If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with this program. If not, see
+<https://www.gnu.org/licenses/>.
+
+[venv]: https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/
+[virtualenv]: https://virtualenv.pypa.io/en/latest/
+[editable]: https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs
+[hatch]: https://hatch.pypa.io/latest/
