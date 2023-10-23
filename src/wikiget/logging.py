@@ -16,7 +16,6 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 import logging
-from argparse import Namespace
 
 import wikiget
 
@@ -26,14 +25,14 @@ class FileLogAdapter(logging.LoggerAdapter):
         return f"[{self.extra['filename']}] {msg}", kwargs
 
 
-def configure_logging(args: Namespace) -> None:
+def configure_logging(verbosity: int, logfile: str, *, quiet: bool) -> None:
     loglevel = logging.WARNING
-    if args.verbose >= wikiget.VERY_VERBOSE:
+    if verbosity >= wikiget.VERY_VERBOSE:
         # this includes API and library messages
         loglevel = logging.DEBUG
-    elif args.verbose >= wikiget.STD_VERBOSE:
+    elif verbosity >= wikiget.STD_VERBOSE:
         loglevel = logging.INFO
-    elif args.quiet:
+    elif quiet:
         loglevel = logging.ERROR
 
     # configure logging:
@@ -41,12 +40,12 @@ def configure_logging(args: Namespace) -> None:
     # file log level is always debug (TODO: make this user configurable)
     base_format = "%(message)s"
     log_format = "[%(levelname)s] " + base_format
-    if args.logfile:
+    if logfile:
         # log to console and file
         logging.basicConfig(
             level=logging.DEBUG,
             format="%(asctime)s [%(levelname)-7s] " + base_format,
-            filename=args.logfile,
+            filename=logfile,
         )
 
         console = logging.StreamHandler()

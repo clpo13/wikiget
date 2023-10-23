@@ -119,7 +119,7 @@ def main() -> None:
     # setup our environment
     parser = construct_parser()
     args = parser.parse_args()
-    configure_logging(args)
+    configure_logging(verbosity=args.verbose, logfile=args.logfile, quiet=args.quiet)
 
     # log events are appended to the file if it already exists, so note the start of a
     # new download session
