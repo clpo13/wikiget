@@ -18,38 +18,51 @@
 import pytest
 
 from wikiget.exceptions import ParseError
+from wikiget.file import File
 from wikiget.parse import get_dest
 from wikiget.wikiget import construct_parser
 
 
 class TestGetDest:
-    parser = construct_parser()
+    @pytest.fixture(scope="class")
+    def file_with_filename(self) -> File:
+        args = construct_parser().parse_args(["File:Example.jpg"])
+        return get_dest(args.FILE, args)
 
-    def test_get_dest_with_filename(self):
-        args = self.parser.parse_args(["File:Example.jpg"])
-        file = get_dest(args.FILE, args)
-        assert file.name == "Example.jpg"
-        assert file.dest == "Example.jpg"
-        assert file.site == "commons.wikimedia.org"
+    def test_get_dest_name_with_filename(self, file_with_filename: File) -> None:
+        assert file_with_filename.name == "Example.jpg"
 
-    def test_get_dest_with_url(self):
-        args = self.parser.parse_args(
-            [
-                "https://en.wikipedia.org/wiki/File:Example.jpg",
-            ]
+    def test_get_dest_with_filename(self, file_with_filename: File) -> None:
+        assert file_with_filename.dest == "Example.jpg"
+
+    def test_get_dest_site_with_filename(self, file_with_filename: File) -> None:
+        assert file_with_filename.site == "commons.wikimedia.org"
+
+    @pytest.fixture(scope="class")
+    def file_with_url(self) -> File:
+        args = construct_parser().parse_args(
+            ["https://en.wikipedia.org/wiki/File:Example.jpg"]
         )
-        file = get_dest(args.FILE, args)
-        assert file.name == "Example.jpg"
-        assert file.dest == "Example.jpg"
-        assert file.site == "en.wikipedia.org"
+        return get_dest(args.FILE, args)
 
-    def test_get_dest_with_bad_filename(self):
-        args = self.parser.parse_args(["Example.jpg"])
+    def test_get_dest_name_with_url(self, file_with_url: File) -> None:
+        assert file_with_url.name == "Example.jpg"
+
+    def test_get_dest_with_url(self, file_with_url: File) -> None:
+        assert file_with_url.dest == "Example.jpg"
+
+    def test_get_dest_site_with_url(self, file_with_url: File) -> None:
+        assert file_with_url.site == "en.wikipedia.org"
+
+    def test_get_dest_with_bad_filename(self) -> None:
+        args = construct_parser().parse_args(["Example.jpg"])
         with pytest.raises(ParseError):
             _ = get_dest(args.FILE, args)
 
-    def test_get_dest_with_different_site(self, caplog: pytest.LogCaptureFixture):
-        args = self.parser.parse_args(
+    def test_get_dest_with_different_site(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        args = construct_parser().parse_args(
             [
                 "https://commons.wikimedia.org/wiki/File:Example.jpg",
                 "--site",

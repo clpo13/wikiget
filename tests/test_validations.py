@@ -15,88 +15,125 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from pathlib import Path
+from re import Match
+from typing import Optional
+
+import pytest
+
 from wikiget.validations import valid_file, valid_site, verify_hash
 
 
-def test_invalid_site_input():
-    """
-    Invalid site strings should not return regex match objects.
-    """
-    invalid_input = [
-        "example.com",
-        "vim.wikia.com",
-        "en.wikipedia.com",
-        "en.wikimpedia.org",
-    ]
-    for i in invalid_input:
-        site_match = valid_site(i)
-        assert site_match is None
+class TestSiteInput:
+    @pytest.fixture(
+        scope="class",
+        params=[
+            "example.com",
+            "vim.wikia.com",
+            "en.wikipedia.com",
+            "en.wikimpedia.org",
+        ],
+    )
+    def invalid_input(self, request: pytest.FixtureRequest) -> Optional[Match]:
+        return valid_site(request.param)
+
+    @pytest.fixture(
+        scope="class",
+        params=[
+            "en.wikipedia.org",
+            "commons.wikimedia.org",
+            "de.wikipedia.org",
+            "meta.wikimedia.org",
+        ],
+    )
+    def valid_input(self, request: pytest.FixtureRequest) -> Optional[Match]:
+        return valid_site(request.param)
+
+    def test_invalid_site_input(self, invalid_input: None) -> None:
+        """
+        Invalid site strings should not return regex match objects.
+        """
+        assert invalid_input is None
+
+    def test_valid_site_input(self, valid_input: Match) -> None:
+        """
+        Valid site strings should return regex match objects.
+        """
+        assert valid_input is not None
 
 
-def test_valid_site_input():
-    """
-    Valid site strings should return regex match objects.
-    """
-    valid_input = [
-        "en.wikipedia.org",
-        "commons.wikimedia.org",
-        "de.wikipedia.org",
-        "meta.wikimedia.org",
-    ]
-    for i in valid_input:
-        site_match = valid_site(i)
-        assert site_match is not None
+class TestFileRegex:
+    @pytest.fixture(scope="class")
+    def file_match(self) -> Optional[Match]:
+        """
+        File regex should return a match object with match groups corresponding
+        to the file prefix and name.
+        """
+        return valid_file("File:Example.jpg")
 
-
-def test_file_regex():
-    """
-    File regex should return a match object with match groups corresponding
-    to the file prefix and name.
-    """
-    i = "File:Example.jpg"
-    file_match = valid_file(i)
-    assert file_match is not None
-    assert file_match.group(0) == "File:Example.jpg"  # entire match
-    assert file_match.group(1) == "File:"  # first group
-    assert file_match.group(2) == "Example.jpg"  # second group
-
-
-def test_invalid_file_input():
-    """
-    Invalid file strings should not return regex match objects.
-    """
-    invalid_input = ["file:example", "example.jpg", "Foo Bar.gif", "Fil:Example.jpg"]
-    for i in invalid_input:
-        file_match = valid_file(i)
-        assert file_match is None
-
-
-def test_valid_file_input():
-    """
-    Valid file strings should return regex match objects.
-    """
-    valid_input = [
-        "Image:example.jpg",
-        "file:example.jpg",
-        "File:example.file-01.jpg",
-        "FILE:FOO.BMP",
-        "File:ß handwritten sample.gif",
-        "File:A (1).jpeg",
-    ]
-    for i in valid_input:
-        file_match = valid_file(i)
+    def test_file_match_exists(self, file_match: Match) -> None:
         assert file_match is not None
 
+    def test_file_match_entire_match(self, file_match: Match) -> None:
+        assert file_match.group(0) == "File:Example.jpg"
 
-def test_verify_hash(tmp_path):
-    """
-    Confirm that verify_hash returns the proper SHA1 hash.
-    """
-    file_name = "testfile"
-    file_contents = "foobar"
-    file_sha1 = "8843d7f92416211de9ebb963ff4ce28125932878"
+    def test_file_match_first_group(self, file_match: Match) -> None:
+        assert file_match.group(1) == "File:"
 
-    tmp_file = tmp_path / file_name
-    tmp_file.write_text(file_contents)
+    def test_file_match_second_group(self, file_match: Match) -> None:
+        assert file_match.group(2) == "Example.jpg"
 
-    assert verify_hash(tmp_file) == file_sha1
+
+class TestFileInput:
+    @pytest.fixture(
+        scope="class",
+        params=[
+            "file:example",
+            "example.jpg",
+            "Foo Bar.gif",
+            "Fil:Example.jpg",
+        ],
+    )
+    def invalid_input(self, request: pytest.FixtureRequest) -> Optional[Match]:
+        return valid_file(request.param)
+
+    @pytest.fixture(
+        scope="class",
+        params=[
+            "Image:example.jpg",
+            "file:example.jpg",
+            "File:example.file-01.jpg",
+            "FILE:FOO.BMP",
+            "File:ß handwritten sample.gif",
+            "File:A (1).jpeg",
+        ],
+    )
+    def valid_input(self, request: pytest.FixtureRequest) -> Optional[Match]:
+        return valid_file(request.param)
+
+    def test_invalid_file_input(self, invalid_input: None) -> None:
+        """
+        Invalid file strings should not return regex match objects.
+        """
+        assert invalid_input is None
+
+    def test_valid_file_input(self, valid_input: Match) -> None:
+        """
+        Valid file strings should return regex match objects.
+        """
+        assert valid_input is not None
+
+
+class TestVerifyHash:
+    def test_verify_hash(self, tmp_path: Path) -> None:
+        """
+        Confirm that verify_hash returns the proper SHA1 hash.
+        """
+        file_name = "testfile"
+        file_contents = "foobar"
+        file_sha1 = "8843d7f92416211de9ebb963ff4ce28125932878"
+
+        tmp_file = tmp_path / file_name
+        tmp_file.write_text(file_contents)
+
+        assert verify_hash(str(tmp_file)) == file_sha1

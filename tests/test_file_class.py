@@ -15,23 +15,36 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+import pytest
+
 from wikiget import DEFAULT_SITE
 from wikiget.file import File
 
 
-def test_file_with_name_only():
-    file = File("foobar.jpg")
-    assert file.name == "foobar.jpg"
-    assert file.dest == file.name
-    assert file.site == DEFAULT_SITE
+class TestFileClass:
+    @pytest.fixture(scope="class")
+    def file_with_name(self) -> File:
+        return File("foobar.jpg")
 
+    def test_file_with_name(self, file_with_name: File) -> None:
+        assert file_with_name.name == "foobar.jpg"
 
-def test_file_with_name_and_dest():
-    file = File("foobar.jpg", dest="bazqux.jpg")
-    assert file.dest == "bazqux.jpg"
-    assert file.dest != file.name
+    def test_file_with_name_dest(self, file_with_name: File) -> None:
+        assert file_with_name.dest == file_with_name.name
 
+    def test_file_with_name_site(self, file_with_name: File) -> None:
+        assert file_with_name.site == DEFAULT_SITE
 
-def test_file_with_name_and_site():
-    file = File("foobar.jpg", site="en.wikipedia.org")
-    assert file.site == "en.wikipedia.org"
+    @pytest.fixture(scope="class")
+    def file_with_name_and_dest(self) -> File:
+        return File("foobar.jpg", dest="bazqux.jpg")
+
+    def test_file_with_name_and_dest(self, file_with_name_and_dest: File) -> None:
+        assert file_with_name_and_dest.dest == "bazqux.jpg"
+
+    def test_name_and_dest_are_different(self, file_with_name_and_dest: File) -> None:
+        assert file_with_name_and_dest.dest != file_with_name_and_dest.name
+
+    def test_file_with_name_and_site(self) -> None:
+        file = File("foobar.jpg", site="en.wikipedia.org")
+        assert file.site == "en.wikipedia.org"
