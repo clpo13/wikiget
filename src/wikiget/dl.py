@@ -122,25 +122,22 @@ def download(f: File, args: Namespace) -> int:
             except OSError as e:
                 adapter.error(f"File could not be written. {e}")
                 errors += 1
-            else:
-                # download the file(s)
-                if args.verbose >= wikiget.STD_VERBOSE:
-                    leave_bars = True
-                else:
-                    leave_bars = False
-                with tqdm(
-                    leave=leave_bars,
-                    total=file_size,
-                    unit="B",
-                    unit_scale=True,
-                    unit_divisor=wikiget.CHUNKSIZE,
-                ) as progress_bar:
-                    with fd:
-                        res = site.connection.get(file_url, stream=True)
-                        progress_bar.set_postfix(file=dest, refresh=False)
-                        for chunk in res.iter_content(wikiget.CHUNKSIZE):
-                            fd.write(chunk)
-                            progress_bar.update(len(chunk))
+                return errors
+            # download the file(s)
+            leave_bars = args.verbose >= wikiget.STD_VERBOSE
+            with tqdm(
+                desc=dest,
+                leave=leave_bars,
+                total=file_size,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=wikiget.CHUNKSIZE,
+            ) as progress_bar:
+                with fd:
+                    res = site.connection.get(file_url, stream=True)
+                    for chunk in res.iter_content(wikiget.CHUNKSIZE):
+                        fd.write(chunk)
+                        progress_bar.update(len(chunk))
 
             # verify file integrity and log details
             dl_sha1 = verify_hash(dest)
