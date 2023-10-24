@@ -15,18 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+import logging
+
 import pytest
 
-from wikiget.dl import prep_download
+from wikiget import USER_AGENT
+from wikiget.client import connect_to_site, query_api
 from wikiget.wikiget import construct_parser
 
 
 # TODO: don't hit the actual API when doing tests
 @pytest.mark.skip(reason="skip tests that query a live API")
-class TestPrepDownload:
+class TestQueryApi:
     parser = construct_parser()
 
-    def test_prep_download(self) -> None:
+    def test_connect_to_site(self, caplog: pytest.LogCaptureFixture) -> None:
+        caplog.set_level(logging.DEBUG)
         args = self.parser.parse_args(["File:Example.jpg"])
-        file = prep_download(args.FILE, args)
-        assert file is not None
+        _ = connect_to_site("commons.wikimedia.org", args)
+        assert "Connecting to commons.wikimedia.org" in caplog.text
+
+    def test_query_api(self, caplog: pytest.LogCaptureFixture) -> None:
+        caplog.set_level(logging.DEBUG)
+        args = self.parser.parse_args(["File:Example.jpg"])
+        site = connect_to_site("commons.wikimedia.org", args)
+        _ = query_api("Example.jpg", site)
+        assert USER_AGENT in caplog.text
