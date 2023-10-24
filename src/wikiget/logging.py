@@ -42,6 +42,7 @@ def configure_logging(verbosity: int, logfile: str, *, quiet: bool) -> None:
     file_log_format = "%(asctime)s [%(levelname)-7s] %(message)s"
 
     logger = logging.getLogger("")  # root logger
+    logger.setLevel(logging.DEBUG)
 
     # set up console logging
     ch = logging.StreamHandler()
