@@ -21,12 +21,12 @@ import sys
 from argparse import Namespace
 from concurrent.futures import ThreadPoolExecutor
 
-from mwclient import APIError, InvalidResponse, LoginError, Site
-from mwclient.image import Image
+from mwclient import APIError, InvalidResponse, LoginError
 from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
 import wikiget
+from wikiget.client import connect_to_site, query_api
 from wikiget.exceptions import ParseError
 from wikiget.file import File
 from wikiget.logging import FileLogAdapter
@@ -36,52 +36,10 @@ from wikiget.validations import verify_hash
 logger = logging.getLogger(__name__)
 
 
-def query_api(filename: str, site_name: str, args: Namespace) -> Image:
-    # connect to site and identify ourselves
-    logger.info(f"Connecting to {site_name}")
-    try:
-        site = Site(site_name, path=args.path, clients_useragent=wikiget.USER_AGENT)
-        if args.username and args.password:
-            site.login(args.username, args.password)
-    except ConnectionError as e:
-        # usually this means there is no such site, or there's no network connection,
-        # though it could be a certificate problem
-        logger.error("Could not connect to specified site")
-        logger.debug(e)
-        raise
-    except HTTPError as e:
-        # most likely a 403 forbidden or 404 not found error for api.php
-        logger.error(
-            "Could not find the specified wiki's api.php. Check the value of --path."
-        )
-        logger.debug(e)
-        raise
-    except (InvalidResponse, LoginError) as e:
-        # InvalidResponse: site exists, but we couldn't communicate with the API
-        # endpoint for some reason other than an HTTP error.
-        # LoginError: missing or invalid credentials
-        logger.error(e)
-        raise
-
-    # get info about the target file
-    try:
-        image = site.images[filename]
-    except APIError as e:
-        # an API error at this point likely means access is denied, which could happen
-        # with a private wiki
-        logger.error(
-            "Access denied. Try providing credentials with --username and --password."
-        )
-        for i in e.args:
-            logger.debug(i)
-        raise
-
-    return image
-
-
 def prep_download(dl: str, args: Namespace) -> File:
     file = get_dest(dl, args)
-    file.image = query_api(file.name, file.site, args)
+    site = connect_to_site(file.site, args)
+    file.image = query_api(file.name, site)
     return file
 
 
