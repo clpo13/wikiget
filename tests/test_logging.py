@@ -16,6 +16,9 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 import logging
+from pathlib import Path
+
+from pytest import LogCaptureFixture
 
 from wikiget.logging import FileLogAdapter, configure_logging
 from wikiget.wikiget import construct_parser
@@ -23,7 +26,7 @@ from wikiget.wikiget import construct_parser
 logger = logging.getLogger()
 
 
-def test_custom_log_adapter(caplog):
+def test_custom_log_adapter(caplog: LogCaptureFixture) -> None:
     args = construct_parser().parse_args(["File:Example.jpg"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     adapter = FileLogAdapter(logger, {"filename": "Example.jpg"})
@@ -31,7 +34,7 @@ def test_custom_log_adapter(caplog):
     assert "[Example.jpg] test log" in caplog.text
 
 
-def test_file_logging(tmp_path):
+def test_file_logging(tmp_path: Path) -> None:
     logfile_location = tmp_path / "test.log"
     args = construct_parser().parse_args(
         ["File:Example.jpg", "-l", str(logfile_location)]
@@ -40,7 +43,7 @@ def test_file_logging(tmp_path):
     assert logfile_location.is_file()
 
 
-def test_default_logging():
+def test_default_logging() -> None:
     args = construct_parser().parse_args(["File:Example.jpg"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     # each call of configure_logging() adds a new handler to the logger, so we need to
@@ -49,21 +52,21 @@ def test_default_logging():
     assert handler.level == logging.WARNING
 
 
-def test_verbose_logging():
+def test_verbose_logging() -> None:
     args = construct_parser().parse_args(["File:Example.jpg", "-v"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     handler = logger.handlers[-1]
     assert handler.level == logging.INFO
 
 
-def test_very_verbose_logging():
+def test_very_verbose_logging() -> None:
     args = construct_parser().parse_args(["File:Example.jpg", "-vv"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     handler = logger.handlers[-1]
     assert handler.level == logging.DEBUG
 
 
-def test_quiet_logging():
+def test_quiet_logging() -> None:
     args = construct_parser().parse_args(["File:Example.jpg", "-q"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     handler = logger.handlers[-1]

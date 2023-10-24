@@ -33,10 +33,12 @@ from wikiget.logging import FileLogAdapter
 from wikiget.parse import get_dest
 from wikiget.validations import verify_hash
 
+logger = logging.getLogger(__name__)
+
 
 def query_api(filename: str, site_name: str, args: Namespace) -> Image:
     # connect to site and identify ourselves
-    logging.info(f"Connecting to {site_name}")
+    logger.info(f"Connecting to {site_name}")
     try:
         site = Site(site_name, path=args.path, clients_useragent=wikiget.USER_AGENT)
         if args.username and args.password:
@@ -44,21 +46,21 @@ def query_api(filename: str, site_name: str, args: Namespace) -> Image:
     except ConnectionError as e:
         # usually this means there is no such site, or there's no network connection,
         # though it could be a certificate problem
-        logging.error("Could not connect to specified site")
-        logging.debug(e)
+        logger.error("Could not connect to specified site")
+        logger.debug(e)
         raise
     except HTTPError as e:
         # most likely a 403 forbidden or 404 not found error for api.php
-        logging.error(
+        logger.error(
             "Could not find the specified wiki's api.php. Check the value of --path."
         )
-        logging.debug(e)
+        logger.debug(e)
         raise
     except (InvalidResponse, LoginError) as e:
         # InvalidResponse: site exists, but we couldn't communicate with the API
         # endpoint for some reason other than an HTTP error.
         # LoginError: missing or invalid credentials
-        logging.error(e)
+        logger.error(e)
         raise
 
     # get info about the target file
@@ -67,11 +69,11 @@ def query_api(filename: str, site_name: str, args: Namespace) -> Image:
     except APIError as e:
         # an API error at this point likely means access is denied, which could happen
         # with a private wiki
-        logging.error(
+        logger.error(
             "Access denied. Try providing credentials with --username and --password."
         )
         for i in e.args:
-            logging.debug(i)
+            logger.debug(i)
         raise
 
     return image
@@ -88,13 +90,13 @@ def batch_download(args: Namespace) -> int:
     dl_list = {}
     errors = 0
 
-    logging.info(f"Using batch file '{input_file}'.")
+    logger.info(f"Using batch file '{input_file}'.")
 
     try:
         fd = open(input_file)
     except OSError as e:
-        logging.error("File could not be read. The following error was encountered:")
-        logging.error(e)
+        logger.error("File could not be read. The following error was encountered:")
+        logger.error(e)
         sys.exit(1)
     else:
         with fd:
@@ -110,15 +112,15 @@ def batch_download(args: Namespace) -> int:
         futures = []
         for line_num, line in dl_list.items():
             # keep track of batch file line numbers for debugging/logging purposes
-            logging.info(f"Processing '{line}' at line {line_num}")
+            logger.info(f"Processing '{line}' at line {line_num}")
             try:
                 file = prep_download(line, args)
             except ParseError as e:
-                logging.warning(f"{e} (line {line_num})")
+                logger.warning(f"{e} (line {line_num})")
                 errors += 1
                 continue
             except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
-                logging.warning(
+                logger.warning(
                     f"Unable to download '{line}' (line {line_num}) due to an error"
                 )
                 errors += 1
@@ -139,7 +141,6 @@ def download(f: File, args: Namespace) -> int:
 
     errors = 0
 
-    logger = logging.getLogger("")
     adapter = FileLogAdapter(logger, {"filename": filename})
 
     if file.exists:

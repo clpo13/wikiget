@@ -27,6 +27,8 @@ from wikiget.dl import batch_download, download, prep_download
 from wikiget.exceptions import ParseError
 from wikiget.logging import configure_logging
 
+logger = logging.getLogger(__name__)
+
 
 def construct_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -123,8 +125,8 @@ def main() -> None:
 
     # log events are appended to the file if it already exists, so note the start of a
     # new download session
-    logging.info(f"Starting download session using wikiget {wikiget.wikiget_version}")
-    logging.debug(f"User agent: {wikiget.USER_AGENT}")
+    logger.info(f"Starting download session using wikiget {wikiget.wikiget_version}")
+    logger.debug(f"User agent: {wikiget.USER_AGENT}")
 
     if args.batch:
         # batch download mode
@@ -132,7 +134,7 @@ def main() -> None:
         if errors:
             # return non-zero exit code if any problems were encountered, even if some
             # downloads completed successfully
-            logging.warning(
+            logger.warning(
                 f"{errors} problem{'s'[:errors^1]} encountered during batch processing"
             )
             sys.exit(1)
@@ -141,7 +143,7 @@ def main() -> None:
         try:
             file = prep_download(args.FILE, args)
         except ParseError as e:
-            logging.error(e)
+            logger.error(e)
             sys.exit(1)
         except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
             sys.exit(1)

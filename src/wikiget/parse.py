@@ -24,6 +24,8 @@ from wikiget.exceptions import ParseError
 from wikiget.file import File
 from wikiget.validations import valid_file
 
+logger = logging.getLogger(__name__)
+
 
 def get_dest(dl: str, args: Namespace) -> File:
     url = urlparse(dl)
@@ -34,7 +36,7 @@ def get_dest(dl: str, args: Namespace) -> File:
         if args.site is not wikiget.DEFAULT_SITE:
             # this will work even if the user specifies 'commons.wikimedia.org' since
             # we're comparing objects instead of values (is not vs. !=)
-            logging.warning("Target is a URL, ignoring site specified with --site")
+            logger.warning("Target is a URL, ignoring site specified with --site")
     else:
         filename = dl
         site_name = args.site

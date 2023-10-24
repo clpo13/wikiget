@@ -29,7 +29,7 @@ from wikiget.wikiget import construct_parser
 class TestQueryApi:
     parser = construct_parser()
 
-    def test_query_api(self, caplog):
+    def test_query_api(self, caplog: pytest.LogCaptureFixture) -> None:
         caplog.set_level(logging.DEBUG)
         args = self.parser.parse_args(["File:Example.jpg"])
         file, site = query_api("Example.jpg", "commons.wikimedia.org", args)
@@ -40,7 +40,7 @@ class TestQueryApi:
 class TestPrepDownload:
     parser = construct_parser()
 
-    def test_prep_download(self):
+    def test_prep_download(self) -> None:
         args = self.parser.parse_args(["File:Example.jpg"])
         file = prep_download(args.FILE, args)
         assert file is not None

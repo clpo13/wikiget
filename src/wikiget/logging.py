@@ -38,20 +38,20 @@ def configure_logging(verbosity: int, logfile: str, *, quiet: bool) -> None:
     # configure logging:
     # console log level is set via -v, -vv, and -q options;
     # file log level is always debug (TODO: make this user configurable)
-    base_format = "%(message)s"
-    log_format = "[%(levelname)s] " + base_format
-    if logfile:
-        # log to console and file
-        logging.basicConfig(
-            level=logging.DEBUG,
-            format="%(asctime)s [%(levelname)-7s] " + base_format,
-            filename=logfile,
-        )
+    console_log_format = "[%(levelname)s] %(message)s"
+    file_log_format = "%(asctime)s [%(levelname)-7s] %(message)s"
 
-        console = logging.StreamHandler()
-        console.setLevel(loglevel)
-        console.setFormatter(logging.Formatter(log_format))
-        logging.getLogger("").addHandler(console)
-    else:
-        # log only to console
-        logging.basicConfig(level=loglevel, format=log_format)
+    logger = logging.getLogger("")  # root logger
+
+    # set up console logging
+    ch = logging.StreamHandler()
+    ch.setLevel(loglevel)
+    ch.setFormatter(logging.Formatter(console_log_format))
+    logger.addHandler(ch)
+
+    if logfile:
+        # also log to file
+        fh = logging.FileHandler(logfile)
+        fh.setLevel(logging.DEBUG)
+        fh.setFormatter(logging.Formatter(file_log_format))
+        logger.addHandler(fh)
