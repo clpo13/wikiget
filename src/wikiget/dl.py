@@ -140,7 +140,14 @@ def download(f: File, args: Namespace) -> int:
                         progress_bar.update(len(chunk))
 
             # verify file integrity and log details
-            dl_sha1 = verify_hash(dest)
+            try:
+                dl_sha1 = verify_hash(dest)
+            except OSError as e:
+                adapter.error(
+                    f"File downloaded but could not be verified. {e}"
+                )
+                errors += 1
+                return errors
 
             adapter.info(f"Remote file SHA1 is {file_sha1}")
             adapter.info(f"Local file SHA1 is {dl_sha1}")
