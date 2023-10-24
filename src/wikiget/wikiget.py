@@ -113,6 +113,12 @@ def construct_parser() -> argparse.ArgumentParser:
         help="number of parallel downloads to attempt in batch mode",
         type=int,
     )
+    parser.add_argument(
+        "-n",
+        "--dry-run",
+        action="store_true",
+        help="check the download or batch file without actually downloading anything",
+    )
 
     return parser
 

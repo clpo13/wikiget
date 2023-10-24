@@ -116,6 +116,8 @@ def download(f: File, args: Namespace) -> int:
         if os.path.isfile(dest) and not args.force:
             adapter.warning("File already exists, skipping download (use -f to force)")
             errors += 1
+        elif args.dry_run:
+            adapter.warning("Dry run, so nothing actually downloaded")
         else:
             try:
                 fd = open(dest, "wb")
@@ -143,9 +145,7 @@ def download(f: File, args: Namespace) -> int:
             try:
                 dl_sha1 = verify_hash(dest)
             except OSError as e:
-                adapter.error(
-                    f"File downloaded but could not be verified. {e}"
-                )
+                adapter.error(f"File downloaded but could not be verified. {e}")
                 errors += 1
                 return errors
 
