@@ -17,50 +17,54 @@
 
 import logging
 
-import pytest
-
 from wikiget.logging import FileLogAdapter, configure_logging
 from wikiget.wikiget import construct_parser
 
-
-@pytest.fixture
-def create_logger():
-    def _create_logger(args):
-        configure_logging(args.verbose, args.logfile, quiet=args.quiet)
-        return logging.getLogger()
-    return _create_logger
+logger = logging.getLogger()
 
 
-def test_custom_log_adapter(create_logger, caplog):
+def test_custom_log_adapter(caplog):
     args = construct_parser().parse_args(["File:Example.jpg"])
-    logger = create_logger(args)
+    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     adapter = FileLogAdapter(logger, {"filename": "Example.jpg"})
     adapter.warning("test log")
     assert "[Example.jpg] test log" in caplog.text
 
 
-def test_default_logging(create_logger):
+def test_file_logging(tmp_path):
+    logfile_location = tmp_path / "test.log"
+    args = construct_parser().parse_args(
+        ["File:Example.jpg", "-l", str(logfile_location)]
+    )
+    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+    assert logfile_location.is_file()
+
+
+def test_default_logging():
     args = construct_parser().parse_args(["File:Example.jpg"])
-    logger = create_logger(args)
-    assert logger.level == logging.WARNING
+    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+    # each call of configure_logging() adds a new handler to the logger, so we need to
+    # grab the most recently added one to test
+    handler = logger.handlers[-1]
+    assert handler.level == logging.WARNING
 
 
-@pytest.mark.xfail(reason="logging level can't be changed mid-test")
-def test_verbose_logging(create_logger):
+def test_verbose_logging():
     args = construct_parser().parse_args(["File:Example.jpg", "-v"])
-    logger = create_logger(args)
-    assert logger.level == logging.INFO
+    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+    handler = logger.handlers[-1]
+    assert handler.level == logging.INFO
 
 
-@pytest.mark.xfail(reason="logging level can't be changed mid-test")
-def test_very_verbose_logging(create_logger):
+def test_very_verbose_logging():
     args = construct_parser().parse_args(["File:Example.jpg", "-vv"])
-    logger = create_logger(args)
-    assert logger.level == logging.DEBUG
+    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+    handler = logger.handlers[-1]
+    assert handler.level == logging.DEBUG
 
 
-@pytest.mark.xfail(reason="logging level can't be changed mid-test")
-def test_quiet_logging(create_logger):
+def test_quiet_logging():
     args = construct_parser().parse_args(["File:Example.jpg", "-q"])
-    logger = create_logger(args)
-    assert logger.level == logging.ERROR
+    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+    handler = logger.handlers[-1]
+    assert handler.level == logging.ERROR
