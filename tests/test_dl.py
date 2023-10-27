@@ -24,9 +24,7 @@ from wikiget.wikiget import construct_parser
 # TODO: don't hit the actual API when doing tests
 @pytest.mark.skip(reason="skip tests that query a live API")
 class TestPrepDownload:
-    parser = construct_parser()
-
     def test_prep_download(self) -> None:
-        args = self.parser.parse_args(["File:Example.jpg"])
+        args = construct_parser().parser.parse_args(["File:Example.jpg"])
         file = prep_download(args.FILE, args)
         assert file is not None

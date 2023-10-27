@@ -27,17 +27,15 @@ from wikiget.wikiget import construct_parser
 # TODO: don't hit the actual API when doing tests
 @pytest.mark.skip(reason="skip tests that query a live API")
 class TestQueryApi:
-    parser = construct_parser()
+    args = construct_parser().parse_args(["File:Example.jpg"])
 
     def test_connect_to_site(self, caplog: pytest.LogCaptureFixture) -> None:
         caplog.set_level(logging.DEBUG)
-        args = self.parser.parse_args(["File:Example.jpg"])
-        _ = connect_to_site("commons.wikimedia.org", args)
+        _ = connect_to_site("commons.wikimedia.org", self.args)
         assert "Connecting to commons.wikimedia.org" in caplog.text
 
     def test_query_api(self, caplog: pytest.LogCaptureFixture) -> None:
         caplog.set_level(logging.DEBUG)
-        args = self.parser.parse_args(["File:Example.jpg"])
-        site = connect_to_site("commons.wikimedia.org", args)
+        site = connect_to_site("commons.wikimedia.org", self.args)
         _ = query_api("Example.jpg", site)
         assert USER_AGENT in caplog.text
