@@ -17,6 +17,7 @@
 
 import logging
 from argparse import Namespace
+from typing import Dict
 from urllib.parse import unquote, urlparse
 
 import wikiget
@@ -61,7 +62,7 @@ def get_dest(dl: str, args: Namespace) -> File:
     return file
 
 
-def read_batch_file(batch_file: str) -> dict[int, str]:
+def read_batch_file(batch_file: str) -> Dict[int, str]:
     dl_list = {}
 
     logger.info(f"Using batch file '{batch_file}'.")
