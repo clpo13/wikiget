@@ -50,8 +50,7 @@ def batch_download(args: Namespace) -> int:
     try:
         dl_list = read_batch_file(args.FILE)
     except OSError as e:
-        logger.error("File could not be read. The following error was encountered:")
-        logger.error(e)
+        logger.error(f"File could not be read. {e}")
         sys.exit(1)
 
     # TODO: validate file contents before download process starts
