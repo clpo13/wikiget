@@ -59,3 +59,19 @@ def get_dest(dl: str, args: Namespace) -> File:
     file = File(filename, dest, site_name)
 
     return file
+
+
+def read_batch_file(batch_file: str) -> dict[int, str]:
+    dl_list = {}
+
+    logger.info(f"Using batch file '{batch_file}'.")
+
+    with open(batch_file) as fd:
+        # read the file into memory and process each line as we go
+        for line_num, line in enumerate(fd, start=1):
+            line_s = line.strip()
+            # ignore blank lines and lines starting with "#" (for comments)
+            if line_s and not line_s.startswith("#"):
+                dl_list[line_num] = line_s
+
+    return dl_list

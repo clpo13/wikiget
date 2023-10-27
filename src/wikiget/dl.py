@@ -30,7 +30,7 @@ from wikiget.client import connect_to_site, query_api
 from wikiget.exceptions import ParseError
 from wikiget.file import File
 from wikiget.logging import FileLogAdapter
-from wikiget.parse import get_dest
+from wikiget.parse import get_dest, read_batch_file
 from wikiget.validations import verify_hash
 
 logger = logging.getLogger(__name__)
@@ -44,26 +44,15 @@ def prep_download(dl: str, args: Namespace) -> File:
 
 
 def batch_download(args: Namespace) -> int:
-    input_file = args.FILE
-    dl_list = {}
     errors = 0
 
-    logger.info(f"Using batch file '{input_file}'.")
-
+    # parse batch file
     try:
-        fd = open(input_file)
+        dl_list = read_batch_file(args.FILE)
     except OSError as e:
         logger.error("File could not be read. The following error was encountered:")
         logger.error(e)
         sys.exit(1)
-    else:
-        with fd:
-            # read the file into memory and process each line as we go
-            for line_num, line in enumerate(fd, start=1):
-                line_s = line.strip()
-                # ignore blank lines and lines starting with "#" (for comments)
-                if line_s and not line_s.startswith("#"):
-                    dl_list[line_num] = line_s
 
     # TODO: validate file contents before download process starts
     with ThreadPoolExecutor(max_workers=args.threads) as executor:
