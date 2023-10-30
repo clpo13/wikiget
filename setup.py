@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+# This is a stub file for older versions of pip, setuptools, etc. that aren't fully
+# compatible with the latest Python packaging standards.
+# See <https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html>
+
 from setuptools import setup
 
 setup()
