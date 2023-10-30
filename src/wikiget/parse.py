@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+import fileinput
 import logging
 from argparse import Namespace
 from typing import Dict
@@ -65,9 +66,12 @@ def get_dest(dl: str, args: Namespace) -> File:
 def read_batch_file(batch_file: str) -> Dict[int, str]:
     dl_list = {}
 
-    logger.info(f"Using batch file '{batch_file}'.")
+    if batch_file == "-":
+        logger.info("Using stdin for batch download")
+    else:
+        logger.info(f"Using file '{batch_file}' for batch download")
 
-    with open(batch_file) as fd:
+    with fileinput.input(batch_file) as fd:
         # read the file into memory and process each line as we go
         for line_num, line in enumerate(fd, start=1):
             line_s = line.strip()
