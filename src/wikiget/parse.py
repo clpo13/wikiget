@@ -51,7 +51,7 @@ def get_dest(dl: str, args: Namespace) -> File:
         filename = file_match.group(2)
     else:
         # no file extension and/or prefix, probably an article
-        msg = f"Could not parse input '{filename}' as a file"
+        msg = f"Could not parse input '{dl}' as a file"
         raise ParseError(msg)
 
     filename = unquote(filename)  # remove URL encoding for special characters
