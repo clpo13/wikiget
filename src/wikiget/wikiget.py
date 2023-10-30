@@ -151,8 +151,11 @@ def main() -> None:
         except ParseError as e:
             logger.error(e)
             sys.exit(1)
+        except FileExistsError:
+            sys.exit(1)
         except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
             sys.exit(1)
+
         errors = download(file, args)
         if errors:
             sys.exit(1)  # completed with errors

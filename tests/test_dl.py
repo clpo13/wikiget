@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from pathlib import Path
+
 import pytest
 
 from wikiget.dl import prep_download
@@ -22,9 +24,23 @@ from wikiget.wikiget import construct_parser
 
 
 # TODO: don't hit the actual API when doing tests
-@pytest.mark.skip(reason="skip tests that query a live API")
 class TestPrepDownload:
+    @pytest.mark.skip(reason="skip tests that query a live API")
     def test_prep_download(self) -> None:
+        """
+        The prep_download function should create a file object.
+        """
         args = construct_parser().parse_args(["File:Example.jpg"])
         file = prep_download(args.FILE, args)
         assert file is not None
+
+    def test_prep_download_with_existing_file(self, tmp_path: Path) -> None:
+        """
+        Attempting to download a file with the same destination name as an existing file
+        should raise a FileExistsError.
+        """
+        tmp_file = tmp_path / "File:Example.jpg"
+        tmp_file.write_text("nothing")
+        args = construct_parser().parse_args(["File:Example.jpg", "-o", str(tmp_file)])
+        with pytest.raises(FileExistsError):
+            _ = prep_download(args.FILE, args)

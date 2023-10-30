@@ -38,6 +38,12 @@ logger = logging.getLogger(__name__)
 
 def prep_download(dl: str, args: Namespace) -> File:
     file = get_dest(dl, args)
+
+    # check if the destination file already exists; don't overwrite unless the user says
+    if os.path.isfile(file.dest) and not args.force:
+        msg = f"[{file.dest}] File already exists; skipping download (use -f to force)"
+        raise FileExistsError(msg)
+
     site = connect_to_site(file.site, args)
     file.image = query_api(file.name, site)
     return file
@@ -63,6 +69,10 @@ def batch_download(args: Namespace) -> int:
                 file = prep_download(line, args)
             except ParseError as e:
                 logger.warning(f"{e} (line {line_num})")
+                errors += 1
+                continue
+            except FileExistsError as e:
+                logger.warning(e)
                 errors += 1
                 continue
             except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
@@ -101,11 +111,7 @@ def download(f: File, args: Namespace) -> int:
         adapter.info(filename_log)
         adapter.info(f"{file_url}")
 
-        if os.path.isfile(dest) and not args.force:
-            # TODO: check for this before the download process starts
-            adapter.warning("File already exists; skipping download (use -f to force)")
-            errors += 1
-        elif args.dry_run:
+        if args.dry_run:
             adapter.warning("Dry run; download skipped")
         else:
             try:
