@@ -85,10 +85,14 @@ class TestReadBatchFile:
         tmp_file.write_text("File:Foo.jpg\nFile:Bar.jpg\nFile:Baz.jpg\n")
         return read_batch_file(str(tmp_file))
 
-    def test_batch_file_log(self, caplog: pytest.LogCaptureFixture) -> None:
+    def test_batch_file_log(
+        self, caplog: pytest.LogCaptureFixture, tmp_path: Path
+    ) -> None:
         caplog.set_level(logging.INFO)
-        _ = read_batch_file("batch.txt")
-        assert "Using file 'batch.txt' for batch download" in caplog.text
+        tmp_file = tmp_path / "batch.txt"
+        tmp_file.write_text("File:Foo.jpg\n")
+        _ = read_batch_file(str(tmp_file))
+        assert f"Using file '{tmp_file}' for batch download" in caplog.text
 
     def test_batch_file_length(self, dl_list: Dict[int, str]) -> None:
         assert len(dl_list) == 3
