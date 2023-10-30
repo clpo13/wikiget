@@ -1,17 +1,28 @@
 # wikiget
 
-[![Python package](https://github.com/clpo13/wikiget/actions/workflows/python.yml/badge.svg?branch=master)](https://github.com/clpo13/wikiget/actions/workflows/python.yml)
-[![PyPI version](https://badge.fury.io/py/wikiget.svg)](https://badge.fury.io/py/wikiget)
+[![Made with Python](https://img.shields.io/badge/made_with-python-3776AB?logo=python)][python]
+[![GitHub Actions](https://img.shields.io/github/actions/workflow/status/clpo13/wikiget/python.yml?logo=github)][action]
+[![Codecov coverage](https://img.shields.io/codecov/c/gh/clpo13/wikiget)][codecov]
+[![PyPI version](https://img.shields.io/pypi/v/wikiget)][pypi]
+[![PyPI license](https://img.shields.io/pypi/l/wikiget)][license]
 
-Something like wget for downloading a file from MediaWiki sites (like Wikipedia or Wikimedia Commons) using only the
+Something like [wget] for downloading a file from MediaWiki sites (like Wikipedia or Wikimedia Commons) using only the
 file name or the URL of its description page.
 
 ## Installation
 
-Requires Python 3.7+ and pip. Get it with `pip install wikiget` or `pipx install wikiget`.
+Requires Python 3.7+ and pip. Install the latest version with:
 
-For the latest features, at the risk of bugs and undocumented behavior, you can try the dev branch:
-`pip install https://github.com/clpo13/wikiget/archive/refs/heads/dev.zip`
+```bash
+pip install wikiget
+```
+
+For the latest features, at the risk of bugs and undocumented behavior, you can install the development version directly
+from [GitHub]:
+
+```bash
+pip install https://github.com/clpo13/wikiget/archive/refs/heads/master.zip
+```
 
 ## Usage
 
@@ -64,8 +75,8 @@ wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o test.jpg
 
 Pull requests, bug reports, or feature requests are more than welcome.
 
-It's recommended that you use a [virtual environment manager][venv] like venv or [virtualenv][virtualenv] to create an
-isolated environment in which to install this package's dependencies as not to clutter your system Python environment:
+It's recommended that you use a [virtual environment manager][venv] like venv or [virtualenv] to create an isolated
+environment in which to install this package's dependencies as not to clutter your system Python environment:
 
 ```bash
 # if you plan on submitting pull requests, fork the repo on GitHub and clone that instead
@@ -91,8 +102,8 @@ Then run `pip install -e .` to invoke an ["editable" install][editable], meaning
 reflected immediately in the executable script. Unit tests can be run with `pytest` (make sure to run
 `pip install pytest` in the virtual environment first.)
 
-Alternatively, using [Hatch][hatch], simply clone the repository and run `hatch run test` to create the environment and
-run pytest all in one go. Also try `hatch shell` or `hatch run wikiget --help`.
+Alternatively, using [Hatch], simply clone the repository and run `hatch run test` to create the environment and run
+pytest all in one go. Wikiget can also be run directly in the Hatch environment with `hatch run wikiget [...]`.
 
 ## License
 
@@ -108,6 +119,13 @@ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Gen
 You should have received a copy of the GNU General Public License along with this program. If not, see
 <https://www.gnu.org/licenses/>.
 
+[wget]: https://www.gnu.org/software/wget/
+[github]: https://github.com/clpo13/wikiget/
+[python]: https://www.python.org/
+[action]: https://github.com/clpo13/wikiget/actions/workflows/python.yml
+[codecov]: https://app.codecov.io/gh/clpo13/wikiget/
+[pypi]: https://pypi.org/project/wikiget/
+[license]: https://github.com/clpo13/wikiget/blob/master/LICENSE
 [venv]: https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/
 [virtualenv]: https://virtualenv.pypa.io/en/latest/
 [editable]: https://pip.pypa.io/en/stable/topics/local-project-installs/#editable-installs
