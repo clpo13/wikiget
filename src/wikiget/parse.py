@@ -37,8 +37,8 @@ def get_dest(dl: str, args: Namespace) -> File:
         site_name = url.netloc
         if args.site is not wikiget.DEFAULT_SITE:
             # this will work even if the user specifies 'commons.wikimedia.org' since
-            # we're comparing objects instead of values (is not vs. !=)
-            logger.warning("Target is a URL, ignoring site specified with --site")
+            # we're comparing objects instead of values ('is not' vs. '!=')
+            logger.warning("Target is a URL; ignoring site specified with --site")
     else:
         filename = dl
         site_name = args.site
@@ -55,12 +55,8 @@ def get_dest(dl: str, args: Namespace) -> File:
         raise ParseError(msg)
 
     filename = unquote(filename)  # remove URL encoding for special characters
-
     dest = args.output or filename
-
-    file = File(filename, dest, site_name)
-
-    return file
+    return File(filename, dest, site_name)
 
 
 def read_batch_file(batch_file: str) -> Dict[int, str]:

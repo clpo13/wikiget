@@ -26,9 +26,9 @@ class FileLogAdapter(logging.LoggerAdapter):
 
 
 def configure_logging(verbosity: int, logfile: str, *, quiet: bool) -> None:
-    loglevel = logging.WARNING
+    loglevel = logging.WARNING  # default log level
     if verbosity >= wikiget.VERY_VERBOSE:
-        # this includes API and library messages
+        # this includes API and library messages, not just from wikiget
         loglevel = logging.DEBUG
     elif verbosity >= wikiget.STD_VERBOSE:
         loglevel = logging.INFO

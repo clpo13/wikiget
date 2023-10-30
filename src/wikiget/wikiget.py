@@ -34,7 +34,7 @@ def construct_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="""
         A tool for downloading files from MediaWiki sites using the file name or
-        description page URL
+        description page URL.
         """,
         epilog="""
         Copyright (C) 2018-2023 Cody Logan and contributors. License GPLv3+: GNU GPL
@@ -46,7 +46,7 @@ def construct_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "FILE",
         help="""
-        name of the file to download with the File: prefix, or the URL of its file
+        name of the file to download, with the File: prefix, or the URL of its file
         description page
         """,
     )
@@ -54,7 +54,7 @@ def construct_parser() -> argparse.ArgumentParser:
         "-V",
         "--version",
         action="version",
-        version=f"%(prog)s {wikiget.wikiget_version}",
+        version=f"%(prog)s {wikiget.__version__}",
     )
     message_options = parser.add_mutually_exclusive_group()
     message_options.add_argument(
@@ -116,8 +116,8 @@ def construct_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "-n",
         "--dry-run",
-        action="store_true",
         help="check the download or batch file without actually downloading anything",
+        action="store_true",
     )
 
     return parser
@@ -131,7 +131,7 @@ def main() -> None:
 
     # log events are appended to the file if it already exists, so note the start of a
     # new download session
-    logger.info(f"Starting download session using wikiget {wikiget.wikiget_version}")
+    logger.info(f"Starting download session using wikiget {wikiget.__version__}")
     logger.debug(f"User agent: {wikiget.USER_AGENT}")
 
     if args.batch:
@@ -143,7 +143,7 @@ def main() -> None:
             logger.warning(
                 f"{errors} problem{'s'[:errors^1]} encountered during batch processing"
             )
-            sys.exit(1)
+            sys.exit(1)  # completed with errors
     else:
         # single download mode
         try:
@@ -155,4 +155,4 @@ def main() -> None:
             sys.exit(1)
         errors = download(file, args)
         if errors:
-            sys.exit(1)
+            sys.exit(1)  # completed with errors

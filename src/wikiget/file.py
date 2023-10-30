@@ -21,6 +21,11 @@ from wikiget import DEFAULT_SITE
 
 
 class File:
+    """
+    This class represents a file with the properties name, destination, host site, and
+    mwclient.image.Image object as retrieved from the host site.
+    """
+
     def __init__(self, name: str, dest: str = "", site: str = "") -> None:
         """
         Initializes a new file with the specified name and an optional destination name.

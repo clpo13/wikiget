@@ -17,7 +17,7 @@
 
 from mwclient import __version__ as mwclient_version
 
-from wikiget.version import __version__ as wikiget_version
+from wikiget.version import __version__
 
 # set some global constants
 BLOCKSIZE = 65536
@@ -25,7 +25,7 @@ CHUNKSIZE = 1024
 DEFAULT_SITE = "commons.wikimedia.org"
 DEFAULT_PATH = "/w/"
 USER_AGENT = (
-    f"wikiget/{wikiget_version} (https://github.com/clpo13/wikiget) "
+    f"wikiget/{__version__} (https://github.com/clpo13/wikiget) "
     f"mwclient/{mwclient_version}"
 )
 STD_VERBOSE = 1

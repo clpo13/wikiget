@@ -70,4 +70,4 @@ class TestGetDest:
             ]
         )
         _ = get_dest(args.FILE, args)
-        assert "Target is a URL, ignoring site specified with --site" in caplog.text
+        assert "Target is a URL; ignoring site specified with --site" in caplog.text

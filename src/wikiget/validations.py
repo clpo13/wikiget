@@ -43,8 +43,10 @@ def valid_site(search_string: str) -> Optional[re.Match]:
     """
     Determines if the given string contains a valid site name, defined as a string
     ending with 'wikipedia.org' or 'wikimedia.org'. This covers all subdomains of those
-    domains. Eventually, it should be possible to support any MediaWiki site, regardless
-    of domain name.
+    domains.
+
+    Currently unused since any site is accepted as input, and we rely on the user to
+    ensure the site has a compatible API.
 
     :param search_string: string to validate
     :type search_string: str
