@@ -37,6 +37,7 @@ class File:
         :type dest: str, optional
         :param site: name of the site hosting the file; if not specified, defaults to
             the global default site
+        :type site: str, optional
         """
         self.image: Image = None
         self.name = name

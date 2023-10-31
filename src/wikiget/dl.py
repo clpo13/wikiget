@@ -113,49 +113,50 @@ def download(f: File, args: Namespace) -> int:
 
         if args.dry_run:
             adapter.warning("Dry run; download skipped")
+            return
+
+        try:
+            fd = open(dest, "wb")
+        except OSError as e:
+            adapter.error(f"File could not be written: {e}")
+            errors += 1
+            return errors
+        # download the file(s)
+        leave_bars = args.verbose >= wikiget.STD_VERBOSE
+        with tqdm(
+            desc=dest,
+            leave=leave_bars,
+            total=file_size,
+            unit="B",
+            unit_scale=True,
+            unit_divisor=wikiget.CHUNKSIZE,
+        ) as progress_bar:
+            with fd:
+                res = site.connection.get(file_url, stream=True)
+                for chunk in res.iter_content(wikiget.CHUNKSIZE):
+                    fd.write(chunk)
+                    progress_bar.update(len(chunk))
+
+        # verify file integrity and log details
+        try:
+            dl_sha1 = verify_hash(dest)
+        except OSError as e:
+            adapter.error(f"File downloaded but could not be verified: {e}")
+            errors += 1
+            return errors
+
+        adapter.info(f"Remote file SHA1 is {file_sha1}")
+        adapter.info(f"Local file SHA1 is {dl_sha1}")
+        if dl_sha1 == file_sha1:
+            adapter.info("Hashes match!")
+            # at this point, we've successfully downloaded the file
+            success_log = f"'{filename}' downloaded"
+            if args.output:
+                success_log += f" to '{dest}'"
+            adapter.info(success_log)
         else:
-            try:
-                fd = open(dest, "wb")
-            except OSError as e:
-                adapter.error(f"File could not be written: {e}")
-                errors += 1
-                return errors
-            # download the file(s)
-            leave_bars = args.verbose >= wikiget.STD_VERBOSE
-            with tqdm(
-                desc=dest,
-                leave=leave_bars,
-                total=file_size,
-                unit="B",
-                unit_scale=True,
-                unit_divisor=wikiget.CHUNKSIZE,
-            ) as progress_bar:
-                with fd:
-                    res = site.connection.get(file_url, stream=True)
-                    for chunk in res.iter_content(wikiget.CHUNKSIZE):
-                        fd.write(chunk)
-                        progress_bar.update(len(chunk))
-
-            # verify file integrity and log details
-            try:
-                dl_sha1 = verify_hash(dest)
-            except OSError as e:
-                adapter.error(f"File downloaded but could not be verified: {e}")
-                errors += 1
-                return errors
-
-            adapter.info(f"Remote file SHA1 is {file_sha1}")
-            adapter.info(f"Local file SHA1 is {dl_sha1}")
-            if dl_sha1 == file_sha1:
-                adapter.info("Hashes match!")
-                # at this point, we've successfully downloaded the file
-                success_log = f"'{filename}' downloaded"
-                if args.output:
-                    success_log += f" to '{dest}'"
-                adapter.info(success_log)
-            else:
-                adapter.error("Hash mismatch! Downloaded file may be corrupt.")
-                errors += 1
+            adapter.error("Hash mismatch! Downloaded file may be corrupt.")
+            errors += 1
 
     else:
         # no file information returned
