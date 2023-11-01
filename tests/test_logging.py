@@ -21,7 +21,7 @@ from pathlib import Path
 from pytest import LogCaptureFixture
 
 from wikiget.logging import FileLogAdapter, configure_logging
-from wikiget.wikiget import construct_parser
+from wikiget.wikiget import parse_args
 
 logger = logging.getLogger()
 
@@ -30,7 +30,7 @@ def test_custom_log_adapter(caplog: LogCaptureFixture) -> None:
     """
     The custom log adapter should prepend the filename to log messages.
     """
-    args = construct_parser(["File:Example.jpg"])
+    args = parse_args(["File:Example.jpg"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     adapter = FileLogAdapter(logger, {"filename": "Example.jpg"})
     adapter.warning("test log")
@@ -42,7 +42,7 @@ def test_file_logging(tmp_path: Path) -> None:
     Logging to a file should create the file in the specified location.
     """
     logfile_location = tmp_path / "test.log"
-    args = construct_parser(["File:Example.jpg", "-l", str(logfile_location)])
+    args = parse_args(["File:Example.jpg", "-l", str(logfile_location)])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     assert logfile_location.is_file()
 
@@ -51,7 +51,7 @@ def test_default_logging() -> None:
     """
     The default log level should be set to WARNING.
     """
-    args = construct_parser(["File:Example.jpg"])
+    args = parse_args(["File:Example.jpg"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     # each call of configure_logging() adds a new handler to the logger, so we need to
     # grab the most recently added one to test
@@ -63,7 +63,7 @@ def test_verbose_logging() -> None:
     """
     When -v is passed, the log level should be set to INFO.
     """
-    args = construct_parser(["File:Example.jpg", "-v"])
+    args = parse_args(["File:Example.jpg", "-v"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     handler = logger.handlers[-1]
     assert handler.level == logging.INFO
@@ -73,7 +73,7 @@ def test_very_verbose_logging() -> None:
     """
     When -vv is passed, the log level should be set to DEBUG.
     """
-    args = construct_parser(["File:Example.jpg", "-vv"])
+    args = parse_args(["File:Example.jpg", "-vv"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     handler = logger.handlers[-1]
     assert handler.level == logging.DEBUG
@@ -83,7 +83,7 @@ def test_quiet_logging() -> None:
     """
     When -q is passed, the log level should be set to ERROR.
     """
-    args = construct_parser(["File:Example.jpg", "-q"])
+    args = parse_args(["File:Example.jpg", "-q"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     handler = logger.handlers[-1]
     assert handler.level == logging.ERROR

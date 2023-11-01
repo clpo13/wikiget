@@ -85,7 +85,7 @@ def batch_download(args: Namespace) -> int:
 
     # parse batch file
     try:
-        dl_list = read_batch_file(args.FILE)
+        dl_dict = read_batch_file(args.FILE)
     except OSError as e:
         logger.error(f"File could not be read: {e}")
         sys.exit(1)
@@ -93,7 +93,7 @@ def batch_download(args: Namespace) -> int:
     # TODO: validate file contents before download process starts
     with ThreadPoolExecutor(max_workers=args.threads) as executor:
         futures = []
-        for line_num, line in dl_list.items():
+        for line_num, line in dl_dict.items():
             # keep track of batch file line numbers for debugging/logging purposes
             logger.info(f"Processing '{line}' at line {line_num}")
             try:

@@ -19,43 +19,43 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from wikiget import USER_AGENT
-from wikiget.wikiget import main
+from wikiget import USER_AGENT, __version__
+from wikiget.wikiget import cli
 
 
-def test_main_no_params(monkeypatch: pytest.MonkeyPatch):
+def test_cli_no_params(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr("sys.argv", ["wikiget"])
     with pytest.raises(SystemExit) as e:
-        main()
+        cli()
     assert e.value.code == 2
 
 
 @patch("wikiget.wikiget.process_download")
-def test_main_success(
+def test_cli_completed_successfully(
     mock_process_download: MagicMock, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
     mock_process_download.return_value = 0
     with pytest.raises(SystemExit) as e:
-        main()
+        cli()
     assert mock_process_download.called
     assert e.value.code == 0
 
 
 @patch("wikiget.wikiget.process_download")
-def test_main_failure(
+def test_cli_completed_with_problems(
     mock_process_download: MagicMock, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
     mock_process_download.return_value = 1
     with pytest.raises(SystemExit) as e:
-        main()
+        cli()
     assert mock_process_download.called
     assert e.value.code == 1
 
 
 @patch("wikiget.wikiget.process_download")
-def test_main_logs(
+def test_cli_logs(
     mock_process_download: MagicMock,
     monkeypatch: pytest.MonkeyPatch,
     caplog: pytest.LogCaptureFixture,
@@ -63,6 +63,7 @@ def test_main_logs(
     monkeypatch.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
     mock_process_download.return_value = 0
     with pytest.raises(SystemExit):
-        main()
+        cli()
     assert mock_process_download.called
+    assert f"Starting download session using wikiget {__version__}" in caplog.text
     assert USER_AGENT in caplog.text

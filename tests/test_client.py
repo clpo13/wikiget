@@ -22,7 +22,7 @@ import pytest
 
 from wikiget import USER_AGENT
 from wikiget.client import connect_to_site, query_api
-from wikiget.wikiget import construct_parser
+from wikiget.wikiget import parse_args
 
 
 # TODO: don't hit the actual API when doing tests
@@ -37,7 +37,7 @@ class TestQueryApi:
         """
         caplog.set_level(logging.DEBUG)
         mock_site.return_value = MagicMock()
-        args = construct_parser(["File:Example.jpg"])
+        args = parse_args(["File:Example.jpg"])
         _ = connect_to_site("commons.wikimedia.org", args)
         assert mock_site.called
         assert "Connecting to commons.wikimedia.org" in caplog.text
@@ -49,7 +49,7 @@ class TestQueryApi:
         agent we're sending to the API.
         """
         caplog.set_level(logging.DEBUG)
-        args = construct_parser(["File:Example.jpg"])
+        args = parse_args(["File:Example.jpg"])
         site = connect_to_site("commons.wikimedia.org", args)
         _ = query_api("Example.jpg", site)
         assert USER_AGENT in caplog.text

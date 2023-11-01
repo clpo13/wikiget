@@ -60,7 +60,7 @@ def get_dest(dl: str, args: Namespace) -> File:
 
 
 def read_batch_file(batch_file: str) -> Dict[int, str]:
-    dl_list = {}
+    dl_dict = {}
 
     if batch_file == "-":
         logger.info("Using stdin for batch download")
@@ -73,6 +73,6 @@ def read_batch_file(batch_file: str) -> Dict[int, str]:
             line_s = line.strip()
             # ignore blank lines and lines starting with "#" (for comments)
             if line_s and not line_s.startswith("#"):
-                dl_list[line_num] = line_s
+                dl_dict[line_num] = line_s
 
-    return dl_list
+    return dl_dict

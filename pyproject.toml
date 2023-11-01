@@ -44,7 +44,7 @@ Repository = "https://github.com/clpo13/wikiget"
 "Bug Reports" = "https://github.com/clpo13/wikiget/issues"
 
 [project.scripts]
-wikiget = "wikiget.wikiget:main"
+wikiget = "wikiget.wikiget:cli"
 
 [tool.hatch.version]
 path = "src/wikiget/version.py"

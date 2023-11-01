@@ -25,7 +25,7 @@ import pytest
 from wikiget.exceptions import ParseError
 from wikiget.file import File
 from wikiget.parse import get_dest, read_batch_file
-from wikiget.wikiget import construct_parser
+from wikiget.wikiget import parse_args
 
 
 class TestGetDest:
@@ -35,7 +35,7 @@ class TestGetDest:
         When a filename is passed to get_dest, it should create a File object with the
         correct name and dest and the default site.
         """
-        args = construct_parser(["File:Example.jpg"])
+        args = parse_args(["File:Example.jpg"])
         return get_dest(args.FILE, args)
 
     def test_get_dest_name_with_filename(self, file_with_filename: File) -> None:
@@ -53,7 +53,7 @@ class TestGetDest:
         When a URL is passed to get_dest, it should create a File object with the
         correct name and dest and the site from the URL.
         """
-        args = construct_parser(["https://en.wikipedia.org/wiki/File:Example.jpg"])
+        args = parse_args(["https://en.wikipedia.org/wiki/File:Example.jpg"])
         return get_dest(args.FILE, args)
 
     def test_get_dest_name_with_url(self, file_with_url: File) -> None:
@@ -69,7 +69,7 @@ class TestGetDest:
         """
         The get_dest function should raise a ParseError if the filename is invalid.
         """
-        args = construct_parser(["Example.jpg"])
+        args = parse_args(["Example.jpg"])
         with pytest.raises(ParseError):
             _ = get_dest(args.FILE, args)
 
@@ -80,7 +80,7 @@ class TestGetDest:
         If a URL is passed to get_dest and a site is also given on the command line,
         the site in the URL should be used and a warning log message created.
         """
-        args = construct_parser(
+        args = parse_args(
             [
                 "https://commons.wikimedia.org/wiki/File:Example.jpg",
                 "--site",
@@ -93,7 +93,7 @@ class TestGetDest:
 
 class TestReadBatchFile:
     @pytest.fixture()
-    def dl_list(self, tmp_path: Path) -> Dict[int, str]:
+    def dl_dict(self, tmp_path: Path) -> Dict[int, str]:
         """
         Create and process a test batch file with three lines, returning a dictionary.
         """
@@ -114,23 +114,23 @@ class TestReadBatchFile:
         _ = read_batch_file(str(tmp_file))
         assert f"Using file '{tmp_file}' for batch download" in caplog.text
 
-    def test_batch_file_length(self, dl_list: Dict[int, str]) -> None:
+    def test_batch_file_length(self, dl_dict: Dict[int, str]) -> None:
         """
         The processed batch dict should have the same number of items as lines in the
         batch file.
         """
-        assert len(dl_list) == 3
+        assert len(dl_dict) == 3
 
-    def test_batch_file_contents(self, dl_list: Dict[int, str]) -> None:
+    def test_batch_file_contents(self, dl_dict: Dict[int, str]) -> None:
         """
         The processed batch dict should have the correct line numbers and filenames as
         keys and values, respectively.
         """
         expected_list = {1: "File:Foo.jpg", 2: "File:Bar.jpg", 3: "File:Baz.jpg"}
-        assert dl_list == expected_list
+        assert dl_dict == expected_list
 
     @pytest.fixture()
-    def dl_list_stdin(self, monkeypatch: pytest.MonkeyPatch) -> Dict[int, str]:
+    def dl_dict_stdin(self, monkeypatch: pytest.MonkeyPatch) -> Dict[int, str]:
         """
         Pass three lines of filenames from stdin to read_batch_file and return a dict.
         """
@@ -150,23 +150,23 @@ class TestReadBatchFile:
         _ = read_batch_file("-")
         assert "Using stdin for batch download" in caplog.text
 
-    def test_batch_stdin_length(self, dl_list_stdin: Dict[int, str]) -> None:
+    def test_batch_stdin_length(self, dl_dict_stdin: Dict[int, str]) -> None:
         """
         The processed batch dict should have the same number of items as lines in the
         input.
         """
-        assert len(dl_list_stdin) == 3
+        assert len(dl_dict_stdin) == 3
 
-    def test_batch_stdin_contents(self, dl_list_stdin: Dict[int, str]) -> None:
+    def test_batch_stdin_contents(self, dl_dict_stdin: Dict[int, str]) -> None:
         """
         The processed batch dict should have the correct line numbers and filenames as
         keys and values, respectively.
         """
         expected_list = {1: "File:Foo.jpg", 2: "File:Bar.jpg", 3: "File:Baz.jpg"}
-        assert dl_list_stdin == expected_list
+        assert dl_dict_stdin == expected_list
 
     @pytest.fixture()
-    def dl_list_with_comment(self, tmp_path: Path) -> Dict[int, str]:
+    def dl_dict_with_comment(self, tmp_path: Path) -> Dict[int, str]:
         """
         Create and process a test batch file with four lines, one of which is
         commented out and another of which is blank, and return a dictionary.
@@ -176,20 +176,20 @@ class TestReadBatchFile:
         return read_batch_file(str(tmp_file))
 
     def test_batch_file_with_comment_length(
-        self, dl_list_with_comment: Dict[int, str]
+        self, dl_dict_with_comment: Dict[int, str]
     ) -> None:
         """
         The processed batch dict should contain the same number of items as uncommented
         and non-blank lines in the input.
         """
-        assert len(dl_list_with_comment) == 2
+        assert len(dl_dict_with_comment) == 2
 
     def test_batch_file_with_comment_contents(
-        self, dl_list_with_comment: Dict[int, str]
+        self, dl_dict_with_comment: Dict[int, str]
     ) -> None:
         """
         The processed batch dict should have the correct line numbers and filenames as
         keys and values, respectively, skipping any commented or blank lines.
         """
         expected_list = {1: "File:Foo.jpg", 4: "File:Baz.jpg"}
-        assert dl_list_with_comment == expected_list
+        assert dl_dict_with_comment == expected_list
