@@ -17,14 +17,9 @@
 
 import argparse
 import logging
-import sys
-
-from mwclient import APIError, InvalidResponse, LoginError
-from requests import ConnectionError, HTTPError
 
 import wikiget
-from wikiget.dl import batch_download, download, prep_download
-from wikiget.exceptions import ParseError
+from wikiget.dl import process_download
 from wikiget.logging import configure_logging
 
 logger = logging.getLogger(__name__)
@@ -134,28 +129,4 @@ def main() -> None:
     logger.info(f"Starting download session using wikiget {wikiget.__version__}")
     logger.debug(f"User agent: {wikiget.USER_AGENT}")
 
-    if args.batch:
-        # batch download mode
-        errors = batch_download(args)
-        if errors:
-            # return non-zero exit code if any problems were encountered, even if some
-            # downloads completed successfully
-            logger.warning(
-                f"{errors} problem{'s'[:errors^1]} encountered during batch processing"
-            )
-            sys.exit(1)  # completed with errors
-    else:
-        # single download mode
-        try:
-            file = prep_download(args.FILE, args)
-        except ParseError as e:
-            logger.error(e)
-            sys.exit(1)
-        except FileExistsError:
-            sys.exit(1)
-        except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
-            sys.exit(1)
-
-        errors = download(file, args)
-        if errors:
-            sys.exit(1)  # completed with errors
+    process_download(args)
