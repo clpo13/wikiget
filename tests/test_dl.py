@@ -56,8 +56,9 @@ class TestProcessDownload:
         """
         args = construct_parser().parse_args(["-a", "batch.txt"])
         mock_batch_download.return_value = 0
-        process_download(args)
+        exit_code = process_download(args)
         assert mock_batch_download.called
+        assert exit_code == 0
 
     @patch("wikiget.dl.batch_download")
     def test_batch_download_with_errors(
@@ -69,10 +70,9 @@ class TestProcessDownload:
         """
         args = construct_parser().parse_args(["-a", "batch.txt"])
         mock_batch_download.return_value = 4
-        with pytest.raises(SystemExit) as e:
-            process_download(args)
+        exit_code = process_download(args)
         assert mock_batch_download.called
-        assert e.value.code == 1
+        assert exit_code == 1
         assert "4 problems encountered during batch processing" in caplog.text
 
     @patch("wikiget.dl.prep_download")
@@ -86,9 +86,10 @@ class TestProcessDownload:
         args = construct_parser().parse_args(["File:Example.jpg"])
         mock_download.return_value = 0
         mock_prep_download.return_value = MagicMock(File)
-        process_download(args)
+        exit_code = process_download(args)
         assert mock_prep_download.called
         assert mock_download.called
+        assert exit_code == 0
 
     @patch("wikiget.dl.prep_download")
     @patch("wikiget.dl.download")
@@ -101,8 +102,7 @@ class TestProcessDownload:
         args = construct_parser().parse_args(["File:Example.jpg"])
         mock_download.return_value = 1
         mock_prep_download.return_value = MagicMock(File)
-        with pytest.raises(SystemExit) as e:
-            process_download(args)
+        exit_code = process_download(args)
         assert mock_prep_download.called
         assert mock_download.called
-        assert e.value.code == 1
+        assert exit_code == 1

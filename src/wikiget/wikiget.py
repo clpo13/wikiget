@@ -17,6 +17,7 @@
 
 import argparse
 import logging
+import sys
 
 import wikiget
 from wikiget.dl import process_download
@@ -129,4 +130,5 @@ def main() -> None:
     logger.info(f"Starting download session using wikiget {wikiget.__version__}")
     logger.debug(f"User agent: {wikiget.USER_AGENT}")
 
-    process_download(args)
+    exit_code = process_download(args)
+    sys.exit(exit_code)
