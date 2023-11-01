@@ -113,7 +113,7 @@ def download(f: File, args: Namespace) -> int:
 
         if args.dry_run:
             adapter.warning("Dry run; download skipped")
-            return
+            return 0
 
         try:
             fd = open(dest, "wb")
