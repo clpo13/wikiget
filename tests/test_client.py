@@ -16,6 +16,7 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 import logging
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -25,15 +26,19 @@ from wikiget.wikiget import construct_parser
 
 
 # TODO: don't hit the actual API when doing tests
-@pytest.mark.skip(reason="skip tests that query a live API")
 class TestQueryApi:
-    args = construct_parser().parse_args(["File:Example.jpg"])
-
-    def test_connect_to_site(self, caplog: pytest.LogCaptureFixture) -> None:
+    @patch("mwclient.Site.__new__")
+    def test_connect_to_site(
+        self, mock_site: MagicMock, caplog: pytest.LogCaptureFixture
+    ) -> None:
         caplog.set_level(logging.DEBUG)
-        _ = connect_to_site("commons.wikimedia.org", self.args)
+        mock_site.return_value = MagicMock()
+        args = construct_parser().parse_args(["File:Example.jpg"])
+        _ = connect_to_site("commons.wikimedia.org", args)
+        assert mock_site.called
         assert "Connecting to commons.wikimedia.org" in caplog.text
 
+    @pytest.mark.skip(reason="skip tests that query a live API")
     def test_query_api(self, caplog: pytest.LogCaptureFixture) -> None:
         caplog.set_level(logging.DEBUG)
         site = connect_to_site("commons.wikimedia.org", self.args)
