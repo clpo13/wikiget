@@ -24,6 +24,10 @@ from wikiget.file import File
 class TestFileClass:
     @pytest.fixture(scope="class")
     def file_with_name(self) -> File:
+        """
+        A File object created with only a name should set its destination property to
+        the same value and its site property to the program's default site.
+        """
         return File("foobar.jpg")
 
     def test_file_with_name(self, file_with_name: File) -> None:
@@ -37,6 +41,10 @@ class TestFileClass:
 
     @pytest.fixture(scope="class")
     def file_with_name_and_dest(self) -> File:
+        """
+        A File object created with a name and destination should set those properties
+        accordingly; they should not be the same value.
+        """
         return File("foobar.jpg", dest="bazqux.jpg")
 
     def test_file_with_name_and_dest(self, file_with_name_and_dest: File) -> None:
@@ -46,5 +54,9 @@ class TestFileClass:
         assert file_with_name_and_dest.dest != file_with_name_and_dest.name
 
     def test_file_with_name_and_site(self) -> None:
+        """
+        A File object created with a name and site should set those properties
+        accordingly and not use the program's default site.
+        """
         file = File("foobar.jpg", site="en.wikipedia.org")
         assert file.site == "en.wikipedia.org"

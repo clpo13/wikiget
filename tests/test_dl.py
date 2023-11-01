@@ -16,10 +16,12 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from wikiget.dl import prep_download
+from wikiget.dl import prep_download, process_download
+from wikiget.file import File
 from wikiget.wikiget import construct_parser
 
 
@@ -44,3 +46,63 @@ class TestPrepDownload:
         args = construct_parser().parse_args(["File:Example.jpg", "-o", str(tmp_file)])
         with pytest.raises(FileExistsError):
             _ = prep_download(args.FILE, args)
+
+
+class TestProcessDownload:
+    @patch("wikiget.dl.batch_download")
+    def test_batch_download(self, mock_batch_download: MagicMock) -> None:
+        """
+        A successful batch download should not return any errors.
+        """
+        args = construct_parser().parse_args(["-a", "batch.txt"])
+        mock_batch_download.return_value = 0
+        process_download(args)
+        assert mock_batch_download.called
+
+    @patch("wikiget.dl.batch_download")
+    def test_batch_download_with_errors(
+        self, mock_batch_download: MagicMock, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """
+        Any errors during batch download should create a log message containing the
+        number of errors and result in a non-zero exit code.
+        """
+        args = construct_parser().parse_args(["-a", "batch.txt"])
+        mock_batch_download.return_value = 4
+        with pytest.raises(SystemExit) as e:
+            process_download(args)
+        assert mock_batch_download.called
+        assert e.value.code == 1
+        assert "4 problems encountered during batch processing" in caplog.text
+
+    @patch("wikiget.dl.prep_download")
+    @patch("wikiget.dl.download")
+    def test_single_download(
+        self, mock_download: MagicMock, mock_prep_download: MagicMock
+    ) -> None:
+        """
+        A successful download should not return any errors.
+        """
+        args = construct_parser().parse_args(["File:Example.jpg"])
+        mock_download.return_value = 0
+        mock_prep_download.return_value = MagicMock(File)
+        process_download(args)
+        assert mock_prep_download.called
+        assert mock_download.called
+
+    @patch("wikiget.dl.prep_download")
+    @patch("wikiget.dl.download")
+    def test_single_download_with_errors(
+        self, mock_download: MagicMock, mock_prep_download: MagicMock
+    ) -> None:
+        """
+        Any errors during download should result in a non-zero exit code.
+        """
+        args = construct_parser().parse_args(["File:Example.jpg"])
+        mock_download.return_value = 1
+        mock_prep_download.return_value = MagicMock(File)
+        with pytest.raises(SystemExit) as e:
+            process_download(args)
+        assert mock_prep_download.called
+        assert mock_download.called
+        assert e.value.code == 1
