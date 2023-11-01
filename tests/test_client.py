@@ -31,6 +31,10 @@ class TestQueryApi:
     def test_connect_to_site(
         self, mock_site: MagicMock, caplog: pytest.LogCaptureFixture
     ) -> None:
+        """
+        The connect_to_site function should create a debug log message recording the
+        name of the site we're connecting to.
+        """
         caplog.set_level(logging.DEBUG)
         mock_site.return_value = MagicMock()
         args = construct_parser().parse_args(["File:Example.jpg"])
@@ -40,7 +44,12 @@ class TestQueryApi:
 
     @pytest.mark.skip(reason="skip tests that query a live API")
     def test_query_api(self, caplog: pytest.LogCaptureFixture) -> None:
+        """
+        The query_api function should create a debug log message containing the user
+        agent we're sending to the API.
+        """
         caplog.set_level(logging.DEBUG)
-        site = connect_to_site("commons.wikimedia.org", self.args)
+        args = construct_parser().parse_args(["File:Example.jpg"])
+        site = connect_to_site("commons.wikimedia.org", args)
         _ = query_api("Example.jpg", site)
         assert USER_AGENT in caplog.text

@@ -27,6 +27,9 @@ logger = logging.getLogger()
 
 
 def test_custom_log_adapter(caplog: LogCaptureFixture) -> None:
+    """
+    The custom log adapter should prepend the filename to log messages.
+    """
     args = construct_parser().parse_args(["File:Example.jpg"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     adapter = FileLogAdapter(logger, {"filename": "Example.jpg"})
@@ -35,6 +38,9 @@ def test_custom_log_adapter(caplog: LogCaptureFixture) -> None:
 
 
 def test_file_logging(tmp_path: Path) -> None:
+    """
+    Logging to a file should create the file in the specified location.
+    """
     logfile_location = tmp_path / "test.log"
     args = construct_parser().parse_args(
         ["File:Example.jpg", "-l", str(logfile_location)]
@@ -44,6 +50,9 @@ def test_file_logging(tmp_path: Path) -> None:
 
 
 def test_default_logging() -> None:
+    """
+    The default log level should be set to WARNING.
+    """
     args = construct_parser().parse_args(["File:Example.jpg"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     # each call of configure_logging() adds a new handler to the logger, so we need to
@@ -53,6 +62,9 @@ def test_default_logging() -> None:
 
 
 def test_verbose_logging() -> None:
+    """
+    When -v is passed, the log level should be set to INFO.
+    """
     args = construct_parser().parse_args(["File:Example.jpg", "-v"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     handler = logger.handlers[-1]
@@ -60,6 +72,9 @@ def test_verbose_logging() -> None:
 
 
 def test_very_verbose_logging() -> None:
+    """
+    When -vv is passed, the log level should be set to DEBUG.
+    """
     args = construct_parser().parse_args(["File:Example.jpg", "-vv"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     handler = logger.handlers[-1]
@@ -67,6 +82,9 @@ def test_very_verbose_logging() -> None:
 
 
 def test_quiet_logging() -> None:
+    """
+    When -q is passed, the log level should be set to ERROR.
+    """
     args = construct_parser().parse_args(["File:Example.jpg", "-q"])
     configure_logging(args.verbose, args.logfile, quiet=args.quiet)
     handler = logger.handlers[-1]
