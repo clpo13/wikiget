@@ -151,7 +151,8 @@ def main() -> None:
         except ParseError as e:
             logger.error(e)
             sys.exit(1)
-        except FileExistsError:
+        except FileExistsError as e:
+            logger.warning(e)
             sys.exit(1)
         except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
             sys.exit(1)
