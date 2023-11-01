@@ -35,7 +35,7 @@ class TestGetDest:
         When a filename is passed to get_dest, it should create a File object with the
         correct name and dest and the default site.
         """
-        args = construct_parser().parse_args(["File:Example.jpg"])
+        args = construct_parser(["File:Example.jpg"])
         return get_dest(args.FILE, args)
 
     def test_get_dest_name_with_filename(self, file_with_filename: File) -> None:
@@ -53,9 +53,7 @@ class TestGetDest:
         When a URL is passed to get_dest, it should create a File object with the
         correct name and dest and the site from the URL.
         """
-        args = construct_parser().parse_args(
-            ["https://en.wikipedia.org/wiki/File:Example.jpg"]
-        )
+        args = construct_parser(["https://en.wikipedia.org/wiki/File:Example.jpg"])
         return get_dest(args.FILE, args)
 
     def test_get_dest_name_with_url(self, file_with_url: File) -> None:
@@ -71,7 +69,7 @@ class TestGetDest:
         """
         The get_dest function should raise a ParseError if the filename is invalid.
         """
-        args = construct_parser().parse_args(["Example.jpg"])
+        args = construct_parser(["Example.jpg"])
         with pytest.raises(ParseError):
             _ = get_dest(args.FILE, args)
 
@@ -82,7 +80,7 @@ class TestGetDest:
         If a URL is passed to get_dest and a site is also given on the command line,
         the site in the URL should be used and a warning log message created.
         """
-        args = construct_parser().parse_args(
+        args = construct_parser(
             [
                 "https://commons.wikimedia.org/wiki/File:Example.jpg",
                 "--site",

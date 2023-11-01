@@ -18,6 +18,7 @@
 import argparse
 import logging
 import sys
+from typing import List
 
 import wikiget
 from wikiget.dl import process_download
@@ -26,7 +27,7 @@ from wikiget.logging import configure_logging
 logger = logging.getLogger(__name__)
 
 
-def construct_parser() -> argparse.ArgumentParser:
+def construct_parser(argv: List[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="""
         A tool for downloading files from MediaWiki sites using the file name or
@@ -116,13 +117,12 @@ def construct_parser() -> argparse.ArgumentParser:
         action="store_true",
     )
 
-    return parser
+    return parser.parse_args(argv)
 
 
 def main() -> None:
     # setup our environment
-    parser = construct_parser()
-    args = parser.parse_args()
+    args = construct_parser(sys.argv[1:])
     configure_logging(verbosity=args.verbose, logfile=args.logfile, quiet=args.quiet)
 
     # log events are appended to the file if it already exists, so note the start of a

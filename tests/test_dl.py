@@ -32,7 +32,7 @@ class TestPrepDownload:
         """
         The prep_download function should create a file object.
         """
-        args = construct_parser().parse_args(["File:Example.jpg"])
+        args = construct_parser(["File:Example.jpg"])
         file = prep_download(args.FILE, args)
         assert file is not None
 
@@ -43,7 +43,7 @@ class TestPrepDownload:
         """
         tmp_file = tmp_path / "File:Example.jpg"
         tmp_file.write_text("nothing")
-        args = construct_parser().parse_args(["File:Example.jpg", "-o", str(tmp_file)])
+        args = construct_parser(["File:Example.jpg", "-o", str(tmp_file)])
         with pytest.raises(FileExistsError):
             _ = prep_download(args.FILE, args)
 
@@ -54,7 +54,7 @@ class TestProcessDownload:
         """
         A successful batch download should not return any errors.
         """
-        args = construct_parser().parse_args(["-a", "batch.txt"])
+        args = construct_parser(["-a", "batch.txt"])
         mock_batch_download.return_value = 0
         exit_code = process_download(args)
         assert mock_batch_download.called
@@ -68,7 +68,7 @@ class TestProcessDownload:
         Any errors during batch download should create a log message containing the
         number of errors and result in a non-zero exit code.
         """
-        args = construct_parser().parse_args(["-a", "batch.txt"])
+        args = construct_parser(["-a", "batch.txt"])
         mock_batch_download.return_value = 4
         exit_code = process_download(args)
         assert mock_batch_download.called
@@ -83,7 +83,7 @@ class TestProcessDownload:
         """
         A successful download should not return any errors.
         """
-        args = construct_parser().parse_args(["File:Example.jpg"])
+        args = construct_parser(["File:Example.jpg"])
         mock_download.return_value = 0
         mock_prep_download.return_value = MagicMock(File)
         exit_code = process_download(args)
@@ -99,7 +99,7 @@ class TestProcessDownload:
         """
         Any errors during download should result in a non-zero exit code.
         """
-        args = construct_parser().parse_args(["File:Example.jpg"])
+        args = construct_parser(["File:Example.jpg"])
         mock_download.return_value = 1
         mock_prep_download.return_value = MagicMock(File)
         exit_code = process_download(args)
