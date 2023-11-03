@@ -25,7 +25,6 @@ from wikiget.client import connect_to_site, query_api
 from wikiget.wikiget import parse_args
 
 
-# TODO: don't hit the actual API when doing tests
 class TestQueryApi:
     @patch("mwclient.Site.__new__")
     def test_connect_to_site(
@@ -42,6 +41,7 @@ class TestQueryApi:
         assert mock_site.called
         assert "Connecting to commons.wikimedia.org" in caplog.text
 
+    # TODO: don't hit the actual API when doing tests
     @pytest.mark.skip(reason="skip tests that query a live API")
     def test_query_api(self, caplog: pytest.LogCaptureFixture) -> None:
         """
