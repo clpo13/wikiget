@@ -16,30 +16,87 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 import logging
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
+from mwclient import InvalidResponse
+from requests import ConnectionError, HTTPError
 
-from wikiget import USER_AGENT
+from wikiget import DEFAULT_SITE, USER_AGENT
 from wikiget.client import connect_to_site, query_api
 from wikiget.wikiget import parse_args
 
 
-class TestQueryApi:
-    @patch("mwclient.Site.__new__")
-    def test_connect_to_site(
-        self, mock_site: MagicMock, caplog: pytest.LogCaptureFixture
-    ) -> None:
+class TestClient:
+    def test_connect_to_site(self, caplog: pytest.LogCaptureFixture) -> None:
         """
-        The connect_to_site function should create a debug log message recording the
+        The connect_to_site function should create an info log message recording the
         name of the site we're connecting to.
         """
-        caplog.set_level(logging.DEBUG)
-        mock_site.return_value = MagicMock()
+        caplog.set_level(logging.INFO)
         args = parse_args(["File:Example.jpg"])
-        _ = connect_to_site("commons.wikimedia.org", args)
-        assert mock_site.called
-        assert "Connecting to commons.wikimedia.org" in caplog.text
+        with patch("wikiget.client.Site"):
+            _ = connect_to_site(DEFAULT_SITE, args)
+        assert caplog.record_tuples == [
+            ("wikiget.client", logging.INFO, f"Connecting to {DEFAULT_SITE}"),
+        ]
+
+    def test_connect_to_site_connection_error(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """
+        The connect_to_site function should log an error if a ConnectionError exception
+        is raised.
+        """
+        caplog.set_level(logging.DEBUG)
+        args = parse_args(["File:Example.jpg"])
+        with patch("wikiget.client.Site") as mock_site:
+            mock_site.side_effect = ConnectionError("connection error message")
+            with pytest.raises(ConnectionError):
+                _ = connect_to_site(DEFAULT_SITE, args)
+        assert "Could not connect to specified site" in caplog.text
+        assert caplog.record_tuples == [
+            ("wikiget.client", logging.INFO, f"Connecting to {DEFAULT_SITE}"),
+            ("wikiget.client", logging.ERROR, "Could not connect to specified site"),
+            ("wikiget.client", logging.DEBUG, "connection error message"),
+        ]
+
+    def test_connect_to_site_http_error(self, caplog: pytest.LogCaptureFixture) -> None:
+        """
+        The connect_to_site function should log an error if an HTTPError exception
+        is raised.
+        """
+        caplog.set_level(logging.DEBUG)
+        args = parse_args(["File:Example.jpg"])
+        with patch("wikiget.client.Site") as mock_site:
+            mock_site.side_effect = HTTPError
+            with pytest.raises(HTTPError):
+                _ = connect_to_site(DEFAULT_SITE, args)
+        assert caplog.record_tuples == [
+            ("wikiget.client", logging.INFO, f"Connecting to {DEFAULT_SITE}"),
+            (
+                "wikiget.client",
+                logging.ERROR,
+                "Could not find the specified wiki's api.php. "
+                "Check the value of --path.",
+            ),
+            ("wikiget.client", logging.DEBUG, "")
+        ]
+
+    def test_connect_to_site_other_error(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """
+        The connect_to_site function should log an error if some other exception type
+        is raised.
+        """
+        args = parse_args(["File:Example.jpg"])
+        with patch("wikiget.client.Site") as mock_site:
+            mock_site.side_effect = InvalidResponse
+            with pytest.raises(InvalidResponse):
+                _ = connect_to_site("commons.wikimedia.org", args)
+            for record in caplog.records:
+                assert record.levelname == "ERROR"
 
     # TODO: don't hit the actual API when doing tests
     @pytest.mark.skip(reason="skip tests that query a live API")
