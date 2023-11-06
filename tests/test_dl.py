@@ -16,11 +16,9 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
-from mwclient import Site
-from mwclient.image import Image
 
 from wikiget.dl import prep_download, process_download
 from wikiget.file import File
@@ -34,8 +32,8 @@ class TestPrepDownload:
         self, mock_connect_to_site: MagicMock, mock_query_api: MagicMock
     ) -> None:
         """The prep_download function should create the expected file object."""
-        mock_site = MagicMock(Site)
-        mock_image = MagicMock(Image)
+        mock_site = Mock()
+        mock_image = Mock()
 
         mock_connect_to_site.return_value = mock_site
         mock_query_api.return_value = mock_image

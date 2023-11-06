@@ -16,11 +16,10 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 import logging
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, sentinel
 
 import pytest
-from mwclient import InvalidResponse, Site
-from mwclient.image import Image
+from mwclient import InvalidResponse
 from requests import ConnectionError, HTTPError
 
 from wikiget import DEFAULT_SITE
@@ -113,9 +112,8 @@ class TestQueryApi:
         # would have created using the MediaWiki API. The Site.images attribute is
         # normally populated during Site init, but since we're not doing that, a mock
         # dict is created for query_api to parse.
-        mock_site = MagicMock(Site)
-        mock_image = MagicMock(Image)
-        mock_site.images = {"Example.jpg": mock_image}
+        mock_site = MagicMock()
+        mock_site.images = {"Example.jpg": sentinel.mock_image}
 
         image = query_api("Example.jpg", mock_site)
-        assert image == mock_image
+        assert image == sentinel.mock_image
