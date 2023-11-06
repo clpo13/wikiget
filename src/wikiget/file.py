@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from typing import Any
+
 from mwclient.image import Image
 
 from wikiget import DEFAULT_SITE
@@ -43,3 +45,21 @@ class File:
         self.name = name
         self.dest = dest if dest else name
         self.site = site if site else DEFAULT_SITE
+
+    def __eq__(self, other: Any) -> bool:
+        """
+        Compares this File object with another for equality.
+
+        :param other: another File to compare
+        :type other: File
+        :return: True if the Files are equal and False otherwise
+        :rtype: bool
+        """
+        if not isinstance(other, File):
+            return NotImplemented
+        return (
+            self.image == other.image
+            and self.name == other.name
+            and self.dest == other.dest
+            and self.site == other.site
+        )
