@@ -60,68 +60,52 @@ class TestPrepDownload:
 
 
 class TestProcessDownload:
-    def test_batch_download(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    @patch("wikiget.dl.batch_download")
+    def test_batch_download(self, mock_batch_download: MagicMock) -> None:
         """A successful batch download should not return any errors."""
+        mock_batch_download.return_value = 0
 
-        def mock_batch_download(*args, **kwargs):  # noqa: ARG001
-            return 0
+        args = parse_args(["-a", "batch.txt"])
+        exit_code = process_download(args)
+        assert exit_code == 0
 
-        with monkeypatch.context() as m:
-            m.setattr("wikiget.dl.batch_download", mock_batch_download)
-
-            args = parse_args(["-a", "batch.txt"])
-            exit_code = process_download(args)
-            assert exit_code == 0
-
+    @patch("wikiget.dl.batch_download")
     def test_batch_download_with_errors(
-        self, monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+        self, mock_batch_download: MagicMock, caplog: pytest.LogCaptureFixture
     ) -> None:
         """
         Any errors during batch download should create a log message containing the
         number of errors and result in a non-zero exit code.
         """
+        mock_batch_download.return_value = 4
 
-        def mock_batch_download(*args, **kwargs):  # noqa: ARG001
-            return 4
+        args = parse_args(["-a", "batch.txt"])
+        exit_code = process_download(args)
+        assert exit_code == 1
+        assert "4 problems encountered during batch processing" in caplog.text
 
-        with monkeypatch.context() as m:
-            m.setattr("wikiget.dl.batch_download", mock_batch_download)
-
-            args = parse_args(["-a", "batch.txt"])
-            exit_code = process_download(args)
-            assert exit_code == 1
-            assert "4 problems encountered during batch processing" in caplog.text
-
-    def test_single_download(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    @patch("wikiget.dl.prep_download")
+    @patch("wikiget.dl.download")
+    def test_single_download(
+        self, mock_download: MagicMock, mock_prep_download: MagicMock
+    ) -> None:
         """A successful download should not return any errors."""
+        mock_download.return_value = 0
+        mock_prep_download.return_value = File("Example.jpg")
 
-        def mock_download(*args, **kwargs):  # noqa: ARG001
-            return 0
+        args = parse_args(["File:Example.jpg"])
+        exit_code = process_download(args)
+        assert exit_code == 0
 
-        def mock_prep_download(*args, **kwargs):  # noqa ARG001
-            return File("Example.jpg")
-
-        with monkeypatch.context() as m:
-            m.setattr("wikiget.dl.download", mock_download)
-            m.setattr("wikiget.dl.prep_download", mock_prep_download)
-
-            args = parse_args(["File:Example.jpg"])
-            exit_code = process_download(args)
-            assert exit_code == 0
-
-    def test_single_download_with_errors(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    @patch("wikiget.dl.prep_download")
+    @patch("wikiget.dl.download")
+    def test_single_download_with_errors(
+        self, mock_download: MagicMock, mock_prep_download: MagicMock
+    ) -> None:
         """Any errors during download should result in a non-zero exit code."""
+        mock_download.return_value = 1
+        mock_prep_download.return_value = File("Example.jpg")
 
-        def mock_download(*args, **kwargs):  # noqa: ARG001
-            return 1
-
-        def mock_prep_download(*args, **kwargs):  # noqa ARG001
-            return File("Example.jpg")
-
-        with monkeypatch.context() as m:
-            m.setattr("wikiget.dl.download", mock_download)
-            m.setattr("wikiget.dl.prep_download", mock_prep_download)
-
-            args = parse_args(["File:Example.jpg"])
-            exit_code = process_download(args)
-            assert exit_code == 1
+        args = parse_args(["File:Example.jpg"])
+        exit_code = process_download(args)
+        assert exit_code == 1
