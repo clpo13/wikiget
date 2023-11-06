@@ -109,8 +109,13 @@ class TestQueryApi:
         The query_api function should return an Image object when given a name and a
         valid Site.
         """
+        # These mock objects represent Site and Image objects that the real program
+        # would have created using the MediaWiki API. The Site.images attribute is
+        # normally populated during Site init, but since we're not doing that, a mock
+        # dict is created for query_api to parse.
         mock_site = MagicMock(Site)
         mock_image = MagicMock(Image)
         mock_site.images = {"Example.jpg": mock_image}
+
         image = query_api("Example.jpg", mock_site)
         assert image == mock_image
