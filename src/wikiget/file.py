@@ -15,7 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
-from mwclient.image import Image
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from mwclient.image import Image
 
 from wikiget import DEFAULT_SITE
 
