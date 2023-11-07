@@ -38,11 +38,32 @@ class TestConnectSite:
         """
         caplog.set_level(logging.INFO)
         args = parse_args(["File:Example.jpg"])
+
         with patch("wikiget.client.Site"):
             _ = connect_to_site(DEFAULT_SITE, args)
+
         assert caplog.record_tuples == [
             ("wikiget.client", logging.INFO, self.info_msg),
         ]
+
+    def test_connect_to_site_with_creds(self, caplog: pytest.LogCaptureFixture) -> None:
+        """
+        If a username and password are provided, connect_to_site should use them to
+        log in to the site.
+        """
+        caplog.set_level(logging.INFO)
+        args = parse_args(["-u", "username", "-p", "password", "File:Example.jpg"])
+
+        with patch("wikiget.client.Site"):
+            _ = connect_to_site(DEFAULT_SITE, args)
+
+        # TODO: it should be possible to test if Site.login was called, making the log
+        # message unnecessary
+        assert caplog.record_tuples[1] == (
+            "wikiget.client",
+            logging.INFO,
+            "Attempting to authenticate with credentials",
+        )
 
     def test_connect_to_site_connection_error(
         self, caplog: pytest.LogCaptureFixture
@@ -53,10 +74,12 @@ class TestConnectSite:
         """
         caplog.set_level(logging.DEBUG)
         args = parse_args(["File:Example.jpg"])
+
         with patch("wikiget.client.Site") as mock_site:
             mock_site.side_effect = ConnectionError("connection error message")
             with pytest.raises(ConnectionError):
                 _ = connect_to_site(DEFAULT_SITE, args)
+
         assert "Could not connect to specified site" in caplog.text
         assert caplog.record_tuples == [
             ("wikiget.client", logging.INFO, self.info_msg),
@@ -71,10 +94,12 @@ class TestConnectSite:
         """
         caplog.set_level(logging.DEBUG)
         args = parse_args(["File:Example.jpg"])
+
         with patch("wikiget.client.Site") as mock_site:
             mock_site.side_effect = HTTPError
             with pytest.raises(HTTPError):
                 _ = connect_to_site(DEFAULT_SITE, args)
+
         assert caplog.record_tuples == [
             ("wikiget.client", logging.INFO, self.info_msg),
             (
@@ -94,10 +119,12 @@ class TestConnectSite:
         is raised.
         """
         args = parse_args(["File:Example.jpg"])
+
         with patch("wikiget.client.Site") as mock_site:
             mock_site.side_effect = InvalidResponse
             with pytest.raises(InvalidResponse):
                 _ = connect_to_site("commons.wikimedia.org", args)
+
             for record in caplog.records:
                 assert record.levelname == "ERROR"
 
@@ -116,4 +143,5 @@ class TestQueryApi:
         mock_site.images = {"Example.jpg": sentinel.mock_image}
 
         image = query_api("Example.jpg", mock_site)
+
         assert image == sentinel.mock_image
