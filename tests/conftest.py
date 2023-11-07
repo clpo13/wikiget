@@ -19,8 +19,8 @@ import pytest
 import requests_mock as rm
 
 
-@pytest.fixture
-def mock_get(requests_mock: rm.Mocker) -> None:
+@pytest.fixture()
+def _mock_get(requests_mock: rm.Mocker) -> None:
     # fake the download request for File:Example.jpg
     requests_mock.get(
         "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",

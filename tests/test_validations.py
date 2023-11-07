@@ -57,7 +57,7 @@ class TestSiteInput:
 
 
 class TestFileRegex:
-    @pytest.fixture
+    @pytest.fixture()
     def file_match(self) -> Optional[Match]:
         """
         File regex should return a match object with match groups corresponding

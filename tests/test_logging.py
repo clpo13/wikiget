@@ -18,7 +18,7 @@
 import logging
 from pathlib import Path
 
-from pytest import LogCaptureFixture
+import pytest
 
 from wikiget.logging import FileLogAdapter, configure_logging
 from wikiget.wikiget import parse_args
@@ -27,7 +27,7 @@ from wikiget.wikiget import parse_args
 class TestLogging:
     logger = logging.getLogger()
 
-    def test_custom_log_adapter(self, caplog: LogCaptureFixture) -> None:
+    def test_custom_log_adapter(self, caplog: pytest.LogCaptureFixture) -> None:
         """The custom log adapter should prepend the filename to log messages."""
         args = parse_args(["File:Example.jpg"])
         configure_logging(args.verbose, args.logfile, quiet=args.quiet)

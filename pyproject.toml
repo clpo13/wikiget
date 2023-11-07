@@ -136,6 +136,7 @@ select = [
   "PLE",
   "PLR",
   "PLW",
+  "PT",
   "Q",
   "RUF",
   "S",

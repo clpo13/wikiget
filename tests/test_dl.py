@@ -281,9 +281,9 @@ class TestBatchDownload:
         assert errors == 1
 
 
-@pytest.mark.usefixtures("mock_get")
+@pytest.mark.usefixtures("_mock_get")
 class TestDownload:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_file(self, tmp_path: Path) -> File:
         file = File(name="Example.jpg", dest=str(tmp_path / "Example.jpg"))
         file.image = Mock()

@@ -29,7 +29,7 @@ from wikiget.wikiget import parse_args
 
 
 class TestGetDest:
-    @pytest.fixture
+    @pytest.fixture()
     def file_with_filename(self) -> File:
         """
         When a filename is passed to get_dest, it should create a File object with the
@@ -47,7 +47,7 @@ class TestGetDest:
     def test_get_dest_site_with_filename(self, file_with_filename: File) -> None:
         assert file_with_filename.site == "commons.wikimedia.org"
 
-    @pytest.fixture
+    @pytest.fixture()
     def file_with_url(self) -> File:
         """
         When a URL is passed to get_dest, it should create a File object with the
@@ -92,7 +92,7 @@ class TestGetDest:
 
 
 class TestReadBatchFile:
-    @pytest.fixture
+    @pytest.fixture()
     def dl_dict(self, tmp_path: Path) -> Dict[int, str]:
         """
         Create and process a test batch file with three lines, returning a dictionary.
@@ -129,7 +129,7 @@ class TestReadBatchFile:
         expected_list = {1: "File:Foo.jpg", 2: "File:Bar.jpg", 3: "File:Baz.jpg"}
         assert dl_dict == expected_list
 
-    @pytest.fixture
+    @pytest.fixture()
     def dl_dict_stdin(self, monkeypatch: pytest.MonkeyPatch) -> Dict[int, str]:
         """
         Pass three lines of filenames from stdin to read_batch_file and return a dict.
@@ -165,7 +165,7 @@ class TestReadBatchFile:
         expected_list = {1: "File:Foo.jpg", 2: "File:Bar.jpg", 3: "File:Baz.jpg"}
         assert dl_dict_stdin == expected_list
 
-    @pytest.fixture
+    @pytest.fixture()
     def dl_dict_with_comment(self, tmp_path: Path) -> Dict[int, str]:
         """
         Create and process a test batch file with four lines, one of which is

@@ -22,7 +22,7 @@ from wikiget.file import File
 
 
 class TestFileClass:
-    @pytest.fixture
+    @pytest.fixture()
     def file_with_name(self) -> File:
         """
         A File object created with only a name should set its destination property to
@@ -39,7 +39,7 @@ class TestFileClass:
     def test_file_with_name_site(self, file_with_name: File) -> None:
         assert file_with_name.site == DEFAULT_SITE
 
-    @pytest.fixture
+    @pytest.fixture()
     def file_with_name_and_dest(self) -> File:
         """
         A File object created with a name and destination should set those properties
