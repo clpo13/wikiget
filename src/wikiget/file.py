@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
-from typing import Any
-
 from mwclient.image import Image
 
 from wikiget import DEFAULT_SITE
@@ -46,7 +44,7 @@ class File:
         self.dest = dest if dest else name
         self.site = site if site else DEFAULT_SITE
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """
         Compares this File object with another for equality.
 
