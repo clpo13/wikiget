@@ -26,7 +26,6 @@ from wikiget.validations import valid_file, valid_site, verify_hash
 
 class TestSiteInput:
     @pytest.fixture(
-        scope="class",
         params=[
             "example.com",
             "vim.wikia.com",
@@ -38,7 +37,6 @@ class TestSiteInput:
         return valid_site(request.param)
 
     @pytest.fixture(
-        scope="class",
         params=[
             "en.wikipedia.org",
             "commons.wikimedia.org",
@@ -50,20 +48,16 @@ class TestSiteInput:
         return valid_site(request.param)
 
     def test_invalid_site_input(self, invalid_input: None) -> None:
-        """
-        Invalid site strings should not return regex match objects.
-        """
+        """Invalid site strings should not return regex match objects."""
         assert invalid_input is None
 
     def test_valid_site_input(self, valid_input: Match) -> None:
-        """
-        Valid site strings should return regex match objects.
-        """
+        """Valid site strings should return regex match objects."""
         assert valid_input is not None
 
 
 class TestFileRegex:
-    @pytest.fixture(scope="class")
+    @pytest.fixture
     def file_match(self) -> Optional[Match]:
         """
         File regex should return a match object with match groups corresponding
@@ -86,7 +80,6 @@ class TestFileRegex:
 
 class TestFileInput:
     @pytest.fixture(
-        scope="class",
         params=[
             "file:example",
             "example.jpg",
@@ -98,7 +91,6 @@ class TestFileInput:
         return valid_file(request.param)
 
     @pytest.fixture(
-        scope="class",
         params=[
             "Image:example.jpg",
             "file:example.jpg",
@@ -112,23 +104,17 @@ class TestFileInput:
         return valid_file(request.param)
 
     def test_invalid_file_input(self, invalid_input: None) -> None:
-        """
-        Invalid file strings should not return regex match objects.
-        """
+        """Invalid file strings should not return regex match objects."""
         assert invalid_input is None
 
     def test_valid_file_input(self, valid_input: Match) -> None:
-        """
-        Valid file strings should return regex match objects.
-        """
+        """Valid file strings should return regex match objects."""
         assert valid_input is not None
 
 
 class TestVerifyHash:
     def test_verify_hash(self, tmp_path: Path) -> None:
-        """
-        Confirm that verify_hash returns the proper SHA1 hash.
-        """
+        """Confirm that verify_hash returns the proper SHA1 hash."""
         file_name = "testfile"
         file_contents = "foobar"
         file_sha1 = "8843d7f92416211de9ebb963ff4ce28125932878"

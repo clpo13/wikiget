@@ -23,67 +23,51 @@ from pytest import LogCaptureFixture
 from wikiget.logging import FileLogAdapter, configure_logging
 from wikiget.wikiget import parse_args
 
-logger = logging.getLogger()
 
+class TestLogging:
+    logger = logging.getLogger()
 
-def test_custom_log_adapter(caplog: LogCaptureFixture) -> None:
-    """
-    The custom log adapter should prepend the filename to log messages.
-    """
-    args = parse_args(["File:Example.jpg"])
-    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
-    adapter = FileLogAdapter(logger, {"filename": "Example.jpg"})
-    adapter.warning("test log")
-    assert "[Example.jpg] test log" in caplog.text
+    def test_custom_log_adapter(self, caplog: LogCaptureFixture) -> None:
+        """The custom log adapter should prepend the filename to log messages."""
+        args = parse_args(["File:Example.jpg"])
+        configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+        adapter = FileLogAdapter(self.logger, {"filename": "Example.jpg"})
+        adapter.warning("test log")
+        assert "[Example.jpg] test log" in caplog.text
 
+    def test_file_logging(self, tmp_path: Path) -> None:
+        """Logging to a file should create the file in the specified location."""
+        logfile_location = tmp_path / "test.log"
+        args = parse_args(["File:Example.jpg", "-l", str(logfile_location)])
+        configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+        assert logfile_location.is_file()
 
-def test_file_logging(tmp_path: Path) -> None:
-    """
-    Logging to a file should create the file in the specified location.
-    """
-    logfile_location = tmp_path / "test.log"
-    args = parse_args(["File:Example.jpg", "-l", str(logfile_location)])
-    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
-    assert logfile_location.is_file()
+    def test_default_logging(self) -> None:
+        """The default log level should be set to WARNING."""
+        args = parse_args(["File:Example.jpg"])
+        configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+        # each call of configure_logging() adds a new handler to the logger, so we need
+        # to grab the most recently added one to test
+        handler = self.logger.handlers[-1]
+        assert handler.level == logging.WARNING
 
+    def test_verbose_logging(self) -> None:
+        """When -v is passed, the log level should be set to INFO."""
+        args = parse_args(["File:Example.jpg", "-v"])
+        configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+        handler = self.logger.handlers[-1]
+        assert handler.level == logging.INFO
 
-def test_default_logging() -> None:
-    """
-    The default log level should be set to WARNING.
-    """
-    args = parse_args(["File:Example.jpg"])
-    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
-    # each call of configure_logging() adds a new handler to the logger, so we need to
-    # grab the most recently added one to test
-    handler = logger.handlers[-1]
-    assert handler.level == logging.WARNING
+    def test_very_verbose_logging(self) -> None:
+        """When -vv is passed, the log level should be set to DEBUG."""
+        args = parse_args(["File:Example.jpg", "-vv"])
+        configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+        handler = self.logger.handlers[-1]
+        assert handler.level == logging.DEBUG
 
-
-def test_verbose_logging() -> None:
-    """
-    When -v is passed, the log level should be set to INFO.
-    """
-    args = parse_args(["File:Example.jpg", "-v"])
-    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
-    handler = logger.handlers[-1]
-    assert handler.level == logging.INFO
-
-
-def test_very_verbose_logging() -> None:
-    """
-    When -vv is passed, the log level should be set to DEBUG.
-    """
-    args = parse_args(["File:Example.jpg", "-vv"])
-    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
-    handler = logger.handlers[-1]
-    assert handler.level == logging.DEBUG
-
-
-def test_quiet_logging() -> None:
-    """
-    When -q is passed, the log level should be set to ERROR.
-    """
-    args = parse_args(["File:Example.jpg", "-q"])
-    configure_logging(args.verbose, args.logfile, quiet=args.quiet)
-    handler = logger.handlers[-1]
-    assert handler.level == logging.ERROR
+    def test_quiet_logging(self) -> None:
+        """When -q is passed, the log level should be set to ERROR."""
+        args = parse_args(["File:Example.jpg", "-q"])
+        configure_logging(args.verbose, args.logfile, quiet=args.quiet)
+        handler = self.logger.handlers[-1]
+        assert handler.level == logging.ERROR

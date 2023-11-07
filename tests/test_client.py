@@ -16,40 +16,160 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 import logging
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, sentinel
 
 import pytest
+from mwclient import APIError, InvalidResponse
+from requests import ConnectionError, HTTPError
 
-from wikiget import USER_AGENT
+from wikiget import DEFAULT_SITE
 from wikiget.client import connect_to_site, query_api
 from wikiget.wikiget import parse_args
 
 
-# TODO: don't hit the actual API when doing tests
-class TestQueryApi:
-    @patch("mwclient.Site.__new__")
-    def test_connect_to_site(
-        self, mock_site: MagicMock, caplog: pytest.LogCaptureFixture
-    ) -> None:
+class TestConnectSite:
+    # this message is logged when the level is at INFO or below
+    info_msg = f"Connecting to {DEFAULT_SITE}"
+
+    def test_connect_to_site(self, caplog: pytest.LogCaptureFixture) -> None:
         """
-        The connect_to_site function should create a debug log message recording the
+        The connect_to_site function should create an info log message recording the
         name of the site we're connecting to.
         """
-        caplog.set_level(logging.DEBUG)
-        mock_site.return_value = MagicMock()
+        caplog.set_level(logging.INFO)
         args = parse_args(["File:Example.jpg"])
-        _ = connect_to_site("commons.wikimedia.org", args)
-        assert mock_site.called
-        assert "Connecting to commons.wikimedia.org" in caplog.text
 
-    @pytest.mark.skip(reason="skip tests that query a live API")
-    def test_query_api(self, caplog: pytest.LogCaptureFixture) -> None:
+        with patch("wikiget.client.Site"):
+            _ = connect_to_site(DEFAULT_SITE, args)
+
+        assert caplog.record_tuples == [
+            ("wikiget.client", logging.INFO, self.info_msg),
+        ]
+
+    def test_connect_to_site_with_creds(self, caplog: pytest.LogCaptureFixture) -> None:
         """
-        The query_api function should create a debug log message containing the user
-        agent we're sending to the API.
+        If a username and password are provided, connect_to_site should use them to
+        log in to the site.
+        """
+        caplog.set_level(logging.INFO)
+        args = parse_args(["-u", "username", "-p", "password", "File:Example.jpg"])
+
+        with patch("wikiget.client.Site"):
+            _ = connect_to_site(DEFAULT_SITE, args)
+
+        # TODO: it should be possible to test if Site.login was called, making the log
+        # message unnecessary
+        assert caplog.record_tuples[1] == (
+            "wikiget.client",
+            logging.INFO,
+            "Attempting to authenticate with credentials",
+        )
+
+    def test_connect_to_site_connection_error(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """
+        The connect_to_site function should log the correct messages if a
+        ConnectionError exception is raised.
         """
         caplog.set_level(logging.DEBUG)
         args = parse_args(["File:Example.jpg"])
-        site = connect_to_site("commons.wikimedia.org", args)
-        _ = query_api("Example.jpg", site)
-        assert USER_AGENT in caplog.text
+
+        with patch("wikiget.client.Site") as mock_site:
+            mock_site.side_effect = ConnectionError("connection error message")
+            with pytest.raises(ConnectionError):
+                _ = connect_to_site(DEFAULT_SITE, args)
+
+        assert "Could not connect to specified site" in caplog.text
+        assert caplog.record_tuples == [
+            ("wikiget.client", logging.INFO, self.info_msg),
+            ("wikiget.client", logging.ERROR, "Could not connect to specified site"),
+            ("wikiget.client", logging.DEBUG, "connection error message"),
+        ]
+
+    def test_connect_to_site_http_error(self, caplog: pytest.LogCaptureFixture) -> None:
+        """
+        The connect_to_site function should log the correct messages if an HTTPError
+        exception is raised.
+        """
+        caplog.set_level(logging.DEBUG)
+        args = parse_args(["File:Example.jpg"])
+
+        with patch("wikiget.client.Site") as mock_site:
+            mock_site.side_effect = HTTPError
+            with pytest.raises(HTTPError):
+                _ = connect_to_site(DEFAULT_SITE, args)
+
+        assert caplog.record_tuples == [
+            ("wikiget.client", logging.INFO, self.info_msg),
+            (
+                "wikiget.client",
+                logging.ERROR,
+                "Could not find the specified wiki's api.php. "
+                "Check the value of --path.",
+            ),
+            ("wikiget.client", logging.DEBUG, ""),
+        ]
+
+    def test_connect_to_site_other_error(
+        self, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """
+        The connect_to_site function should log an error if some other exception type
+        is raised.
+        """
+        args = parse_args(["File:Example.jpg"])
+
+        with patch("wikiget.client.Site") as mock_site:
+            mock_site.side_effect = InvalidResponse
+            with pytest.raises(InvalidResponse):
+                _ = connect_to_site("commons.wikimedia.org", args)
+
+            for record in caplog.records:
+                assert record.levelname == "ERROR"
+
+
+class TestQueryApi:
+    def test_query_api(self) -> None:
+        """
+        The query_api function should return an Image object when given a name and a
+        valid Site.
+        """
+        # These mock objects represent Site and Image objects that the real program
+        # would have created using the MediaWiki API. The Site.images attribute is
+        # normally populated during Site init, but since we're not doing that, a mock
+        # dict is created for query_api to parse.
+        mock_site = MagicMock()
+        mock_site.images = {"Example.jpg": sentinel.mock_image}
+
+        image = query_api("Example.jpg", mock_site)
+
+        assert image == sentinel.mock_image
+
+    def test_query_api_error(self, caplog: pytest.LogCaptureFixture) -> None:
+        """
+        The query_api function should log an error if an APIError exception is caught,
+        as well as debug log entries with additional information about the error.
+        """
+        caplog.set_level(logging.DEBUG)
+
+        mock_site = MagicMock()
+        mock_site.images = MagicMock()
+        mock_site.images.__getitem__.side_effect = APIError(
+            "error code", "error info", "error kwargs"
+        )
+
+        with pytest.raises(APIError):
+            _ = query_api("Example.jpg", mock_site)
+
+        assert caplog.record_tuples == [
+            (
+                "wikiget.client",
+                logging.ERROR,
+                "Access denied. Try providing credentials with "
+                "--username and --password.",
+            ),
+            ("wikiget.client", logging.DEBUG, "error code"),
+            ("wikiget.client", logging.DEBUG, "error info"),
+            ("wikiget.client", logging.DEBUG, "error kwargs"),
+        ]

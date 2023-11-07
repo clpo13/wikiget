@@ -69,6 +69,7 @@ exclude = [
 dependencies = [
   "coverage[toml]>=6.5",
   "pytest",
+  "requests_mock",
 ]
 [tool.hatch.envs.default.scripts]
 test = "python -m pytest {args}"
@@ -199,5 +200,6 @@ module = [
   "mwclient",
   "mwclient.image",
   "pytest",
+  "requests_mock",
 ]
 ignore_missing_imports = true

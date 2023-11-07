@@ -34,6 +34,7 @@ def connect_to_site(site_name: str, args: Namespace) -> Site:
     try:
         site = Site(site_name, path=args.path, clients_useragent=wikiget.USER_AGENT)
         if args.username and args.password:
+            logger.info("Attempting to authenticate with credentials")
             site.login(args.username, args.password)
     except ConnectionError as e:
         # usually this means there is no such site, or there's no network connection,
