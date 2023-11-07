@@ -65,7 +65,7 @@ def read_batch_file(batch_file: str) -> Dict[int, str]:
     if batch_file == "-":
         logger.info("Using stdin for batch download")
     else:
-        logger.info(f"Using file '{batch_file}' for batch download")
+        logger.info("Using file '%s' for batch download", batch_file)
 
     with fileinput.input(batch_file) as fd:
         # read the file into memory and process each line as we go

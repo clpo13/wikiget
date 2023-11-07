@@ -127,8 +127,8 @@ def cli() -> None:
 
     # log events are appended to the file if it already exists, so note the start of a
     # new download session
-    logger.info(f"Starting download session using wikiget {wikiget.__version__}")
-    logger.debug(f"User agent: {wikiget.USER_AGENT}")
+    logger.info("Starting download session using wikiget %s", wikiget.__version__)
+    logger.debug("User agent: %s", wikiget.USER_AGENT)
 
     exit_code = process_download(args)
     sys.exit(exit_code)

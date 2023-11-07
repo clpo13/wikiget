@@ -59,7 +59,9 @@ def process_download(args: Namespace) -> int:
             # return non-zero exit code if any problems were encountered, even if some
             # downloads completed successfully
             logger.warning(
-                f"{errors} problem{'s'[:errors^1]} encountered during batch processing"
+                "%i problem%s encountered during batch processing",
+                errors,
+                "s"[: errors ^ 1],
             )
             exit_code = 1  # completed with errors
     else:
@@ -88,7 +90,7 @@ def batch_download(args: Namespace) -> int:
     try:
         dl_dict = read_batch_file(args.FILE)
     except OSError as e:
-        logger.error(f"File could not be read: {e}")
+        logger.error("File could not be read: %s", str(e))
         sys.exit(1)
 
     # TODO: validate file contents before download process starts
@@ -96,11 +98,11 @@ def batch_download(args: Namespace) -> int:
         futures = []
         for line_num, line in dl_dict.items():
             # keep track of batch file line numbers for debugging/logging purposes
-            logger.info(f"Processing '{line}' at line {line_num}")
+            logger.info("Processing '%s' at line %i", line, line_num)
             try:
                 file = prep_download(line, args)
             except ParseError as e:
-                logger.warning(f"{e} (line {line_num})")
+                logger.warning("%s (line %i)", str(e), line_num)
                 errors += 1
                 continue
             except FileExistsError as e:
@@ -109,7 +111,9 @@ def batch_download(args: Namespace) -> int:
                 continue
             except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
                 logger.warning(
-                    f"Unable to download '{line}' (line {line_num}) due to an error"
+                    "Unable to download '%s' (line %i) due to an error",
+                    line,
+                    line_num,
                 )
                 errors += 1
                 continue

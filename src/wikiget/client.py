@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 def connect_to_site(site_name: str, args: Namespace) -> Site:
     # connect to site and identify ourselves
-    logger.info(f"Connecting to {site_name}")
+    logger.info("Connecting to %s", site_name)
 
     try:
         site = Site(site_name, path=args.path, clients_useragent=wikiget.USER_AGENT)
