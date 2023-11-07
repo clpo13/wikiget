@@ -162,12 +162,11 @@ def download(f: File, args: Namespace) -> int:
             unit="B",
             unit_scale=True,
             unit_divisor=wikiget.CHUNKSIZE,
-        ) as progress_bar:
-            with fd:
-                res = site.connection.get(file_url, stream=True)
-                for chunk in res.iter_content(wikiget.CHUNKSIZE):
-                    fd.write(chunk)
-                    progress_bar.update(len(chunk))
+        ) as progress_bar, fd:
+            res = site.connection.get(file_url, stream=True)
+            for chunk in res.iter_content(wikiget.CHUNKSIZE):
+                fd.write(chunk)
+                progress_bar.update(len(chunk))
 
         # verify file integrity and log details
         try:
