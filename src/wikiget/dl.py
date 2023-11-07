@@ -50,6 +50,8 @@ def prep_download(dl: str, args: Namespace) -> File:
 
 
 def process_download(args: Namespace) -> int:
+    exit_code = 0
+
     if args.batch:
         # batch download mode
         errors = batch_download(args)
@@ -59,25 +61,24 @@ def process_download(args: Namespace) -> int:
             logger.warning(
                 f"{errors} problem{'s'[:errors^1]} encountered during batch processing"
             )
-            return 1  # completed with errors
-        return 0
+            exit_code = 1  # completed with errors
     else:
         # single download mode
         try:
             file = prep_download(args.FILE, args)
         except ParseError as e:
             logger.error(e)
-            return 1
+            exit_code = 1
         except FileExistsError as e:
             logger.warning(e)
-            return 1
+            exit_code = 1
         except (ConnectionError, HTTPError, InvalidResponse, LoginError, APIError):
-            return 1
-
-        errors = download(file, args)
-        if errors:
-            return 1  # completed with errors
-    return 0
+            exit_code = 1
+        else:
+            errors = download(file, args)
+            if errors:
+                exit_code = 1  # completed with errors
+    return exit_code
 
 
 def batch_download(args: Namespace) -> int:
