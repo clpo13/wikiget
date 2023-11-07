@@ -60,3 +60,12 @@ class TestFileClass:
         """
         file = File("foobar.jpg", site="en.wikipedia.org")
         assert file.site == "en.wikipedia.org"
+
+    def test_file_equality(self, file_with_name: File) -> None:
+        assert File(name="foobar.jpg") == file_with_name
+
+    def test_file_inequality(self, file_with_name: File) -> None:
+        assert File(name="foobaz.jpg", dest="output.jpg") != file_with_name
+
+    def test_file_comparison_with_non_file(self, file_with_name: File) -> None:
+        assert file_with_name.__eq__({"name": "foobar.jpg"}) == NotImplemented
