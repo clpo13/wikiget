@@ -19,7 +19,7 @@ import logging
 from unittest.mock import MagicMock, patch, sentinel
 
 import pytest
-from mwclient import InvalidResponse
+from mwclient import APIError, InvalidResponse
 from requests import ConnectionError, HTTPError
 
 from wikiget import DEFAULT_SITE
@@ -145,3 +145,31 @@ class TestQueryApi:
         image = query_api("Example.jpg", mock_site)
 
         assert image == sentinel.mock_image
+
+    def test_query_api_error(self, caplog: pytest.LogCaptureFixture) -> None:
+        """
+        The query_api function should log an error if an APIError exception is caught,
+        as well as debug log entries with additional information about the error.
+        """
+        caplog.set_level(logging.DEBUG)
+
+        mock_site = MagicMock()
+        mock_site.images = MagicMock()
+        mock_site.images.__getitem__.side_effect = APIError(
+            "error code", "error info", "error kwargs"
+        )
+
+        with pytest.raises(APIError):
+            _ = query_api("Example.jpg", mock_site)
+
+        assert caplog.record_tuples == [
+            (
+                "wikiget.client",
+                logging.ERROR,
+                "Access denied. Try providing credentials with "
+                "--username and --password.",
+            ),
+            ("wikiget.client", logging.DEBUG, "error code"),
+            ("wikiget.client", logging.DEBUG, "error info"),
+            ("wikiget.client", logging.DEBUG, "error kwargs"),
+        ]
