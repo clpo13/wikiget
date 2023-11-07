@@ -20,7 +20,8 @@ from pathlib import Path
 from unittest.mock import MagicMock, Mock, patch
 
 import pytest
-from requests import ConnectionError
+import requests
+from mwclient import Site
 
 from wikiget.dl import batch_download, download, prep_download, process_download
 from wikiget.exceptions import ParseError
@@ -156,7 +157,7 @@ class TestProcessDownload:
         """
         If process_download catches any other errors, it should return 1.
         """
-        mock_prep_download.side_effect = ConnectionError
+        mock_prep_download.side_effect = requests.ConnectionError
 
         args = parse_args(["File:Example.jpg"])
         exit_code = process_download(args)
@@ -263,7 +264,7 @@ class TestBatchDownload:
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         mock_read_batch_file.return_value = {1: "File:Example.jpg"}
-        mock_prep_download.side_effect = ConnectionError
+        mock_prep_download.side_effect = requests.ConnectionError
 
         args = parse_args(["-a", "batch.txt"])
         errors = batch_download(args)
@@ -291,16 +292,32 @@ class TestDownload:
             "size": 9022,
             "sha1": "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840",
         }
-        file.image.site = Mock()
+        file.image.site = MagicMock(Site)
         file.image.site.host = "commons.wikimedia.org"
+        file.image.site.connection = requests.Session()
         return file
 
-    # TODO: test dry run option separately
-    def test_download(self, mock_file: File, caplog: pytest.LogCaptureFixture) -> None:
+    def test_download(
+        self,
+        mock_file: File,
+        requests_mock,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         caplog.set_level(logging.INFO)
 
-        args = parse_args(["-n", "File:Example.jpg"])
-        errors = download(mock_file, args)
+        # fake the download request
+        requests_mock.get(
+            "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
+            text="data",
+        )
+        # save to a temp directory
+        mock_file.dest = str(tmp_path / "Example.jpg")
+
+        with patch("wikiget.dl.verify_hash") as mock_verify_hash:
+            mock_verify_hash.return_value = "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840"
+            args = parse_args(["File:Example.jpg"])
+            errors = download(mock_file, args)
 
         assert caplog.record_tuples == [
             (
@@ -315,7 +332,20 @@ class TestDownload:
                 "[Example.jpg] "
                 "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
             ),
-            ("wikiget.dl", logging.WARNING, "[Example.jpg] Dry run; download skipped"),
+            (
+                "wikiget.dl",
+                logging.INFO,
+                "[Example.jpg] Remote file SHA1 is "
+                "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840",
+            ),
+            (
+                "wikiget.dl",
+                logging.INFO,
+                "[Example.jpg] Local file SHA1 is "
+                "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840",
+            ),
+            ("wikiget.dl", logging.INFO, "[Example.jpg] Hashes match!"),
+            ("wikiget.dl", logging.INFO, "[Example.jpg] 'Example.jpg' downloaded"),
         ]
         assert errors == 0
 
@@ -325,6 +355,7 @@ class TestDownload:
         caplog.set_level(logging.INFO)
 
         mock_file.dest = "output.jpg"
+        # TODO: remove dry run option from this test
         args = parse_args(["-n", "-o", "output.jpg", "File:Example.jpg"])
         errors = download(mock_file, args)
 
@@ -334,6 +365,20 @@ class TestDownload:
             "[Example.jpg] Downloading 'Example.jpg' (9022 bytes) from "
             "commons.wikimedia.org to 'output.jpg'",
         )
+        assert errors == 0
+
+    def test_download_dry_run(
+        self, mock_file: File, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        caplog.set_level(logging.INFO)
+
+        args = parse_args(["-n", "File:Example.jpg"])
+        errors = download(mock_file, args)
+
+        # ignore first two log records since we tested for those earlier
+        assert caplog.record_tuples[2:] == [
+            ("wikiget.dl", logging.WARNING, "[Example.jpg] Dry run; download skipped"),
+        ]
         assert errors == 0
 
     def test_download_os_error(
