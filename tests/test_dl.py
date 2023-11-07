@@ -21,7 +21,6 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 import requests
-import requests_mock as rm
 from mwclient import Site
 
 from wikiget.dl import batch_download, download, prep_download, process_download
@@ -282,10 +281,11 @@ class TestBatchDownload:
         assert errors == 1
 
 
+@pytest.mark.usefixtures("mock_get")
 class TestDownload:
     @pytest.fixture
-    def mock_file(self) -> File:
-        file = File("Example.jpg")
+    def mock_file(self, tmp_path: Path) -> File:
+        file = File(name="Example.jpg", dest=str(tmp_path / "Example.jpg"))
         file.image = Mock()
         file.image.exists = True
         file.image.imageinfo = {
@@ -298,22 +298,8 @@ class TestDownload:
         file.image.site.connection = requests.Session()
         return file
 
-    def test_download(
-        self,
-        mock_file: File,
-        requests_mock: rm.Mocker,
-        tmp_path: Path,
-        caplog: pytest.LogCaptureFixture,
-    ) -> None:
+    def test_download(self, mock_file: File, caplog: pytest.LogCaptureFixture) -> None:
         caplog.set_level(logging.INFO)
-
-        # fake the download request
-        requests_mock.get(
-            "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
-            text="data",
-        )
-        # save to a temp directory
-        mock_file.dest = str(tmp_path / "Example.jpg")
 
         with patch("wikiget.dl.verify_hash") as mock_verify_hash:
             mock_verify_hash.return_value = "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840"
@@ -351,22 +337,11 @@ class TestDownload:
         assert errors == 0
 
     def test_download_with_output(
-        self,
-        mock_file: File,
-        requests_mock: rm.Mocker,
-        tmp_path: Path,
-        caplog: pytest.LogCaptureFixture,
+        self, mock_file: File, caplog: pytest.LogCaptureFixture
     ) -> None:
         caplog.set_level(logging.INFO)
 
-        # fake the download request
-        requests_mock.get(
-            "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
-            text="data",
-        )
-        # save to a temp directory
-        tmp_file = str(tmp_path / "Example.jpg")
-        mock_file.dest = tmp_file
+        tmp_file = mock_file.dest
 
         with patch("wikiget.dl.verify_hash") as mock_verify_hash:
             mock_verify_hash.return_value = "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840"
@@ -401,10 +376,8 @@ class TestDownload:
         assert errors == 0
 
     def test_download_os_error(
-        self, mock_file: File, tmp_path: Path, caplog: pytest.LogCaptureFixture
+        self, mock_file: File, caplog: pytest.LogCaptureFixture
     ) -> None:
-        mock_file.dest = str(tmp_path / "Example.jpg")
-
         with patch("wikiget.dl.open") as mock_open:
             mock_open.side_effect = OSError("write error")
             args = parse_args(["File:Example.jpg"])
@@ -420,20 +393,8 @@ class TestDownload:
         assert errors == 1
 
     def test_download_verify_os_error(
-        self,
-        mock_file: File,
-        requests_mock: rm.Mocker,
-        tmp_path: Path,
-        caplog: pytest.LogCaptureFixture,
+        self, mock_file: File, caplog: pytest.LogCaptureFixture
     ) -> None:
-        # fake the download request
-        requests_mock.get(
-            "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
-            text="data",
-        )
-        # save to a temp directory
-        mock_file.dest = str(tmp_path / "Example.jpg")
-
         with patch("wikiget.dl.verify_hash") as mock_verify_hash:
             mock_verify_hash.side_effect = OSError("read error")
             args = parse_args(["File:Example.jpg"])
@@ -449,20 +410,8 @@ class TestDownload:
         assert errors == 1
 
     def test_download_verify_hash_mismatch(
-        self,
-        mock_file: File,
-        requests_mock: rm.Mocker,
-        tmp_path: Path,
-        caplog: pytest.LogCaptureFixture,
+        self, mock_file: File, caplog: pytest.LogCaptureFixture
     ) -> None:
-        # fake the download request
-        requests_mock.get(
-            "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
-            text="data",
-        )
-        # save to a temp directory
-        mock_file.dest = str(tmp_path / "Example.jpg")
-
         with patch("wikiget.dl.verify_hash") as mock_verify_hash:
             mock_verify_hash.return_value = "mismatch"
             args = parse_args(["File:Example.jpg"])
