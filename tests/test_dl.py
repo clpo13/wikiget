@@ -21,6 +21,7 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 import requests
+import requests_mock as rm
 from mwclient import Site
 
 from wikiget.dl import batch_download, download, prep_download, process_download
@@ -300,7 +301,7 @@ class TestDownload:
     def test_download(
         self,
         mock_file: File,
-        requests_mock,
+        requests_mock: rm.Mocker,
         tmp_path: Path,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -350,20 +351,38 @@ class TestDownload:
         assert errors == 0
 
     def test_download_with_output(
-        self, mock_file: File, caplog: pytest.LogCaptureFixture
+        self,
+        mock_file: File,
+        requests_mock: rm.Mocker,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         caplog.set_level(logging.INFO)
 
-        mock_file.dest = "output.jpg"
-        # TODO: remove dry run option from this test
-        args = parse_args(["-n", "-o", "output.jpg", "File:Example.jpg"])
-        errors = download(mock_file, args)
+        # fake the download request
+        requests_mock.get(
+            "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
+            text="data",
+        )
+        # save to a temp directory
+        tmp_file = str(tmp_path / "Example.jpg")
+        mock_file.dest = tmp_file
+
+        with patch("wikiget.dl.verify_hash") as mock_verify_hash:
+            mock_verify_hash.return_value = "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840"
+            args = parse_args(["-o", tmp_file, "File:Example.jpg"])
+            errors = download(mock_file, args)
 
         assert caplog.record_tuples[0] == (
             "wikiget.dl",
             logging.INFO,
             "[Example.jpg] Downloading 'Example.jpg' (9022 bytes) from "
-            "commons.wikimedia.org to 'output.jpg'",
+            f"commons.wikimedia.org to '{tmp_file}'",
+        )
+        assert caplog.record_tuples[5] == (
+            "wikiget.dl",
+            logging.INFO,
+            f"[Example.jpg] 'Example.jpg' downloaded to '{tmp_file}'",
         )
         assert errors == 0
 
@@ -397,6 +416,64 @@ class TestDownload:
                 logging.ERROR,
                 "[Example.jpg] File could not be written: write error",
             ),
+        ]
+        assert errors == 1
+
+    def test_download_verify_os_error(
+        self,
+        mock_file: File,
+        requests_mock: rm.Mocker,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        # fake the download request
+        requests_mock.get(
+            "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
+            text="data",
+        )
+        # save to a temp directory
+        mock_file.dest = str(tmp_path / "Example.jpg")
+
+        with patch("wikiget.dl.verify_hash") as mock_verify_hash:
+            mock_verify_hash.side_effect = OSError("read error")
+            args = parse_args(["File:Example.jpg"])
+            errors = download(mock_file, args)
+
+        assert caplog.record_tuples == [
+            (
+                "wikiget.dl",
+                logging.ERROR,
+                "[Example.jpg] File downloaded but could not be verified: read error",
+            )
+        ]
+        assert errors == 1
+
+    def test_download_verify_hash_mismatch(
+        self,
+        mock_file: File,
+        requests_mock: rm.Mocker,
+        tmp_path: Path,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        # fake the download request
+        requests_mock.get(
+            "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
+            text="data",
+        )
+        # save to a temp directory
+        mock_file.dest = str(tmp_path / "Example.jpg")
+
+        with patch("wikiget.dl.verify_hash") as mock_verify_hash:
+            mock_verify_hash.return_value = "mismatch"
+            args = parse_args(["File:Example.jpg"])
+            errors = download(mock_file, args)
+
+        assert caplog.record_tuples == [
+            (
+                "wikiget.dl",
+                logging.ERROR,
+                "[Example.jpg] Hash mismatch! Downloaded file may be corrupt.",
+            )
         ]
         assert errors == 1
 

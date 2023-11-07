@@ -200,5 +200,6 @@ module = [
   "mwclient",
   "mwclient.image",
   "pytest",
+  "requests_mock",
 ]
 ignore_missing_imports = true
