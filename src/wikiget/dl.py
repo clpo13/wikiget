@@ -149,30 +149,28 @@ def download(f: File, args: Namespace) -> int:
 
         if args.dry_run:
             adapter.warning("Dry run; download skipped")
-            return 0
+            return errors
 
         try:
-            fd = open(dest, "wb")
+            with tqdm(
+                desc=dest,
+                leave=args.verbose >= wikiget.STD_VERBOSE,
+                total=file_size,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=wikiget.CHUNKSIZE,
+            ) as progress_bar, open(dest, "wb") as fd:
+                # download the file using the existing Site session
+                res = site.connection.get(file_url, stream=True)
+                for chunk in res.iter_content(wikiget.CHUNKSIZE):
+                    fd.write(chunk)
+                    progress_bar.update(len(chunk))
         except OSError as e:
             adapter.error(f"File could not be written: {e}")
             errors += 1
             return errors
-        # download the file(s)
-        leave_bars = args.verbose >= wikiget.STD_VERBOSE
-        with tqdm(
-            desc=dest,
-            leave=leave_bars,
-            total=file_size,
-            unit="B",
-            unit_scale=True,
-            unit_divisor=wikiget.CHUNKSIZE,
-        ) as progress_bar, fd:
-            res = site.connection.get(file_url, stream=True)
-            for chunk in res.iter_content(wikiget.CHUNKSIZE):
-                fd.write(chunk)
-                progress_bar.update(len(chunk))
 
-        # verify file integrity and log details
+        # verify file integrity and log the details
         try:
             dl_sha1 = verify_hash(dest)
         except OSError as e:
