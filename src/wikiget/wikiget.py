@@ -24,8 +24,6 @@ import wikiget
 from wikiget.dl import process_download
 from wikiget.logging import configure_logging
 
-logger = logging.getLogger(__name__)
-
 
 def parse_args(argv: List[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -124,6 +122,8 @@ def cli() -> None:
     # setup our environment
     args = parse_args(sys.argv[1:])
     configure_logging(verbosity=args.verbose, logfile=args.logfile, quiet=args.quiet)
+
+    logger = logging.getLogger(__name__)
 
     # log events are appended to the file if it already exists, so note the start of a
     # new download session
