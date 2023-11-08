@@ -15,57 +15,61 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
-import pytest
+"""Define tests related to the wikiget.file module."""
 
 from wikiget import DEFAULT_SITE
 from wikiget.file import File
 
 
 class TestFileClass:
-    @pytest.fixture()
-    def file_with_name(self) -> File:
-        """
-        A File object created with only a name should set its destination property to
-        the same value and its site property to the program's default site.
-        """
-        return File("foobar.jpg")
+    """Define tests related to wikiget.file.File creation."""
 
     def test_file_with_name(self, file_with_name: File) -> None:
+        """The file name attribute should equal what was passed in."""
         assert file_with_name.name == "foobar.jpg"
 
     def test_file_with_name_dest(self, file_with_name: File) -> None:
+        """The file dest attribute should be the same as the name."""
         assert file_with_name.dest == file_with_name.name
 
     def test_file_with_name_site(self, file_with_name: File) -> None:
+        """The file site attribute should equal the default site."""
         assert file_with_name.site == DEFAULT_SITE
 
-    @pytest.fixture()
-    def file_with_name_and_dest(self) -> File:
-        """
-        A File object created with a name and destination should set those properties
-        accordingly; they should not be the same value.
-        """
-        return File("foobar.jpg", dest="bazqux.jpg")
-
     def test_file_with_name_and_dest(self, file_with_name_and_dest: File) -> None:
+        """The file dest attribute should equal what was passed in."""
         assert file_with_name_and_dest.dest == "bazqux.jpg"
 
     def test_name_and_dest_are_different(self, file_with_name_and_dest: File) -> None:
+        """The file name and dest attributes should not be the same."""
         assert file_with_name_and_dest.dest != file_with_name_and_dest.name
 
     def test_file_with_name_and_site(self) -> None:
-        """
+        """Test the attributes of a File created with a name and site.
+
         A File object created with a name and site should set those properties
         accordingly and not use the program's default site.
         """
         file = File("foobar.jpg", site="en.wikipedia.org")
         assert file.site == "en.wikipedia.org"
 
+
+class TestFileComparison:
+    """Define tests related to wikiget.file.File comparisons."""
+
     def test_file_equality(self, file_with_name: File) -> None:
+        """Test that two similar Files equal each other."""
         assert File(name="foobar.jpg") == file_with_name
 
     def test_file_inequality(self, file_with_name: File) -> None:
+        """Test that two dissimilar Files do not equal each other."""
         assert File(name="foobaz.jpg", dest="output.jpg") != file_with_name
 
     def test_file_comparison_with_non_file(self, file_with_name: File) -> None:
-        assert file_with_name.__eq__({"name": "foobar.jpg"}) == NotImplemented
+        """Test what happens when a File is compared with a different object.
+
+        The equality comparison should return NotImplemented when comparing non-Files
+        with Files.
+        """
+        not_a_file = {"name": "foobar.jpg", "dest": "foobar.jpg"}
+        assert file_with_name.__eq__(not_a_file) == NotImplemented

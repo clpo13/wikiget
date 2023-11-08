@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Define tests related to the wikiget.validations module."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -29,6 +31,8 @@ if TYPE_CHECKING:
 
 
 class TestSiteInput:
+    """Define tests related to wikiget.validations.valid_site."""
+
     @pytest.fixture(
         params=[
             "example.com",
@@ -38,6 +42,13 @@ class TestSiteInput:
         ],
     )
     def invalid_input(self, request: pytest.FixtureRequest) -> Match | None:
+        """Return the results of checking various invalid site names.
+
+        :param request: Pytest request object containing parameter values
+        :type request: pytest.FixtureRequest
+        :return: a Match object for the site or None if there was no match
+        :rtype: Match | None
+        """
         return valid_site(request.param)
 
     @pytest.fixture(
@@ -49,6 +60,13 @@ class TestSiteInput:
         ],
     )
     def valid_input(self, request: pytest.FixtureRequest) -> Match | None:
+        """Return the results of checking various valid site names.
+
+        :param request: Pytest request object containing parameter values
+        :type request: pytest.FixtureRequest
+        :return: a Match object for the site or None if there was no match
+        :rtype: Match | None
+        """
         return valid_site(request.param)
 
     def test_invalid_site_input(self, invalid_input: None) -> None:
@@ -61,28 +79,40 @@ class TestSiteInput:
 
 
 class TestFileRegex:
+    """Define tests related to the regex matching in wikiget.validations.valid_file."""
+
     @pytest.fixture()
     def file_match(self) -> Match | None:
-        """
-        File regex should return a match object with match groups corresponding
-        to the file prefix and name.
+        """Return the results of processing a filename.
+
+        The match object returned will have match groups corresponding to the file
+        prefix and name.
+
+        :return: a Match object for the filename or None if there was no match
+        :rtype: Match | None
         """
         return valid_file("File:Example.jpg")
 
     def test_file_match_exists(self, file_match: Match) -> None:
+        """Test that a Match object was returned."""
         assert file_match is not None
 
     def test_file_match_entire_match(self, file_match: Match) -> None:
+        """Test that the the first match group equals the expected value."""
         assert file_match.group(0) == "File:Example.jpg"
 
     def test_file_match_first_group(self, file_match: Match) -> None:
+        """Test that the second match group equals the expected value."""
         assert file_match.group(1) == "File:"
 
     def test_file_match_second_group(self, file_match: Match) -> None:
+        """Test that the third match group equals the expected value."""
         assert file_match.group(2) == "Example.jpg"
 
 
 class TestFileInput:
+    """Tests related to wikiget.validations.valid_site."""
+
     @pytest.fixture(
         params=[
             "file:example",
@@ -92,6 +122,13 @@ class TestFileInput:
         ],
     )
     def invalid_input(self, request: pytest.FixtureRequest) -> Match | None:
+        """Return the results of checking various invalid filenames.
+
+        :param request: Pytest request object containing parameter values
+        :type request: pytest.FixtureRequest
+        :return: a Match object for the filename or None if there was no match
+        :rtype: Match | None
+        """
         return valid_file(request.param)
 
     @pytest.fixture(
@@ -105,6 +142,13 @@ class TestFileInput:
         ],
     )
     def valid_input(self, request: pytest.FixtureRequest) -> Match | None:
+        """Return the results of checking various valid filenames.
+
+        :param request: Pytest request object containing parameter values
+        :type request: pytest.FixtureRequest
+        :return: a Match object for the filename or None if there was no match
+        :rtype: Match | None
+        """
         return valid_file(request.param)
 
     def test_invalid_file_input(self, invalid_input: None) -> None:
@@ -117,12 +161,15 @@ class TestFileInput:
 
 
 class TestVerifyHash:
+    """Define tests related to wikiget.validations.verify_hash."""
+
     def test_verify_hash(self, tmp_path: Path) -> None:
         """Confirm that verify_hash returns the proper SHA1 hash."""
         file_name = "testfile"
         file_contents = "foobar"
         file_sha1 = "8843d7f92416211de9ebb963ff4ce28125932878"
 
+        # create a temporary file with known contents
         tmp_file = tmp_path / file_name
         tmp_file.write_text(file_contents)
 

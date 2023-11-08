@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Define tests related to the wikiget.wikiget module."""
+
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -24,7 +26,10 @@ from wikiget.wikiget import cli
 
 
 class TestCli:
-    def test_cli_no_params(self, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Define tests related to wikiget.wikiget.cli."""
+
+    def test_cli_no_args(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """If no arguments are passed, the program should exit with code 2."""
         with monkeypatch.context() as m:
             m.setattr("sys.argv", ["wikiget"])
             with pytest.raises(SystemExit) as e:
@@ -35,6 +40,7 @@ class TestCli:
     def test_cli_completed_successfully(
         self, mock_process_download: MagicMock, monkeypatch: pytest.MonkeyPatch
     ) -> None:
+        """If everything is successful, the program should exit with code 0."""
         # a successful call to process_download returns 0
         mock_process_download.return_value = 0
 
@@ -49,6 +55,7 @@ class TestCli:
     def test_cli_completed_with_problems(
         self, mock_process_download: MagicMock, monkeypatch: pytest.MonkeyPatch
     ) -> None:
+        """If there are problems during execution, the exit code should be 1."""
         # an unsuccessful call to process_download returns 1
         mock_process_download.return_value = 1
 
@@ -66,6 +73,11 @@ class TestCli:
         monkeypatch: pytest.MonkeyPatch,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
+        """When program execution starts, it should create the right log messages.
+
+        There should be an info log record with the program version as well as a debug
+        record with the program's user agent.
+        """
         # a successful call to process_download returns 0
         mock_process_download.return_value = 0
 

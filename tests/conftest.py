@@ -15,13 +15,44 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Define fixtures used across all tests in this folder."""
+
 import pytest
 import requests_mock as rm
+
+from wikiget.file import File
+
+
+@pytest.fixture()
+def file_with_name() -> File:
+    """Create a test File with only a filename.
+
+    A File object created with only a name should set its destination property to
+    the same value and its site property to the program's default site.
+
+    :return: File object created using a filename
+    :rtype: File
+    """
+    return File("foobar.jpg")
+
+
+@pytest.fixture()
+def file_with_name_and_dest() -> File:
+    """Create a test File with a name and destination.
+
+    :return: File object created with name and dest
+    :rtype: File
+    """
+    return File(name="foobar.jpg", dest="bazqux.jpg")
 
 
 @pytest.fixture()
 def _mock_get(requests_mock: rm.Mocker) -> None:
-    # fake the download request for File:Example.jpg
+    """Fake the download request for the true URL of File:Example.jpg.
+
+    :param requests_mock: a requests_mock Mocker object
+    :type requests_mock: rm.Mocker
+    """
     requests_mock.get(
         "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
         text="data",

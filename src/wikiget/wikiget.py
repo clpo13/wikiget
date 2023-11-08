@@ -27,6 +27,13 @@ from wikiget.logging import configure_logging
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
+    """Parse the given argument list.
+
+    :param argv: a list of arguments in string form
+    :type argv: list[str]
+    :return: a Namespace containing the arguments and their values
+    :rtype: argparse.Namespace
+    """
     parser = argparse.ArgumentParser(
         description="""
         A tool for downloading files from MediaWiki sites using the file name or
@@ -120,7 +127,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 
 def cli() -> None:
-    # setup our environment
+    """Set up the command-line environment and start the download process."""
     args = parse_args(sys.argv[1:])
     configure_logging(verbosity=args.verbose, logfile=args.logfile, quiet=args.quiet)
 

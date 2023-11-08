@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Define tests related to the wikiget.logging module."""
+
 import logging
 from pathlib import Path
 
@@ -25,6 +27,8 @@ from wikiget.wikiget import parse_args
 
 
 class TestLogging:
+    """Define tests related to wikiget.logging.configure_logging and FileLogAdapter."""
+
     logger = logging.getLogger()
 
     def test_custom_log_adapter(self, caplog: pytest.LogCaptureFixture) -> None:

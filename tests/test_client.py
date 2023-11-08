@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Define tests related to the wikiget.client module."""
+
 import logging
 from unittest.mock import MagicMock, patch, sentinel
 
@@ -28,14 +30,14 @@ from wikiget.wikiget import parse_args
 
 
 class TestConnectSite:
-    # this message is logged when the level is at INFO or below
+    """Define tests related to wikiget.client.connect_to_site."""
+
+    # this message is logged when the level is at INFO or below;
+    # defined here for ease of maintenance
     info_msg = f"Connecting to {DEFAULT_SITE}"
 
     def test_connect_to_site(self, caplog: pytest.LogCaptureFixture) -> None:
-        """
-        The connect_to_site function should create an info log message recording the
-        name of the site we're connecting to.
-        """
+        """Test that an info log message is created with the name of the site."""
         caplog.set_level(logging.INFO)
         args = parse_args(["File:Example.jpg"])
 
@@ -47,7 +49,8 @@ class TestConnectSite:
         ]
 
     def test_connect_to_site_with_creds(self, caplog: pytest.LogCaptureFixture) -> None:
-        """
+        """Test that an info log message is created when credentials are used.
+
         If a username and password are provided, connect_to_site should use them to
         log in to the site.
         """
@@ -68,9 +71,10 @@ class TestConnectSite:
     def test_connect_to_site_connection_error(
         self, caplog: pytest.LogCaptureFixture
     ) -> None:
-        """
-        The connect_to_site function should log the correct messages if a
-        ConnectionError exception is raised.
+        """Test that the correct log messages are created if ConnectionError is raised.
+
+        In addition to the info-level site connection message, there should be error
+        and debug level messages with details about the problem.
         """
         caplog.set_level(logging.DEBUG)
         args = parse_args(["File:Example.jpg"])
@@ -88,9 +92,10 @@ class TestConnectSite:
         ]
 
     def test_connect_to_site_http_error(self, caplog: pytest.LogCaptureFixture) -> None:
-        """
-        The connect_to_site function should log the correct messages if an HTTPError
-        exception is raised.
+        """Test that the correct log messages are created if HTTPError is raised.
+
+        In addition to the info-level site connection message, there should be error
+        and debug level messages with details about the problem.
         """
         caplog.set_level(logging.DEBUG)
         args = parse_args(["File:Example.jpg"])
@@ -114,9 +119,10 @@ class TestConnectSite:
     def test_connect_to_site_other_error(
         self, caplog: pytest.LogCaptureFixture
     ) -> None:
-        """
-        The connect_to_site function should log an error if some other exception type
-        is raised.
+        """Test that log messages are created if other exceptions are raised.
+
+        When an exception other than ConnectionError or HTTPError is raised, an
+        error-level log message should be created.
         """
         args = parse_args(["File:Example.jpg"])
 
@@ -130,11 +136,10 @@ class TestConnectSite:
 
 
 class TestQueryApi:
+    """Define tests related to wikiget.client.query_api."""
+
     def test_query_api(self) -> None:
-        """
-        The query_api function should return an Image object when given a name and a
-        valid Site.
-        """
+        """Test that query_api returns the expected Image object."""
         # These mock objects represent Site and Image objects that the real program
         # would have created using the MediaWiki API. The Site.images attribute is
         # normally populated during Site init, but since we're not doing that, a mock
@@ -147,7 +152,8 @@ class TestQueryApi:
         assert image == sentinel.mock_image
 
     def test_query_api_error(self, caplog: pytest.LogCaptureFixture) -> None:
-        """
+        """Test that the correct log messages are created when APIError is raised.
+
         The query_api function should log an error if an APIError exception is caught,
         as well as debug log entries with additional information about the error.
         """
@@ -155,6 +161,10 @@ class TestQueryApi:
 
         mock_site = MagicMock()
         mock_site.images = MagicMock()
+        # Normally, APIError is raised during the processing of the API call that
+        # creates the site.images attribute. Since we're faking all of that, the
+        # exception needs to be raised elsewhere, so that it's caught when query_api
+        # tries to read the items in site.images.
         mock_site.images.__getitem__.side_effect = APIError(
             "error code", "error info", "error kwargs"
         )

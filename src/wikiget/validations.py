@@ -25,10 +25,11 @@ from wikiget import BLOCKSIZE
 
 
 def valid_file(search_string: str) -> re.Match | None:
-    """
-    Determines if the given string contains a valid file name, defined as a string
-    ending with a '.' and at least one character, beginning with 'File:' or 'Image:',
-    the standard file prefixes in MediaWiki.
+    """Determines if the given string contains a valid file name
+
+    A valid file name is a string that begins with 'File:' or 'Image:' (the standard
+    file prefixes in MediaWiki), includes a period, and has at least one character
+    following the period, like 'File:Example.jpg' or 'Image:Example.svg'.
 
     :param search_string: string to validate
     :type search_string: str
@@ -42,10 +43,10 @@ def valid_file(search_string: str) -> re.Match | None:
 
 
 def valid_site(search_string: str) -> re.Match | None:
-    """
-    Determines if the given string contains a valid site name, defined as a string
-    ending with 'wikipedia.org' or 'wikimedia.org'. This covers all subdomains of those
-    domains.
+    """Determines if the given string contains a valid site name
+
+    A valid site name is a string ending with 'wikipedia.org' or 'wikimedia.org'. This
+    covers all subdomains of those domains.
 
     Currently unused since any site is accepted as input, and we rely on the user to
     ensure the site has a compatible API.
@@ -60,8 +61,10 @@ def valid_site(search_string: str) -> re.Match | None:
 
 
 def verify_hash(filename: str) -> str:
-    """
-    Calculates the SHA1 hash of the given file for comparison with a known value.
+    """Calculates the SHA1 hash of the given file for comparison with a known value.
+
+    Despite being insecure, SHA1 is used since that's what the MediaWiki API returns for
+    the file hash.
 
     :param filename: name of the file to calculate a hash for
     :type filename: str
