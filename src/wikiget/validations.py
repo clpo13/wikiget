@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+from pathlib import Path
 
 from wikiget import BLOCKSIZE
 
@@ -68,7 +69,7 @@ def verify_hash(filename: str) -> str:
     :rtype: str
     """
     hasher = hashlib.sha1()  # noqa: S324
-    with open(filename, "rb") as dl:
+    with Path(filename).open("rb") as dl:
         buf = dl.read(BLOCKSIZE)
         while len(buf) > 0:
             hasher.update(buf)

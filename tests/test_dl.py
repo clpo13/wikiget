@@ -378,7 +378,7 @@ class TestDownload:
     def test_download_os_error(
         self, mock_file: File, caplog: pytest.LogCaptureFixture
     ) -> None:
-        with patch("wikiget.dl.open") as mock_open:
+        with patch("wikiget.dl.Path.open") as mock_open:
             mock_open.side_effect = OSError("write error")
             args = parse_args(["File:Example.jpg"])
             errors = download(mock_file, args)

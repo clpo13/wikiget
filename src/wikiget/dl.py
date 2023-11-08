@@ -16,10 +16,10 @@
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
 import logging
-import os
 import sys
 from argparse import Namespace
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 from mwclient import APIError, InvalidResponse, LoginError
 from requests import ConnectionError, HTTPError
@@ -40,7 +40,7 @@ def prep_download(dl: str, args: Namespace) -> File:
     file = get_dest(dl, args)
 
     # check if the destination file already exists; don't overwrite unless the user says
-    if os.path.isfile(file.dest) and not args.force:
+    if Path(file.dest).is_file() and not args.force:
         msg = f"[{file.dest}] File already exists; skipping download (use -f to force)"
         raise FileExistsError(msg)
 
@@ -159,7 +159,7 @@ def download(f: File, args: Namespace) -> int:
                 unit="B",
                 unit_scale=True,
                 unit_divisor=wikiget.CHUNKSIZE,
-            ) as progress_bar, open(dest, "wb") as fd:
+            ) as progress_bar, Path(dest).open("wb") as fd:
                 # download the file using the existing Site session
                 res = site.connection.get(file_url, stream=True)
                 for chunk in res.iter_content(wikiget.CHUNKSIZE):
