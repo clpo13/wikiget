@@ -37,6 +37,20 @@ logger = logging.getLogger(__name__)
 
 
 def prep_download(dl: str, args: Namespace) -> File:
+    """Prepare to download a file by parsing the filename or URL and CLI arguments.
+
+    First, the target is parsed for a valid name, destination, and site. If there are no
+    problems creating a File with this information, we connect to the site hosting it
+    and fetch the relevant Image object, which is added as an attribute to the File.
+
+    :param dl: a string representing the file or URL to download
+    :type dl: str
+    :param args: command-line arguments and their values
+    :type args: argparse.Namespace
+    :raises FileExistsError: the destination file already exists on disk
+    :return: a File object representing the file to download
+    :rtype: File
+    """
     file = get_dest(dl, args)
 
     # check if the destination file already exists; don't overwrite unless the user says
@@ -50,6 +64,21 @@ def prep_download(dl: str, args: Namespace) -> File:
 
 
 def process_download(args: Namespace) -> int:
+    """Process the download target given in the CLI args as a single file or batch file.
+
+    If the target is a batch file, process with batch_download and return the number of
+    errors encountered, if any. If there were any errors, log the number and exit with
+    code 1. If no errors, exit with code 0.
+
+    If the target is a single file or URL, process with prep_download and log any
+    exceptions that it raises. If there aren't any, download the file and return the
+    exit code appropriately.
+
+    :param args: command-line arguments and their values
+    :type args: argparse.Namespace
+    :return: program exit code (1 if there were any problems or 0 otherwise)
+    :rtype: int
+    """
     exit_code = 0
 
     if args.batch:
@@ -84,6 +113,17 @@ def process_download(args: Namespace) -> int:
 
 
 def batch_download(args: Namespace) -> int:
+    """Download files specified in a batch file.
+
+    The batch file is parsed into a dictionary, and the dictionary's items are checked
+    for validity before being downloaded using a ThreadPool for simultaneous downloads,
+    if threading was specified on the command line.
+
+    :param args: command-line arguments and their values
+    :type args: argparse.Namespace
+    :return: number of errors encountered during processing
+    :rtype: int
+    """
     errors = 0
 
     # parse batch file
@@ -126,6 +166,15 @@ def batch_download(args: Namespace) -> int:
 
 
 def download(f: File, args: Namespace) -> int:
+    """Fetch file information and contents if the file exists and save it to disk.
+
+    :param f: a File object representing the file to be downloaded
+    :type f: File
+    :param args: command-line arguments and their values
+    :type args: argparse.Namespace
+    :return: number of errors encountered during processing
+    :rtype: int
+    """
     file = f.image
     filename = f.name
     dest = f.dest
@@ -133,6 +182,7 @@ def download(f: File, args: Namespace) -> int:
 
     errors = 0
 
+    # prepend the current filename to all log messages
     adapter = FileLogAdapter(logger, {"filename": filename})
 
     if file.exists:

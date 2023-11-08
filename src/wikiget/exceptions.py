@@ -17,7 +17,4 @@
 
 
 class ParseError(Exception):
-    """
-    This exception is raised when the program's input is unable to be parsed as a valid
-    download target.
-    """
+    """Raised when some input is unable to be parsed as valid."""

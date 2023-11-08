@@ -26,6 +26,15 @@ class FileLogAdapter(logging.LoggerAdapter):
 
 
 def configure_logging(verbosity: int, logfile: str, *, quiet: bool) -> None:
+    """Set the program's log configuration according to the given settings.
+
+    :param verbosity: how verbose the log messages should be
+    :type verbosity: int
+    :param logfile: file to write log messages to, if any
+    :type logfile: str
+    :param quiet: True if log messages should be suppressed or False otherwise
+    :type quiet: bool
+    """
     loglevel = logging.WARNING  # default log level
     if verbosity >= wikiget.VERY_VERBOSE:
         # this includes API and library messages, not just from wikiget

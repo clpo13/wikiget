@@ -28,10 +28,19 @@ logger = logging.getLogger(__name__)
 
 
 def connect_to_site(site_name: str, args: Namespace) -> Site:
-    # connect to site and identify ourselves
+    """Create and return a Site object using the given site name and CLI arguments.
+
+    :param site_name: hostname of the site to connect to
+    :type site_name: str
+    :param args: command-line arguments and their values
+    :type args: argparse.Namespace
+    :return: a new Site object
+    :rtype: mwclient.Site
+    """
     logger.info("Connecting to %s", site_name)
 
     try:
+        # connect to site and identify ourselves
         site = Site(site_name, path=args.path, clients_useragent=wikiget.USER_AGENT)
         if args.username and args.password:
             logger.info("Attempting to authenticate with credentials")
@@ -60,8 +69,20 @@ def connect_to_site(site_name: str, args: Namespace) -> Site:
 
 
 def query_api(filename: str, site: Site) -> Image:
-    # get info about the target file
+    """Query the given Site for an Image object matching the given filename.
+
+    Even if there's no file by that name on the site, an Image will still be returned,
+    though with an empty imageinfo attribute.
+
+    :param filename: name of the file to retrieve
+    :type filename: str
+    :param site: the Site object to query
+    :type site: mwclient.Site
+    :return: an Image object representing the requested file
+    :rtype: mwclient.image.Image
+    """
     try:
+        # get info about the target file
         image = site.images[filename]
     except APIError as e:
         # an API error at this point likely means access is denied, which could happen

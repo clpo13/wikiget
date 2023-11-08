@@ -24,18 +24,21 @@ from wikiget import DEFAULT_SITE
 
 
 class File:
-    """
-    This class represents a file with the properties name, destination, host site, and
+    """A file object.
+
+    Represents a file with the attributes name, destination, host site, and
     mwclient.image.Image object as retrieved from the host site.
     """
 
     def __init__(self, name: str, dest: str = "", site: str = "") -> None:
-        """
-        Initializes a new file with the specified name and an optional destination name.
+        """Initialize a new file.
+
+        The file name is required. If a destination and/or site are provided, those will
+        be used instead of the defaults.
 
         :param name: name of the file
         :type name: str
-        :param dest: destination of the file, if different from the name; if not
+        :param dest: output destination of the file, if different from the name; if not
             specified, defaults to the name
         :type dest: str, optional
         :param site: name of the site hosting the file; if not specified, defaults to
@@ -48,8 +51,7 @@ class File:
         self.site = site if site else DEFAULT_SITE
 
     def __eq__(self, other: object) -> bool:
-        """
-        Compares this File object with another for equality.
+        """Compare this File object with another for equality.
 
         :param other: another File to compare
         :type other: File

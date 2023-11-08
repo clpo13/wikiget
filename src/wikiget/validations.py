@@ -25,7 +25,7 @@ from wikiget import BLOCKSIZE
 
 
 def valid_file(search_string: str) -> re.Match | None:
-    """Determines if the given string contains a valid file name
+    """Determine if the given string contains a valid file name.
 
     A valid file name is a string that begins with 'File:' or 'Image:' (the standard
     file prefixes in MediaWiki), includes a period, and has at least one character
@@ -43,7 +43,7 @@ def valid_file(search_string: str) -> re.Match | None:
 
 
 def valid_site(search_string: str) -> re.Match | None:
-    """Determines if the given string contains a valid site name
+    """Determine if the given string contains a valid site name.
 
     A valid site name is a string ending with 'wikipedia.org' or 'wikimedia.org'. This
     covers all subdomains of those domains.
@@ -61,7 +61,7 @@ def valid_site(search_string: str) -> re.Match | None:
 
 
 def verify_hash(filename: str) -> str:
-    """Calculates the SHA1 hash of the given file for comparison with a known value.
+    """Calculate the SHA1 hash of the given file for comparison with a known value.
 
     Despite being insecure, SHA1 is used since that's what the MediaWiki API returns for
     the file hash.
