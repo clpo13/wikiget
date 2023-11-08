@@ -17,6 +17,7 @@
 
 """Define tests related to the wikiget.wikiget module."""
 
+import logging
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -25,6 +26,7 @@ from wikiget import USER_AGENT, __version__
 from wikiget.wikiget import cli
 
 
+@patch("wikiget.wikiget.process_download")
 class TestCli:
     """Define tests related to wikiget.wikiget.cli."""
 
@@ -32,41 +34,40 @@ class TestCli:
         """If no arguments are passed, the program should exit with code 2."""
         with monkeypatch.context() as m:
             m.setattr("sys.argv", ["wikiget"])
+
             with pytest.raises(SystemExit) as e:
                 cli()
+
             assert e.value.code == 2
 
-    @patch("wikiget.wikiget.process_download")
     def test_cli_completed_successfully(
         self, mock_process_download: MagicMock, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """If everything is successful, the program should exit with code 0."""
-        # a successful call to process_download returns 0
-        mock_process_download.return_value = 0
-
         with monkeypatch.context() as m:
+            # pretend process_download was successful
+            mock_process_download.return_value = 0
             m.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
 
             with pytest.raises(SystemExit) as e:
                 cli()
+
             assert e.value.code == 0
 
-    @patch("wikiget.wikiget.process_download")
     def test_cli_completed_with_problems(
         self, mock_process_download: MagicMock, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """If there are problems during execution, the exit code should be 1."""
-        # an unsuccessful call to process_download returns 1
-        mock_process_download.return_value = 1
-
         with monkeypatch.context() as m:
+            # pretend process_download was unsuccessful
+            mock_process_download.return_value = 1
             m.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
 
             with pytest.raises(SystemExit) as e:
                 cli()
+
             assert e.value.code == 1
 
-    @patch("wikiget.wikiget.process_download")
     def test_cli_logs(
         self,
         mock_process_download: MagicMock,
@@ -76,17 +77,25 @@ class TestCli:
         """When program execution starts, it should create the right log messages.
 
         There should be an info log record with the program version as well as a debug
-        record with the program's user agent.
+        record with the user agent we're sending to the API.
         """
-        # a successful call to process_download returns 0
-        mock_process_download.return_value = 0
-
         with monkeypatch.context() as m:
+            # pretend process_download was successful
+            mock_process_download.return_value = 0
             m.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
 
             with pytest.raises(SystemExit):
                 cli()
-            assert (
-                f"Starting download session using wikiget {__version__}" in caplog.text
-            )
-            assert USER_AGENT in caplog.text
+
+            assert caplog.record_tuples == [
+                (
+                    "wikiget.wikiget",
+                    logging.INFO,
+                    f"Starting download session using wikiget {__version__}",
+                ),
+                (
+                    "wikiget.wikiget",
+                    logging.DEBUG,
+                    f"User agent: {USER_AGENT}",
+                ),
+            ]
