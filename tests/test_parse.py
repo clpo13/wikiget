@@ -19,14 +19,18 @@ from __future__ import annotations
 
 import io
 import logging
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
 from wikiget.exceptions import ParseError
-from wikiget.file import File
 from wikiget.parse import get_dest, read_batch_file
 from wikiget.wikiget import parse_args
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from wikiget.file import File
 
 
 class TestGetDest:

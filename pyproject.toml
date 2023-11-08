@@ -143,6 +143,7 @@ select = [
   "RUF",
   "S",
   "T",
+  "TCH",
   "TID",
   "UP",
   "W",

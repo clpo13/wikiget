@@ -19,13 +19,16 @@ from __future__ import annotations
 
 import fileinput
 import logging
-from argparse import Namespace
+from typing import TYPE_CHECKING
 from urllib.parse import unquote, urlparse
 
 import wikiget
 from wikiget.exceptions import ParseError
 from wikiget.file import File
 from wikiget.validations import valid_file
+
+if TYPE_CHECKING:
+    from argparse import Namespace
 
 logger = logging.getLogger(__name__)
 

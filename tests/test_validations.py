@@ -17,12 +17,15 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from re import Match
+from typing import TYPE_CHECKING
 
 import pytest
 
 from wikiget.validations import valid_file, valid_site, verify_hash
+
+if TYPE_CHECKING:
+    from pathlib import Path
+    from re import Match
 
 
 class TestSiteInput:
