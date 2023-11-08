@@ -15,9 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from __future__ import annotations
+
 from pathlib import Path
 from re import Match
-from typing import Optional
 
 import pytest
 
@@ -33,7 +34,7 @@ class TestSiteInput:
             "en.wikimpedia.org",
         ],
     )
-    def invalid_input(self, request: pytest.FixtureRequest) -> Optional[Match]:
+    def invalid_input(self, request: pytest.FixtureRequest) -> Match | None:
         return valid_site(request.param)
 
     @pytest.fixture(
@@ -44,7 +45,7 @@ class TestSiteInput:
             "meta.wikimedia.org",
         ],
     )
-    def valid_input(self, request: pytest.FixtureRequest) -> Optional[Match]:
+    def valid_input(self, request: pytest.FixtureRequest) -> Match | None:
         return valid_site(request.param)
 
     def test_invalid_site_input(self, invalid_input: None) -> None:
@@ -58,7 +59,7 @@ class TestSiteInput:
 
 class TestFileRegex:
     @pytest.fixture()
-    def file_match(self) -> Optional[Match]:
+    def file_match(self) -> Match | None:
         """
         File regex should return a match object with match groups corresponding
         to the file prefix and name.
@@ -87,7 +88,7 @@ class TestFileInput:
             "Fil:Example.jpg",
         ],
     )
-    def invalid_input(self, request: pytest.FixtureRequest) -> Optional[Match]:
+    def invalid_input(self, request: pytest.FixtureRequest) -> Match | None:
         return valid_file(request.param)
 
     @pytest.fixture(
@@ -100,7 +101,7 @@ class TestFileInput:
             "File:A (1).jpeg",
         ],
     )
-    def valid_input(self, request: pytest.FixtureRequest) -> Optional[Match]:
+    def valid_input(self, request: pytest.FixtureRequest) -> Match | None:
         return valid_file(request.param)
 
     def test_invalid_file_input(self, invalid_input: None) -> None:

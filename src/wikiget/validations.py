@@ -15,14 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from __future__ import annotations
+
 import hashlib
 import re
-from typing import Optional
 
 from wikiget import BLOCKSIZE
 
 
-def valid_file(search_string: str) -> Optional[re.Match]:
+def valid_file(search_string: str) -> re.Match | None:
     """
     Determines if the given string contains a valid file name, defined as a string
     ending with a '.' and at least one character, beginning with 'File:' or 'Image:',
@@ -39,7 +40,7 @@ def valid_file(search_string: str) -> Optional[re.Match]:
     return file_regex.search(search_string)
 
 
-def valid_site(search_string: str) -> Optional[re.Match]:
+def valid_site(search_string: str) -> re.Match | None:
     """
     Determines if the given string contains a valid site name, defined as a string
     ending with 'wikipedia.org' or 'wikimedia.org'. This covers all subdomains of those

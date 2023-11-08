@@ -15,10 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from __future__ import annotations
+
 import io
 import logging
 from pathlib import Path
-from typing import Dict
 
 import pytest
 
@@ -93,7 +94,7 @@ class TestGetDest:
 
 class TestReadBatchFile:
     @pytest.fixture()
-    def dl_dict(self, tmp_path: Path) -> Dict[int, str]:
+    def dl_dict(self, tmp_path: Path) -> dict[int, str]:
         """
         Create and process a test batch file with three lines, returning a dictionary.
         """
@@ -114,14 +115,14 @@ class TestReadBatchFile:
         _ = read_batch_file(str(tmp_file))
         assert f"Using file '{tmp_file}' for batch download" in caplog.text
 
-    def test_batch_file_length(self, dl_dict: Dict[int, str]) -> None:
+    def test_batch_file_length(self, dl_dict: dict[int, str]) -> None:
         """
         The processed batch dict should have the same number of items as lines in the
         batch file.
         """
         assert len(dl_dict) == 3
 
-    def test_batch_file_contents(self, dl_dict: Dict[int, str]) -> None:
+    def test_batch_file_contents(self, dl_dict: dict[int, str]) -> None:
         """
         The processed batch dict should have the correct line numbers and filenames as
         keys and values, respectively.
@@ -130,7 +131,7 @@ class TestReadBatchFile:
         assert dl_dict == expected_list
 
     @pytest.fixture()
-    def dl_dict_stdin(self, monkeypatch: pytest.MonkeyPatch) -> Dict[int, str]:
+    def dl_dict_stdin(self, monkeypatch: pytest.MonkeyPatch) -> dict[int, str]:
         """
         Pass three lines of filenames from stdin to read_batch_file and return a dict.
         """
@@ -150,14 +151,14 @@ class TestReadBatchFile:
         _ = read_batch_file("-")
         assert "Using stdin for batch download" in caplog.text
 
-    def test_batch_stdin_length(self, dl_dict_stdin: Dict[int, str]) -> None:
+    def test_batch_stdin_length(self, dl_dict_stdin: dict[int, str]) -> None:
         """
         The processed batch dict should have the same number of items as lines in the
         input.
         """
         assert len(dl_dict_stdin) == 3
 
-    def test_batch_stdin_contents(self, dl_dict_stdin: Dict[int, str]) -> None:
+    def test_batch_stdin_contents(self, dl_dict_stdin: dict[int, str]) -> None:
         """
         The processed batch dict should have the correct line numbers and filenames as
         keys and values, respectively.
@@ -166,7 +167,7 @@ class TestReadBatchFile:
         assert dl_dict_stdin == expected_list
 
     @pytest.fixture()
-    def dl_dict_with_comment(self, tmp_path: Path) -> Dict[int, str]:
+    def dl_dict_with_comment(self, tmp_path: Path) -> dict[int, str]:
         """
         Create and process a test batch file with four lines, one of which is
         commented out and another of which is blank, and return a dictionary.
@@ -176,7 +177,7 @@ class TestReadBatchFile:
         return read_batch_file(str(tmp_file))
 
     def test_batch_file_with_comment_length(
-        self, dl_dict_with_comment: Dict[int, str]
+        self, dl_dict_with_comment: dict[int, str]
     ) -> None:
         """
         The processed batch dict should contain the same number of items as uncommented
@@ -185,7 +186,7 @@ class TestReadBatchFile:
         assert len(dl_dict_with_comment) == 2
 
     def test_batch_file_with_comment_contents(
-        self, dl_dict_with_comment: Dict[int, str]
+        self, dl_dict_with_comment: dict[int, str]
     ) -> None:
         """
         The processed batch dict should have the correct line numbers and filenames as

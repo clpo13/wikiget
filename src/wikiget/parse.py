@@ -15,10 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from __future__ import annotations
+
 import fileinput
 import logging
 from argparse import Namespace
-from typing import Dict
 from urllib.parse import unquote, urlparse
 
 import wikiget
@@ -59,7 +60,7 @@ def get_dest(dl: str, args: Namespace) -> File:
     return File(filename, dest, site_name)
 
 
-def read_batch_file(batch_file: str) -> Dict[int, str]:
+def read_batch_file(batch_file: str) -> dict[int, str]:
     dl_dict = {}
 
     if batch_file == "-":
