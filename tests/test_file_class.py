@@ -30,7 +30,7 @@ class TestFileClass:
 
     def test_file_with_name_dest(self, file_with_name: File) -> None:
         """The file dest attribute should be the same as the name."""
-        assert file_with_name.dest == file_with_name.name
+        assert file_with_name.dest.match(file_with_name.name)
 
     def test_file_with_name_site(self, file_with_name: File) -> None:
         """The file site attribute should equal the default site."""
@@ -38,11 +38,11 @@ class TestFileClass:
 
     def test_file_with_name_and_dest(self, file_with_name_and_dest: File) -> None:
         """The file dest attribute should equal what was passed in."""
-        assert file_with_name_and_dest.dest == "bazqux.jpg"
+        assert file_with_name_and_dest.dest.match("bazqux.jpg")
 
     def test_name_and_dest_are_different(self, file_with_name_and_dest: File) -> None:
         """The file name and dest attributes should not be the same."""
-        assert file_with_name_and_dest.dest != file_with_name_and_dest.name
+        assert not file_with_name_and_dest.dest.match(file_with_name_and_dest.name)
 
     def test_file_with_name_and_site(self) -> None:
         """Test the attributes of a File created with a name and site.

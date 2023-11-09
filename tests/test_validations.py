@@ -173,4 +173,4 @@ class TestVerifyHash:
         tmp_file = tmp_path / file_name
         tmp_file.write_text(file_contents)
 
-        assert verify_hash(str(tmp_file)) == file_sha1
+        assert verify_hash(tmp_file) == file_sha1

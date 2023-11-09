@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -47,7 +48,7 @@ class File:
         """
         self.image: Image = None
         self.name = name
-        self.dest = dest if dest else name
+        self.dest = Path(dest) if dest else Path(name)
         self.site = site if site else DEFAULT_SITE
 
     def __eq__(self, other: object) -> bool:

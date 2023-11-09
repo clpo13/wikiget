@@ -19,9 +19,12 @@ from __future__ import annotations
 
 import hashlib
 import re
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from wikiget import BLOCKSIZE
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 def valid_file(search_string: str) -> re.Match | None:
@@ -60,7 +63,7 @@ def valid_site(search_string: str) -> re.Match | None:
     return site_regex.search(search_string)
 
 
-def verify_hash(filename: str) -> str:
+def verify_hash(file: Path) -> str:
     """Calculate the SHA1 hash of the given file for comparison with a known value.
 
     Despite being insecure, SHA1 is used since that's what the MediaWiki API returns for
@@ -72,7 +75,7 @@ def verify_hash(filename: str) -> str:
     :rtype: str
     """
     hasher = hashlib.sha1()  # noqa: S324
-    with Path(filename).open("rb") as dl:
+    with file.open("rb") as dl:
         buf = dl.read(BLOCKSIZE)
         while len(buf) > 0:
             hasher.update(buf)
