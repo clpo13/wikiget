@@ -17,10 +17,23 @@
 
 """Define fixtures used across all tests in this folder."""
 
+from os import chdir
+from pathlib import Path
+
 import pytest
 import requests_mock as rm
 
 from wikiget.file import File
+
+
+@pytest.fixture(autouse=True)
+def _chdir_to_tmp_dir(tmp_path: Path) -> None:
+    """Change to a temporary directory before running tests.
+
+    :param tmp_path: temporary path object
+    :type tmp_path: Path
+    """
+    chdir(tmp_path)
 
 
 @pytest.fixture()
