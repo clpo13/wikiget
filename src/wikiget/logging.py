@@ -15,13 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from __future__ import annotations
+
 import logging
+from typing import Any, MutableMapping
 
 import wikiget
 
 
 class FileLogAdapter(logging.LoggerAdapter):
-    def process(self, msg, kwargs):
+    def process(
+        self, msg: Any, kwargs: MutableMapping[str, Any]
+    ) -> tuple[str, MutableMapping[str, Any]]:
         return f"[{self.extra['filename']}] {msg}", kwargs
 
 

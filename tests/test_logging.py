@@ -39,9 +39,9 @@ class TestLogging:
         adapter.warning("test log")
         assert "[Example.jpg] test log" in caplog.text
 
-    def test_file_logging(self, tmp_path: Path) -> None:
+    def test_file_logging(self) -> None:
         """Logging to a file should create the file in the specified location."""
-        logfile_location = tmp_path / "test.log"
+        logfile_location = Path("test.log")
         args = parse_args(["File:Example.jpg", "-l", str(logfile_location)])
         configure_logging(args.verbose, args.logfile, quiet=args.quiet)
         assert logfile_location.is_file()

@@ -49,7 +49,7 @@ def prep_download(dl: str, args: Namespace) -> File:
     :type args: argparse.Namespace
     :raises FileExistsError: the destination file already exists on disk
     :return: a File object representing the file to download
-    :rtype: File
+    :rtype: wikiget.file.File
     """
     file = get_dest(dl, args)
 
@@ -169,7 +169,7 @@ def download(f: File, args: Namespace) -> int:
     """Fetch file information and contents if the file exists and save it to disk.
 
     :param f: a File object representing the file to be downloaded
-    :type f: File
+    :type f: wikiget.file.File
     :param args: command-line arguments and their values
     :type args: argparse.Namespace
     :return: number of errors encountered during processing

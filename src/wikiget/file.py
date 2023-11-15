@@ -54,7 +54,7 @@ class File:
         """Compare this File object with another for equality.
 
         :param other: another File to compare
-        :type other: File
+        :type other: wikiget.file.File
         :return: True if the Files are equal and False otherwise
         :rtype: bool
         """
