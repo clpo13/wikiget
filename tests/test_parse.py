@@ -46,7 +46,7 @@ class TestGetDest:
         to the same value as the filename and the default site will be used.
 
         :return: a File object created using a filename
-        :rtype: File
+        :rtype: wikiget.file.File
         """
         args = parse_args(["File:Example.jpg"])
         return get_dest(args.FILE, args)
@@ -77,7 +77,7 @@ class TestGetDest:
         filename and site parsed from the URL.
 
         :return: a File object created using a URL
-        :rtype: File
+        :rtype: wikiget.file.File
         """
         args = parse_args(["https://en.wikipedia.org/wiki/File:Example.jpg"])
         return get_dest(args.FILE, args)
@@ -130,7 +130,7 @@ class TestReadBatchFile:
         """Create and process a test batch file with three lines.
 
         :param batch_file: test batch file
-        :type batch_file: Path
+        :type batch_file: pathlib.Path
         :return: dictionary representation of the input file
         :rtype: dict[int, str]
         """
@@ -207,7 +207,7 @@ class TestReadBatchFile:
         In addition to filenames, one line is commented out and another line is blank.
 
         :param batch_file_with_comment: test batch file
-        :type batch_file_with_comment: Path
+        :type batch_file_with_comment: pathlib.Path
         :return: dictionary representation of the input file
         :rtype: dict[int, str]
         """
