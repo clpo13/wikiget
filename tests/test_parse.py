@@ -126,20 +126,18 @@ class TestReadBatchFile:
     """Define tests related to wikiget.parse.read_batch_file."""
 
     @pytest.fixture()
-    def dl_dict(self, tmp_path: Path) -> dict[int, str]:
+    def dl_dict(self, batch_file: Path) -> dict[int, str]:
         """Create and process a test batch file with three lines.
 
-        :param tmp_path: temporary path object
-        :type tmp_path: Path
+        :param batch_file: test batch file
+        :type batch_file: Path
         :return: dictionary representation of the input file
         :rtype: dict[int, str]
         """
-        tmp_file = tmp_path / "batch.txt"
-        tmp_file.write_text("File:Foo.jpg\nFile:Bar.jpg\nFile:Baz.jpg\n")
-        return read_batch_file(str(tmp_file))
+        return read_batch_file(str(batch_file))
 
     def test_batch_file_log(
-        self, caplog: pytest.LogCaptureFixture, tmp_path: Path
+        self, caplog: pytest.LogCaptureFixture, batch_file: Path
     ) -> None:
         """Test that reading a batch file creates an info log message.
 
@@ -147,10 +145,8 @@ class TestReadBatchFile:
         of the batch file.
         """
         caplog.set_level(logging.INFO)
-        tmp_file = tmp_path / "batch.txt"
-        tmp_file.write_text("File:Foo.jpg\n")
-        _ = read_batch_file(str(tmp_file))
-        assert f"Using file '{tmp_file}' for batch download" in caplog.text
+        _ = read_batch_file(str(batch_file))
+        assert f"Using file '{batch_file}' for batch download" in caplog.text
 
     def test_batch_file_length(self, dl_dict: dict[int, str]) -> None:
         """Test that the batch dict has the same number of lines as the batch file."""
@@ -205,19 +201,17 @@ class TestReadBatchFile:
         assert dl_dict_stdin == expected_list
 
     @pytest.fixture()
-    def dl_dict_with_comment(self, tmp_path: Path) -> dict[int, str]:
+    def dl_dict_with_comment(self, batch_file_with_comment: Path) -> dict[int, str]:
         """Create and process a test batch file with four lines.
 
         In addition to filenames, one line is commented out and another line is blank.
 
-        :param tmp_path: temporary path object
-        :type tmp_path: Path
+        :param batch_file_with_comment: test batch file
+        :type batch_file_with_comment: Path
         :return: dictionary representation of the input file
         :rtype: dict[int, str]
         """
-        tmp_file = tmp_path / "batch.txt"
-        tmp_file.write_text("File:Foo.jpg\n\n#File:Bar.jpg\nFile:Baz.jpg\n")
-        return read_batch_file(str(tmp_file))
+        return read_batch_file(str(batch_file_with_comment))
 
     def test_batch_file_with_comment_length(
         self, dl_dict_with_comment: dict[int, str]
