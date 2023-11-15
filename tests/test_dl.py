@@ -54,15 +54,13 @@ class TestPrepDownload:
 
         assert file == expected_file
 
-    def test_prep_download_with_existing_file(self, tmp_path: Path) -> None:
+    def test_prep_download_with_existing_file(self, test_file: Path) -> None:
         """Test that an exception is raised when the download file already exists.
 
         Attempting to download a file with the same destination name as an existing file
         should raise a FileExistsError.
         """
-        tmp_file = tmp_path / "File:Example.jpg"
-        tmp_file.write_text("nothing")
-        args = parse_args(["File:Example.jpg", "-o", str(tmp_file)])
+        args = parse_args(["File:Example.jpg", "-o", str(test_file)])
         with pytest.raises(FileExistsError):
             _ = prep_download(args.FILE, args)
 
@@ -301,15 +299,13 @@ class TestDownload:
     """Define tests related to wikiget.dl.download."""
 
     @pytest.fixture()
-    def mock_file(self, tmp_path: Path) -> File:
+    def mock_file(self) -> File:
         """Create a mock File object to test against.
 
-        :param tmp_path: temporary path object
-        :type tmp_path: Path
         :return: mock File object
         :rtype: File
         """
-        file = File(name="Example.jpg", dest=str(tmp_path / "Example.jpg"))
+        file = File(name="Example.jpg")
         file.image = Mock()
         file.image.exists = True
         file.image.imageinfo = {

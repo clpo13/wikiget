@@ -42,7 +42,7 @@ def get_dest(dl: str, args: Namespace) -> File:
     :type args: argparse.Namespace
     :raises ParseError: the target was unable to be parsed as a valid file
     :return: a File object representing the target, destination, and site
-    :rtype: File
+    :rtype: wikiget.file.File
     """
     url = urlparse(dl)
 
