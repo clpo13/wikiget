@@ -26,8 +26,8 @@ import pytest
 from wikiget.validations import valid_file, valid_site, verify_hash
 
 if TYPE_CHECKING:
+    import re
     from pathlib import Path
-    from re import Match
 
 
 class TestSiteInput:
@@ -41,13 +41,13 @@ class TestSiteInput:
             "en.wikimpedia.org",
         ],
     )
-    def invalid_input(self, request: pytest.FixtureRequest) -> Match | None:
+    def invalid_input(self, request: pytest.FixtureRequest) -> re.Match | None:
         """Return the results of checking various invalid site names.
 
         :param request: Pytest request object containing parameter values
         :type request: pytest.FixtureRequest
         :return: a Match object for the site or None if there was no match
-        :rtype: Match | None
+        :rtype: re.Match
         """
         return valid_site(request.param)
 
@@ -59,13 +59,13 @@ class TestSiteInput:
             "meta.wikimedia.org",
         ],
     )
-    def valid_input(self, request: pytest.FixtureRequest) -> Match | None:
+    def valid_input(self, request: pytest.FixtureRequest) -> re.Match | None:
         """Return the results of checking various valid site names.
 
         :param request: Pytest request object containing parameter values
         :type request: pytest.FixtureRequest
         :return: a Match object for the site or None if there was no match
-        :rtype: Match | None
+        :rtype: re.Match
         """
         return valid_site(request.param)
 
@@ -73,7 +73,7 @@ class TestSiteInput:
         """Invalid site strings should not return regex match objects."""
         assert invalid_input is None
 
-    def test_valid_site_input(self, valid_input: Match) -> None:
+    def test_valid_site_input(self, valid_input: re.Match) -> None:
         """Valid site strings should return regex match objects."""
         assert valid_input is not None
 
@@ -82,30 +82,30 @@ class TestFileRegex:
     """Define tests related to the regex matching in wikiget.validations.valid_file."""
 
     @pytest.fixture()
-    def file_match(self) -> Match | None:
+    def file_match(self) -> re.Match | None:
         """Return the results of processing a filename.
 
         The match object returned will have match groups corresponding to the file
         prefix and name.
 
         :return: a Match object for the filename or None if there was no match
-        :rtype: Match | None
+        :rtype: re.Match
         """
         return valid_file("File:Example.jpg")
 
-    def test_file_match_exists(self, file_match: Match) -> None:
+    def test_file_match_exists(self, file_match: re.Match) -> None:
         """Test that a Match object was returned."""
         assert file_match is not None
 
-    def test_file_match_entire_match(self, file_match: Match) -> None:
+    def test_file_match_entire_match(self, file_match: re.Match) -> None:
         """Test that the the first match group equals the expected value."""
         assert file_match.group(0) == "File:Example.jpg"
 
-    def test_file_match_first_group(self, file_match: Match) -> None:
+    def test_file_match_first_group(self, file_match: re.Match) -> None:
         """Test that the second match group equals the expected value."""
         assert file_match.group(1) == "File:"
 
-    def test_file_match_second_group(self, file_match: Match) -> None:
+    def test_file_match_second_group(self, file_match: re.Match) -> None:
         """Test that the third match group equals the expected value."""
         assert file_match.group(2) == "Example.jpg"
 
@@ -121,13 +121,13 @@ class TestFileInput:
             "Fil:Example.jpg",
         ],
     )
-    def invalid_input(self, request: pytest.FixtureRequest) -> Match | None:
+    def invalid_input(self, request: pytest.FixtureRequest) -> re.Match | None:
         """Return the results of checking various invalid filenames.
 
         :param request: Pytest request object containing parameter values
         :type request: pytest.FixtureRequest
         :return: a Match object for the filename or None if there was no match
-        :rtype: Match | None
+        :rtype: re.Match
         """
         return valid_file(request.param)
 
@@ -141,13 +141,13 @@ class TestFileInput:
             "File:A (1).jpeg",
         ],
     )
-    def valid_input(self, request: pytest.FixtureRequest) -> Match | None:
+    def valid_input(self, request: pytest.FixtureRequest) -> re.Match | None:
         """Return the results of checking various valid filenames.
 
         :param request: Pytest request object containing parameter values
         :type request: pytest.FixtureRequest
         :return: a Match object for the filename or None if there was no match
-        :rtype: Match | None
+        :rtype: re.Match
         """
         return valid_file(request.param)
 
@@ -155,7 +155,7 @@ class TestFileInput:
         """Invalid file strings should not return regex match objects."""
         assert invalid_input is None
 
-    def test_valid_file_input(self, valid_input: Match) -> None:
+    def test_valid_file_input(self, valid_input: re.Match) -> None:
         """Valid file strings should return regex match objects."""
         assert valid_input is not None
 
