@@ -17,7 +17,6 @@
 
 """Define fixtures used across all tests in this folder."""
 
-from os import chdir
 from pathlib import Path
 
 import pytest
@@ -37,14 +36,18 @@ TEST_FILE_BYTES = (
 )
 
 
-@pytest.fixture(autouse=True, scope="session")
-def _chdir_to_tmp_dir(tmp_path_factory: pytest.TempPathFactory) -> None:
+@pytest.fixture(autouse=True)
+def _chdir_to_tmp_dir(
+    tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Change to the base temporary directory before running tests.
 
     :param tmp_path_factory: temporary path generator
     :type tmp_path_factory: pytest.TempPathFactory
+    :param tmp_path_factory: Pytest monkeypatch helper
+    :type tmp_path_factory: pytest.MonkeyPatch
     """
-    chdir(tmp_path_factory.getbasetemp())
+    monkeypatch.chdir(tmp_path_factory.getbasetemp())
 
 
 @pytest.fixture(scope="session")
