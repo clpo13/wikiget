@@ -170,4 +170,4 @@ class TestVerifyHash:
         """
         expected_sha1 = "cd19c009a30ca9b68045415a3a0838e64f3c2443"
 
-        assert verify_hash(str(test_file)) == expected_sha1
+        assert verify_hash(test_file) == expected_sha1

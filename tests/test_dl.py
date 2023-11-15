@@ -375,7 +375,7 @@ class TestDownload:
 
         with patch("wikiget.dl.verify_hash") as mock_verify_hash:
             mock_verify_hash.return_value = "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840"
-            args = parse_args(["-o", tmp_file, "File:Example.jpg"])
+            args = parse_args(["-o", str(tmp_file), "File:Example.jpg"])
             errors = download(mock_file, args)
 
         assert caplog.record_tuples[0] == (
@@ -414,7 +414,7 @@ class TestDownload:
         If the downloaded file cannot be created, an error log message should be created
         with details on the exception.
         """
-        with patch("wikiget.dl.Path.open") as mock_open:
+        with patch("pathlib.Path.open") as mock_open:
             mock_open.side_effect = OSError("write error")
             args = parse_args(["File:Example.jpg"])
             errors = download(mock_file, args)

@@ -60,7 +60,7 @@ class TestGetDest:
 
         Unless otherwise specified, it should match the filename.
         """
-        assert file_with_filename.dest == "Example.jpg"
+        assert file_with_filename.dest.match("Example.jpg")
 
     def test_get_dest_site_with_filename(self, file_with_filename: File) -> None:
         """Test that the file's site attribute is set correctly.
@@ -88,7 +88,7 @@ class TestGetDest:
 
     def test_get_dest_with_url(self, file_with_url: File) -> None:
         """Test that the file's dest attribute is set correctly."""
-        assert file_with_url.dest == "Example.jpg"
+        assert file_with_url.dest.match("Example.jpg")
 
     def test_get_dest_site_with_url(self, file_with_url: File) -> None:
         """Test that the file's site attribute is set correctly.
