@@ -184,7 +184,7 @@ def download(f: File, args: Namespace) -> int:
     # prepend the current filename to all log messages
     adapter = FileLogAdapter(logger, {"filename": filename})
 
-    if file.exists:
+    if file.imageinfo:
         # file exists either locally or at a common repository, like Wikimedia Commons
         file_url = file.imageinfo["url"]
         file_size = file.imageinfo["size"]

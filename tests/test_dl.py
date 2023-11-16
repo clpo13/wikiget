@@ -307,7 +307,6 @@ class TestDownload:
         """
         file = File(name="Example.jpg")
         file.image = Mock()
-        file.image.exists = True
         file.image.imageinfo = {
             "url": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",
             "size": 9022,
@@ -475,7 +474,7 @@ class TestDownload:
         self, mock_file: File, caplog: pytest.LogCaptureFixture
     ) -> None:
         """Test that a warning message is logged if no file info was returned."""
-        mock_file.image.exists = False
+        mock_file.image.imageinfo = {}
 
         args = parse_args(["File:Example.jpg"])
         errors = download(mock_file, args)
