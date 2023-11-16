@@ -17,13 +17,17 @@
 
 """Define tests related to the wikiget.logging module."""
 
+from __future__ import annotations
+
 import logging
 from pathlib import Path
-
-import pytest
+from typing import TYPE_CHECKING
 
 from wikiget.logging import FileLogAdapter, configure_logging
 from wikiget.wikiget import parse_args
+
+if TYPE_CHECKING:
+    import pytest
 
 
 class TestLogging:

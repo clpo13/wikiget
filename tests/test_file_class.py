@@ -17,6 +17,8 @@
 
 """Define tests related to the wikiget.file module."""
 
+from __future__ import annotations
+
 from wikiget import DEFAULT_SITE
 from wikiget.file import File
 

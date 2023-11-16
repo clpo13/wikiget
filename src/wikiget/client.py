@@ -15,14 +15,20 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from __future__ import annotations
+
 import logging
-from argparse import Namespace
+from typing import TYPE_CHECKING
 
 from mwclient import APIError, InvalidResponse, LoginError, Site
-from mwclient.image import Image
 from requests import ConnectionError, HTTPError
 
 import wikiget
+
+if TYPE_CHECKING:
+    from argparse import Namespace
+
+    from mwclient.image import Image
 
 logger = logging.getLogger(__name__)
 

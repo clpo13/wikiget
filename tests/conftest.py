@@ -17,12 +17,18 @@
 
 """Define fixtures used across all tests in this folder."""
 
-from pathlib import Path
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import pytest
-import requests_mock as rm
 
 from wikiget.file import File
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    import requests_mock as rm
 
 # 2x2 JPEG
 TEST_FILE_BYTES = (
