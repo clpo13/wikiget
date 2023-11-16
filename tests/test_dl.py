@@ -34,20 +34,9 @@ from wikiget.wikiget import parse_args
 class TestPrepDownload:
     """Define tests related to wikiget.dl.prep_download."""
 
-    @patch("wikiget.dl.query_api")
-    @patch("wikiget.dl.connect_to_site")
-    def test_prep_download(
-        self, mock_connect_to_site: MagicMock, mock_query_api: MagicMock
-    ) -> None:
+    def test_prep_download(self) -> None:
         """The prep_download function should create the expected file object."""
-        mock_site = Mock()
-        mock_image = Mock()
-
-        mock_connect_to_site.return_value = mock_site
-        mock_query_api.return_value = mock_image
-
         expected_file = File(name="Example.jpg")
-        expected_file.image = mock_image
 
         args = parse_args(["File:Example.jpg"])
         file = prep_download(args.FILE, args)
@@ -104,7 +93,8 @@ class TestProcessDownload:
         mock_prep_download.return_value = File("Example.jpg")
 
         args = parse_args(["File:Example.jpg"])
-        exit_code = process_download(args)
+        with patch("wikiget.dl.connect_to_site"), patch("wikiget.dl.query_api"):
+            exit_code = process_download(args)
 
         assert exit_code == 0
 
@@ -118,7 +108,8 @@ class TestProcessDownload:
         mock_prep_download.return_value = File("Example.jpg")
 
         args = parse_args(["File:Example.jpg"])
-        exit_code = process_download(args)
+        with patch("wikiget.dl.connect_to_site"), patch("wikiget.dl.query_api"):
+            exit_code = process_download(args)
 
         assert exit_code == 1
 
@@ -168,12 +159,10 @@ class TestBatchDownload:
     """Define tests related to wikiget.dl.batch_download."""
 
     @patch("wikiget.dl.download")
-    @patch("wikiget.dl.prep_download")
     @patch("wikiget.dl.read_batch_file")
     def test_batch_download(
         self,
         mock_read_batch_file: MagicMock,
-        mock_prep_download: MagicMock,
         mock_download: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
@@ -189,15 +178,57 @@ class TestBatchDownload:
         mock_download.return_value = 0
 
         args = parse_args(["-a", "batch.txt"])
-        errors = batch_download(args)
+        with patch("wikiget.dl.query_api"), patch("wikiget.dl.connect_to_site"), patch(
+            "wikiget.dl.prep_download"
+        ):
+            errors = batch_download(args)
 
         assert mock_read_batch_file.called
-        assert mock_prep_download.called
         assert mock_download.called
         assert caplog.record_tuples == [
             ("wikiget.dl", logging.INFO, "Processing 'File:Example.jpg' at line 1")
         ]
         assert errors == 0
+
+    @patch("wikiget.dl.connect_to_site")
+    @patch("wikiget.dl.prep_download")
+    @patch("wikiget.dl.read_batch_file")
+    def test_batch_download_reuse_site(
+        self,
+        mock_read_batch_file: MagicMock,
+        mock_prep_download: MagicMock,
+        mock_connect_to_site: MagicMock,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Test that an existing site object is reused."""
+        caplog.set_level(logging.DEBUG)
+
+        mock_site = MagicMock()
+        mock_site.host = "commons.wikimedia.org"
+        mock_read_batch_file.return_value = {
+            1: "File:Example.jpg",
+            2: "File:Foobar.jpg",
+        }
+        mock_prep_download.return_value = File("Example.jpg")
+        mock_connect_to_site.return_value = mock_site
+
+        args = parse_args(["-a", "batch.txt"])
+        with patch("wikiget.dl.download"), patch("wikiget.dl.query_api"):
+            _ = batch_download(args)
+
+        assert mock_read_batch_file.called
+        assert mock_prep_download.called
+        assert mock_connect_to_site.called
+        assert caplog.record_tuples[1] == (
+            "wikiget.dl",
+            logging.DEBUG,
+            "Made a new site connection",
+        )
+        assert caplog.record_tuples[3] == (
+            "wikiget.dl",
+            logging.DEBUG,
+            "Reused an existing site connection",
+        )
 
     @patch("wikiget.dl.read_batch_file")
     def test_batch_download_os_error(
