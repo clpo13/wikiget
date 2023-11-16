@@ -15,10 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+from __future__ import annotations
+
 import logging
 import sys
-from argparse import Namespace
 from concurrent.futures import ThreadPoolExecutor
+from typing import TYPE_CHECKING
 
 from mwclient import APIError, InvalidResponse, LoginError, Site
 from requests import ConnectionError, HTTPError
@@ -27,10 +29,14 @@ from tqdm import tqdm
 import wikiget
 from wikiget.client import connect_to_site, query_api
 from wikiget.exceptions import ParseError
-from wikiget.file import File
 from wikiget.logging import FileLogAdapter
 from wikiget.parse import get_dest, read_batch_file
 from wikiget.validations import verify_hash
+
+if TYPE_CHECKING:
+    from argparse import Namespace
+
+    from wikiget.file import File
 
 logger = logging.getLogger(__name__)
 
