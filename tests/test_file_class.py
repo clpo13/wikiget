@@ -73,3 +73,22 @@ class TestFileComparison:
         """
         not_a_file = {"name": "foobar.jpg", "dest": "foobar.jpg"}
         assert file_with_name.__eq__(not_a_file) == NotImplemented
+
+
+class TestFileStrings:
+    """Define tests related to wikiget.file.File string representations."""
+
+    def test_file_str(self, file_with_name: File) -> None:
+        """Test that str(File) produces the correct output."""
+        expected_output = (
+            "{'name': 'foobar.jpg', 'dest': PosixPath('foobar.jpg'), "
+            "'site': 'commons.wikimedia.org', 'image': None}"
+        )
+        assert str(file_with_name) == expected_output
+
+    def test_file_repr(self, file_with_name: File) -> None:
+        """Test that repr(File) produces the correct output."""
+        expected_output = (
+            'File("foobar.jpg", "foobar.jpg", "commons.wikimedia.org", None)'
+        )
+        assert repr(file_with_name) == expected_output
