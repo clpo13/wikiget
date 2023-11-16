@@ -1,6 +1,6 @@
-% WIKIGET(1) Version 0.5.1 | Wikiget User Manual
-% Cody Logan <clpo13@gmail.com>
-% October 5, 2023
+% WIKIGET(1) Version 0.8.0 | Wikiget User Manual
+% Cody Logan <cody@lokken.dev>
+% November 16, 2023
 
 # NAME
 
@@ -71,6 +71,11 @@ the file name or the URL of its description page.
 \-**j**, \-\-**threads**
 
 :   Number of parallel downloads to attempt in batch mode. This option has no effect if \-**a** is not also set.
+
+\-**n**, \-\-**dry-run**
+
+:   Do a dry-run of the download process. Useful for checking the format of a batch file. Nothing will actually be
+    downloaded.
 
 \-**v**, \-\-**verbose**
 
