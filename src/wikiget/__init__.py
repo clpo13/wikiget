@@ -15,6 +15,30 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Wikiget is a tool for downloading files from MediaWiki sites.
+
+It's similar in conception to download tools like wget, but wikiget can use the name of
+the file or the URL of its description page to get the actual file's URL and download
+it. Additionally, it can download multiple files at once by reading the targets from a
+given text file.
+
+Further documentation can be found in the accompanying README.md file or at
+<https://github.com/clpo13/wikiget>.
+
+Basic usage::
+
+    wikiget [options] FILE
+    wikiget [options] [-a|--batch] BATCHFILE
+
+Examples::
+
+    wikiget File:Example.jpg
+    wikiget --site en.wikipedia.org File:Example.jpg
+    wikiget https://en.wikipedia.org/wiki/File:Example.jpg -o output.jpg
+    wikiget -a -j4 batch.txt
+
+"""
+
 from mwclient import __version__ as mwclient_version
 
 from wikiget.version import __version__

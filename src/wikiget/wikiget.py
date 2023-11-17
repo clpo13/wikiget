@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Set up the command-line interface and handle program start and exit."""
+
 from __future__ import annotations
 
 import argparse
@@ -138,5 +140,10 @@ def cli() -> None:
     logger.info("Starting download session using wikiget %s", wikiget.__version__)
     logger.debug("User agent: %s", wikiget.USER_AGENT)
 
-    exit_code = process_download(args)
-    sys.exit(exit_code)
+    try:
+        exit_code = process_download(args)
+    except KeyboardInterrupt:
+        logger.critical("Interrupted by user")
+        exit_code = 130
+    finally:
+        sys.exit(exit_code)

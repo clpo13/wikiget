@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Configure program log configuration and adapters."""
+
 from __future__ import annotations
 
 import logging

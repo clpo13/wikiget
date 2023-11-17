@@ -29,7 +29,7 @@ from wikiget.wikiget import cli
 
 
 @patch("wikiget.wikiget.process_download")
-class TestCli:
+class TestWikigetCli:
     """Define tests related to wikiget.wikiget.cli."""
 
     def test_cli_no_args(self, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -40,7 +40,7 @@ class TestCli:
             with pytest.raises(SystemExit) as e:
                 cli()
 
-            assert e.value.code == 2
+        assert e.value.code == 2
 
     def test_cli_completed_successfully(
         self, mock_process_download: MagicMock, monkeypatch: pytest.MonkeyPatch
@@ -54,7 +54,7 @@ class TestCli:
             with pytest.raises(SystemExit) as e:
                 cli()
 
-            assert e.value.code == 0
+        assert e.value.code == 0
 
     def test_cli_completed_with_problems(
         self, mock_process_download: MagicMock, monkeypatch: pytest.MonkeyPatch
@@ -68,7 +68,7 @@ class TestCli:
             with pytest.raises(SystemExit) as e:
                 cli()
 
-            assert e.value.code == 1
+        assert e.value.code == 1
 
     def test_cli_logs(
         self,
@@ -89,15 +89,40 @@ class TestCli:
             with pytest.raises(SystemExit):
                 cli()
 
-            assert caplog.record_tuples == [
-                (
-                    "wikiget.wikiget",
-                    logging.INFO,
-                    f"Starting download session using wikiget {__version__}",
-                ),
-                (
-                    "wikiget.wikiget",
-                    logging.DEBUG,
-                    f"User agent: {USER_AGENT}",
-                ),
-            ]
+        assert caplog.record_tuples == [
+            (
+                "wikiget.wikiget",
+                logging.INFO,
+                f"Starting download session using wikiget {__version__}",
+            ),
+            (
+                "wikiget.wikiget",
+                logging.DEBUG,
+                f"User agent: {USER_AGENT}",
+            ),
+        ]
+
+    def test_cli_interrupt(
+        self,
+        mock_process_download: MagicMock,
+        monkeypatch: pytest.MonkeyPatch,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Test what happens when KeyboardInterrupt is raised during processing.
+
+        A critical log message should be printed and the exit code should be 130.
+        """
+        with monkeypatch.context() as m:
+            mock_process_download.side_effect = KeyboardInterrupt
+            m.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
+
+            with pytest.raises(SystemExit) as e:
+                cli()
+
+        assert e.value.code == 130
+        # ignore the first two messages, since they're tested elsewhere
+        assert caplog.record_tuples[2] == (
+            "wikiget.wikiget",
+            logging.CRITICAL,
+            "Interrupted by user",
+        )

@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Define a File class for representing individual files to be downloaded."""
+
 from __future__ import annotations
 
 from pathlib import Path
