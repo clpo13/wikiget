@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Define exceptions specific to the program."""
+
 
 class ParseError(Exception):
     """Raised when some input is unable to be parsed as valid."""

@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Parse download targets and batch files."""
+
 from __future__ import annotations
 
 import fileinput

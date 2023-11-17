@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Set up the command-line interface and handle program start and exit."""
+
 from __future__ import annotations
 
 import argparse

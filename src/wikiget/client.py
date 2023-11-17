@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
+"""Handle API calls (via mwclient) for site and image information."""
+
 import logging
 from argparse import Namespace
 
