@@ -136,7 +136,6 @@ def batch_download(args: Namespace) -> int:
         logger.error("File could not be read: %s", str(e))
         sys.exit(1)
 
-    # TODO: validate file contents before download process starts
     with ThreadPoolExecutor(max_workers=args.threads) as executor:
         futures = []
         sites: list[Site] = []
