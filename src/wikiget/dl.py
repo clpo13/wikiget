@@ -139,19 +139,28 @@ def batch_download(args: Namespace) -> int:
     # TODO: validate file contents before download process starts
     with ThreadPoolExecutor(max_workers=args.threads) as executor:
         futures = []
-        site: Site = None
+        sites: list[Site] = []
         for line_num, line in dl_dict.items():
             # keep track of batch file line numbers for debugging/logging purposes
             logger.info("Processing '%s' at line %i", line, line_num)
             try:
                 file = prep_download(line, args)
+                site = next(
+                    filter(
+                        lambda site: site.host == file.site,
+                        sites,
+                    ),
+                    None,
+                )
                 # if there's already a Site object matching the desired host, reuse it
                 # to reduce the number of API calls made per file
-                if not site or site.host != file.site:
-                    logger.debug("Made a new site connection")
-                    site = connect_to_site(file.site, args)
+                if site:
+                    logger.debug("Reusing the existing connection to %s", site.host)
                 else:
-                    logger.debug("Reused an existing site connection")
+                    logger.debug("Making a new connection to %s", file.site)
+                    site = connect_to_site(file.site, args)
+                    # cache the new Site for reuse
+                    sites.append(site)
                 file.image = query_api(file.name, site)
             except ParseError as e:
                 logger.warning("%s (line %i)", str(e), line_num)

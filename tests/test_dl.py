@@ -227,12 +227,12 @@ class TestBatchDownload:
         assert caplog.record_tuples[1] == (
             "wikiget.dl",
             logging.DEBUG,
-            "Made a new site connection",
+            "Making a new connection to commons.wikimedia.org",
         )
         assert caplog.record_tuples[3] == (
             "wikiget.dl",
             logging.DEBUG,
-            "Reused an existing site connection",
+            "Reusing the existing connection to commons.wikimedia.org",
         )
 
     @patch("wikiget.dl.read_batch_file")
