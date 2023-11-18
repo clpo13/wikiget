@@ -160,15 +160,15 @@ class TestProcessDownload:
         assert exit_code == 1
 
 
+@patch("wikiget.dl.read_batch_file")
 class TestBatchDownload:
     """Define tests related to wikiget.dl.batch_download."""
 
     @patch("wikiget.dl.download")
-    @patch("wikiget.dl.read_batch_file")
     def test_batch_download(
         self,
-        mock_read_batch_file: MagicMock,
         mock_download: MagicMock,
+        mock_read_batch_file: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that no errors are returned for a successful batch download.
@@ -197,12 +197,11 @@ class TestBatchDownload:
 
     @patch("wikiget.dl.connect_to_site")
     @patch("wikiget.dl.prep_download")
-    @patch("wikiget.dl.read_batch_file")
     def test_batch_download_reuse_site(
         self,
-        mock_read_batch_file: MagicMock,
         mock_prep_download: MagicMock,
         mock_connect_to_site: MagicMock,
+        mock_read_batch_file: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that an existing site object is reused."""
@@ -235,7 +234,6 @@ class TestBatchDownload:
             "Reusing the existing connection to commons.wikimedia.org",
         )
 
-    @patch("wikiget.dl.read_batch_file")
     def test_batch_download_os_error(
         self, mock_read_batch_file: MagicMock, caplog: pytest.LogCaptureFixture
     ) -> None:
@@ -252,11 +250,10 @@ class TestBatchDownload:
         ]
 
     @patch("wikiget.dl.prep_download")
-    @patch("wikiget.dl.read_batch_file")
     def test_batch_download_parse_error(
         self,
-        mock_read_batch_file: MagicMock,
         mock_prep_download: MagicMock,
+        mock_read_batch_file: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that a warning log message is created if ParseError is raised.
@@ -278,11 +275,10 @@ class TestBatchDownload:
         assert errors == 1
 
     @patch("wikiget.dl.prep_download")
-    @patch("wikiget.dl.read_batch_file")
     def test_batch_download_file_exists_error(
         self,
-        mock_read_batch_file: MagicMock,
         mock_prep_download: MagicMock,
+        mock_read_batch_file: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that a warning log message is created if the download file exists."""
@@ -300,11 +296,10 @@ class TestBatchDownload:
         assert errors == 1
 
     @patch("wikiget.dl.prep_download")
-    @patch("wikiget.dl.read_batch_file")
     def test_batch_download_other_error(
         self,
-        mock_read_batch_file: MagicMock,
         mock_prep_download: MagicMock,
+        mock_read_batch_file: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that a warning log message is created if there are problems downloading.
