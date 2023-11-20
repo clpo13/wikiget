@@ -79,10 +79,12 @@ cov-report = [
   "coverage report",
 ]
 htmlcov = "coverage html"
+xmlcov = "coverage xml"
 cov = [
   "test-cov",
   "cov-report",
   "htmlcov",
+  "xmlcov",
 ]
 
 [[tool.hatch.envs.all.matrix]]
@@ -198,6 +200,7 @@ warn_unused_ignores = true
 strict_equality = true
 check_untyped_defs = true
 extra_checks = true
+disallow_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = [

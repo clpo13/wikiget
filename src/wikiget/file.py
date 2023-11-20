@@ -17,11 +17,15 @@
 
 """Define a File class for representing individual files to be downloaded."""
 
-from pathlib import Path
+from __future__ import annotations
 
-from mwclient.image import Image
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 from wikiget import DEFAULT_SITE
+
+if TYPE_CHECKING:
+    from mwclient.image import Image
 
 
 class File:

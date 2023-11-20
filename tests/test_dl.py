@@ -17,8 +17,10 @@
 
 """Define tests related to the wikiget.dl module."""
 
+from __future__ import annotations
+
 import logging
-from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, Mock, patch
 
 import pytest
@@ -30,24 +32,16 @@ from wikiget.exceptions import ParseError
 from wikiget.file import File
 from wikiget.wikiget import parse_args
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
 
 class TestPrepDownload:
     """Define tests related to wikiget.dl.prep_download."""
 
-    @patch("wikiget.dl.query_api")
-    @patch("wikiget.dl.connect_to_site")
-    def test_prep_download(
-        self, mock_connect_to_site: MagicMock, mock_query_api: MagicMock
-    ) -> None:
+    def test_prep_download(self) -> None:
         """The prep_download function should create the expected file object."""
-        mock_site = Mock()
-        mock_image = Mock()
-
-        mock_connect_to_site.return_value = mock_site
-        mock_query_api.return_value = mock_image
-
         expected_file = File(name="Example.jpg")
-        expected_file.image = mock_image
 
         args = parse_args(["File:Example.jpg"])
         file = prep_download(args.FILE, args)
@@ -104,7 +98,8 @@ class TestProcessDownload:
         mock_prep_download.return_value = File("Example.jpg")
 
         args = parse_args(["File:Example.jpg"])
-        exit_code = process_download(args)
+        with patch("wikiget.dl.connect_to_site"), patch("wikiget.dl.query_api"):
+            exit_code = process_download(args)
 
         assert exit_code == 0
 
@@ -118,7 +113,8 @@ class TestProcessDownload:
         mock_prep_download.return_value = File("Example.jpg")
 
         args = parse_args(["File:Example.jpg"])
-        exit_code = process_download(args)
+        with patch("wikiget.dl.connect_to_site"), patch("wikiget.dl.query_api"):
+            exit_code = process_download(args)
 
         assert exit_code == 1
 
@@ -164,17 +160,15 @@ class TestProcessDownload:
         assert exit_code == 1
 
 
+@patch("wikiget.dl.read_batch_file")
 class TestBatchDownload:
     """Define tests related to wikiget.dl.batch_download."""
 
     @patch("wikiget.dl.download")
-    @patch("wikiget.dl.prep_download")
-    @patch("wikiget.dl.read_batch_file")
     def test_batch_download(
         self,
-        mock_read_batch_file: MagicMock,
-        mock_prep_download: MagicMock,
         mock_download: MagicMock,
+        mock_read_batch_file: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that no errors are returned for a successful batch download.
@@ -189,17 +183,57 @@ class TestBatchDownload:
         mock_download.return_value = 0
 
         args = parse_args(["-a", "batch.txt"])
-        errors = batch_download(args)
+        with patch("wikiget.dl.query_api"), patch("wikiget.dl.connect_to_site"), patch(
+            "wikiget.dl.prep_download"
+        ):
+            errors = batch_download(args)
 
         assert mock_read_batch_file.called
-        assert mock_prep_download.called
         assert mock_download.called
         assert caplog.record_tuples == [
             ("wikiget.dl", logging.INFO, "Processing 'File:Example.jpg' at line 1")
         ]
         assert errors == 0
 
-    @patch("wikiget.dl.read_batch_file")
+    @patch("wikiget.dl.connect_to_site")
+    @patch("wikiget.dl.prep_download")
+    def test_batch_download_reuse_site(
+        self,
+        mock_prep_download: MagicMock,
+        mock_connect_to_site: MagicMock,
+        mock_read_batch_file: MagicMock,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Test that an existing site object is reused."""
+        caplog.set_level(logging.DEBUG)
+
+        mock_site = MagicMock()
+        mock_site.host = "commons.wikimedia.org"
+        mock_read_batch_file.return_value = {
+            1: "File:Example.jpg",
+            2: "File:Foobar.jpg",
+        }
+        mock_prep_download.return_value = File("Example.jpg")
+        mock_connect_to_site.return_value = mock_site
+
+        args = parse_args(["-a", "batch.txt"])
+        with patch("wikiget.dl.download"), patch("wikiget.dl.query_api"):
+            _ = batch_download(args)
+
+        assert mock_read_batch_file.called
+        assert mock_prep_download.called
+        assert mock_connect_to_site.called
+        assert caplog.record_tuples[1] == (
+            "wikiget.dl",
+            logging.DEBUG,
+            "Making a new connection to commons.wikimedia.org",
+        )
+        assert caplog.record_tuples[3] == (
+            "wikiget.dl",
+            logging.DEBUG,
+            "Reusing the existing connection to commons.wikimedia.org",
+        )
+
     def test_batch_download_os_error(
         self, mock_read_batch_file: MagicMock, caplog: pytest.LogCaptureFixture
     ) -> None:
@@ -216,11 +250,10 @@ class TestBatchDownload:
         ]
 
     @patch("wikiget.dl.prep_download")
-    @patch("wikiget.dl.read_batch_file")
     def test_batch_download_parse_error(
         self,
-        mock_read_batch_file: MagicMock,
         mock_prep_download: MagicMock,
+        mock_read_batch_file: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that a warning log message is created if ParseError is raised.
@@ -242,11 +275,10 @@ class TestBatchDownload:
         assert errors == 1
 
     @patch("wikiget.dl.prep_download")
-    @patch("wikiget.dl.read_batch_file")
     def test_batch_download_file_exists_error(
         self,
-        mock_read_batch_file: MagicMock,
         mock_prep_download: MagicMock,
+        mock_read_batch_file: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that a warning log message is created if the download file exists."""
@@ -264,11 +296,10 @@ class TestBatchDownload:
         assert errors == 1
 
     @patch("wikiget.dl.prep_download")
-    @patch("wikiget.dl.read_batch_file")
     def test_batch_download_other_error(
         self,
-        mock_read_batch_file: MagicMock,
         mock_prep_download: MagicMock,
+        mock_read_batch_file: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that a warning log message is created if there are problems downloading.
@@ -317,7 +348,13 @@ class TestDownload:
         file.image.site.connection = requests.Session()
         return file
 
-    def test_download(self, mock_file: File, caplog: pytest.LogCaptureFixture) -> None:
+    @patch("wikiget.dl.verify_hash")
+    def test_download(
+        self,
+        mock_verify_hash: MagicMock,
+        mock_file: File,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
         """Test that the correct log messages are created when downloading a file.
 
         There should be a series of info-level messages containing the filename, size,
@@ -326,10 +363,10 @@ class TestDownload:
         """
         caplog.set_level(logging.INFO)
 
-        with patch("wikiget.dl.verify_hash") as mock_verify_hash:
-            mock_verify_hash.return_value = "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840"
-            args = parse_args(["File:Example.jpg"])
-            errors = download(mock_file, args)
+        mock_verify_hash.return_value = "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840"
+
+        args = parse_args(["File:Example.jpg"])
+        errors = download(mock_file, args)
 
         assert caplog.record_tuples == [
             (
@@ -361,8 +398,12 @@ class TestDownload:
         ]
         assert errors == 0
 
+    @patch("wikiget.dl.verify_hash")
     def test_download_with_output(
-        self, mock_file: File, caplog: pytest.LogCaptureFixture
+        self,
+        mock_verify_hash: MagicMock,
+        mock_file: File,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that the correct log messages are created when downloading a file.
 
@@ -371,11 +412,10 @@ class TestDownload:
         caplog.set_level(logging.INFO)
 
         tmp_file = mock_file.dest
+        mock_verify_hash.return_value = "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840"
 
-        with patch("wikiget.dl.verify_hash") as mock_verify_hash:
-            mock_verify_hash.return_value = "d01b79a6781c72ac9bfff93e5e2cfbeef4efc840"
-            args = parse_args(["-o", str(tmp_file), "File:Example.jpg"])
-            errors = download(mock_file, args)
+        args = parse_args(["-o", str(tmp_file), "File:Example.jpg"])
+        errors = download(mock_file, args)
 
         assert caplog.record_tuples[0] == (
             "wikiget.dl",
@@ -405,18 +445,19 @@ class TestDownload:
         ]
         assert errors == 0
 
+    @patch("pathlib.Path.open")
     def test_download_os_error(
-        self, mock_file: File, caplog: pytest.LogCaptureFixture
+        self, mock_open: MagicMock, mock_file: File, caplog: pytest.LogCaptureFixture
     ) -> None:
         """Test what happens when an OSError is raised during download.
 
         If the downloaded file cannot be created, an error log message should be created
         with details on the exception.
         """
-        with patch("pathlib.Path.open") as mock_open:
-            mock_open.side_effect = OSError("write error")
-            args = parse_args(["File:Example.jpg"])
-            errors = download(mock_file, args)
+        mock_open.side_effect = OSError("write error")
+
+        args = parse_args(["File:Example.jpg"])
+        errors = download(mock_file, args)
 
         assert caplog.record_tuples == [
             (
@@ -427,18 +468,22 @@ class TestDownload:
         ]
         assert errors == 1
 
+    @patch("wikiget.dl.verify_hash")
     def test_download_verify_os_error(
-        self, mock_file: File, caplog: pytest.LogCaptureFixture
+        self,
+        mock_verify_hash: MagicMock,
+        mock_file: File,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test what happens when an OSError is raised during verification.
 
         If the downloaded file cannot be read in order to calculate its hash, an error
         log message should be created with details on the exception.
         """
-        with patch("wikiget.dl.verify_hash") as mock_verify_hash:
-            mock_verify_hash.side_effect = OSError("read error")
-            args = parse_args(["File:Example.jpg"])
-            errors = download(mock_file, args)
+        mock_verify_hash.side_effect = OSError("read error")
+
+        args = parse_args(["File:Example.jpg"])
+        errors = download(mock_file, args)
 
         assert caplog.record_tuples == [
             (
@@ -449,17 +494,21 @@ class TestDownload:
         ]
         assert errors == 1
 
+    @patch("wikiget.dl.verify_hash")
     def test_download_verify_hash_mismatch(
-        self, mock_file: File, caplog: pytest.LogCaptureFixture
+        self,
+        mock_verify_hash: MagicMock,
+        mock_file: File,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test what happens when the downloaded file hash and server hash don't match.
 
         An error log message should be created if there's a hash mismatch.
         """
-        with patch("wikiget.dl.verify_hash") as mock_verify_hash:
-            mock_verify_hash.return_value = "mismatch"
-            args = parse_args(["File:Example.jpg"])
-            errors = download(mock_file, args)
+        mock_verify_hash.return_value = "mismatch"
+
+        args = parse_args(["File:Example.jpg"])
+        errors = download(mock_file, args)
 
         assert caplog.record_tuples == [
             (

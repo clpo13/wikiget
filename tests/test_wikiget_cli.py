@@ -17,6 +17,8 @@
 
 """Define tests related to the wikiget.wikiget module."""
 
+from __future__ import annotations
+
 import logging
 from unittest.mock import MagicMock, patch
 

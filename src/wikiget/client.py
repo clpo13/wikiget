@@ -17,14 +17,20 @@
 
 """Handle API calls (via mwclient) for site and image information."""
 
+from __future__ import annotations
+
 import logging
-from argparse import Namespace
+from typing import TYPE_CHECKING
 
 from mwclient import APIError, InvalidResponse, LoginError, Site
-from mwclient.image import Image
 from requests import ConnectionError, HTTPError
 
 import wikiget
+
+if TYPE_CHECKING:
+    from argparse import Namespace
+
+    from mwclient.image import Image
 
 logger = logging.getLogger(__name__)
 

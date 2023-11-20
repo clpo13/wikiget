@@ -17,32 +17,34 @@
 
 """Prepare and process file downloads."""
 
+from __future__ import annotations
+
 import logging
 import sys
-from argparse import Namespace
 from concurrent.futures import ThreadPoolExecutor
+from typing import TYPE_CHECKING
 
-from mwclient import APIError, InvalidResponse, LoginError
+from mwclient import APIError, InvalidResponse, LoginError, Site
 from requests import ConnectionError, HTTPError
 from tqdm import tqdm
 
 import wikiget
 from wikiget.client import connect_to_site, query_api
 from wikiget.exceptions import ParseError
-from wikiget.file import File
 from wikiget.logging import FileLogAdapter
 from wikiget.parse import get_dest, read_batch_file
 from wikiget.validations import verify_hash
+
+if TYPE_CHECKING:
+    from argparse import Namespace
+
+    from wikiget.file import File
 
 logger = logging.getLogger(__name__)
 
 
 def prep_download(dl: str, args: Namespace) -> File:
     """Prepare to download a file by parsing the filename or URL and CLI arguments.
-
-    First, the target is parsed for a valid name, destination, and site. If there are no
-    problems creating a File with this information, we connect to the site hosting it
-    and fetch the relevant Image object, which is added as an attribute to the File.
 
     :param dl: a string representing the file or URL to download
     :type dl: str
@@ -59,8 +61,6 @@ def prep_download(dl: str, args: Namespace) -> File:
         msg = f"[{file.dest}] File already exists; skipping download (use -f to force)"
         raise FileExistsError(msg)
 
-    site = connect_to_site(file.site, args)
-    file.image = query_api(file.name, site)
     return file
 
 
@@ -98,6 +98,8 @@ def process_download(args: Namespace) -> int:
         # single download mode
         try:
             file = prep_download(args.FILE, args)
+            site = connect_to_site(file.site, args)
+            file.image = query_api(file.name, site)
         except ParseError as e:
             logger.error(e)
             exit_code = 1
@@ -134,14 +136,31 @@ def batch_download(args: Namespace) -> int:
         logger.error("File could not be read: %s", str(e))
         sys.exit(1)
 
-    # TODO: validate file contents before download process starts
     with ThreadPoolExecutor(max_workers=args.threads) as executor:
         futures = []
+        sites: list[Site] = []
         for line_num, line in dl_dict.items():
             # keep track of batch file line numbers for debugging/logging purposes
             logger.info("Processing '%s' at line %i", line, line_num)
             try:
                 file = prep_download(line, args)
+                site = next(
+                    filter(
+                        lambda site: site.host == file.site,
+                        sites,
+                    ),
+                    None,
+                )
+                # if there's already a Site object matching the desired host, reuse it
+                # to reduce the number of API calls made per file
+                if site:
+                    logger.debug("Reusing the existing connection to %s", site.host)
+                else:
+                    logger.debug("Making a new connection to %s", file.site)
+                    site = connect_to_site(file.site, args)
+                    # cache the new Site for reuse
+                    sites.append(site)
+                file.image = query_api(file.name, site)
             except ParseError as e:
                 logger.warning("%s (line %i)", str(e), line_num)
                 errors += 1
