@@ -17,4 +17,4 @@
 
 """Set the version string of the program."""
 
-__version__ = "0.8.0.dev0"
+__version__ = "0.9.0.dev0"
