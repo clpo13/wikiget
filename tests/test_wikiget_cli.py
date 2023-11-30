@@ -37,6 +37,7 @@ class TestWikigetCli:
         with monkeypatch.context() as m:
             m.setattr("sys.argv", ["wikiget"])
 
+            # this SystemExit exception is raised by argparse
             with pytest.raises(SystemExit) as e:
                 cli()
 
@@ -51,10 +52,9 @@ class TestWikigetCli:
             mock_process_download.return_value = 0
             m.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
 
-            with pytest.raises(SystemExit) as e:
-                cli()
+            code = cli()
 
-        assert e.value.code == 0
+        assert code == 0
 
     def test_cli_completed_with_problems(
         self, mock_process_download: MagicMock, monkeypatch: pytest.MonkeyPatch
@@ -65,10 +65,9 @@ class TestWikigetCli:
             mock_process_download.return_value = 1
             m.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
 
-            with pytest.raises(SystemExit) as e:
-                cli()
+            code = cli()
 
-        assert e.value.code == 1
+        assert code == 1
 
     def test_cli_logs(
         self,
@@ -86,9 +85,9 @@ class TestWikigetCli:
             mock_process_download.return_value = 0
             m.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
 
-            with pytest.raises(SystemExit):
-                cli()
+            code = cli()
 
+        assert code == 0
         assert caplog.record_tuples == [
             (
                 "wikiget.wikiget",
@@ -116,10 +115,9 @@ class TestWikigetCli:
             mock_process_download.side_effect = KeyboardInterrupt
             m.setattr("sys.argv", ["wikiget", "File:Example.jpg"])
 
-            with pytest.raises(SystemExit) as e:
-                cli()
+            code = cli()
 
-        assert e.value.code == 130
+        assert code == 130
         # ignore the first two messages, since they're tested elsewhere
         assert caplog.record_tuples[2] == (
             "wikiget.wikiget",

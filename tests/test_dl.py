@@ -241,10 +241,10 @@ class TestBatchDownload:
         mock_read_batch_file.side_effect = OSError("error message")
 
         args = parse_args(["-a", "batch.txt"])
-        with pytest.raises(SystemExit):
-            _ = batch_download(args)
+        errors = batch_download(args)
 
         assert mock_read_batch_file.called
+        assert errors == 1
         assert caplog.record_tuples == [
             ("wikiget.dl", logging.ERROR, "File could not be read: error message"),
         ]

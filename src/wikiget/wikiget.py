@@ -129,7 +129,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def cli() -> None:
+def cli() -> int:
     """Set up the command-line environment and start the download process."""
     args = parse_args(sys.argv[1:])
     configure_logging(verbosity=args.verbose, logfile=args.logfile, quiet=args.quiet)
@@ -146,5 +146,4 @@ def cli() -> None:
     except KeyboardInterrupt:
         logger.critical("Interrupted by user")
         exit_code = 130
-    finally:
-        sys.exit(exit_code)
+    return exit_code

@@ -20,7 +20,6 @@
 from __future__ import annotations
 
 import logging
-import sys
 from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
 
@@ -134,7 +133,7 @@ def batch_download(args: Namespace) -> int:
         dl_dict = read_batch_file(args.FILE)
     except OSError as e:
         logger.error("File could not be read: %s", str(e))
-        sys.exit(1)
+        return 1
 
     with ThreadPoolExecutor(max_workers=args.threads) as executor:
         futures = []
