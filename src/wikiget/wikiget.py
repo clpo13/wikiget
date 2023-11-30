@@ -47,6 +47,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         software; you are free to change and redistribute it under certain conditions.
         There is NO WARRANTY, to the extent permitted by law.
         """,
+        prog="wikiget",
     )
     parser.add_argument(
         "FILE",
