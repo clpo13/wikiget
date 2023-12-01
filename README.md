@@ -24,6 +24,13 @@ from [GitHub]:
 pip install https://github.com/clpo13/wikiget/archive/refs/heads/master.zip
 ```
 
+Alternatively, if you have [Homebrew] installed:
+
+```bash
+brew tap clpo13/clpo13
+brew install wikiget
+```
+
 ## Usage
 
 `wikiget [-h] [-V] [-q | -v] [-f] [-s SITE] [-P PATH] [-u USERNAME] [-p PASSWORD] [-o OUTPUT | -a] [-l LOGFILE] [-j THREADS] FILE`
@@ -121,6 +128,7 @@ You should have received a copy of the GNU General Public License along with thi
 
 [wget]: https://www.gnu.org/software/wget/
 [github]: https://github.com/clpo13/wikiget/
+[homebrew]: https://brew.sh/
 [python]: https://www.python.org/
 [action]: https://github.com/clpo13/wikiget/actions/workflows/python.yml
 [codecov]: https://app.codecov.io/gh/clpo13/wikiget/
