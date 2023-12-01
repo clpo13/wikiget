@@ -44,10 +44,12 @@ class TestSiteInput:
     def invalid_input(self, request: pytest.FixtureRequest) -> re.Match | None:
         """Return the results of checking various invalid site names.
 
-        :param request: Pytest request object containing parameter values
-        :type request: pytest.FixtureRequest
-        :return: a Match object for the site or None if there was no match
-        :rtype: re.Match
+        Args:
+            request (pytest.FixtureRequest): Pytest request object containing parameter
+                values
+
+        Returns:
+            re.Match: a Match object for the site or None if there was no match
         """
         return valid_site(request.param)
 
@@ -62,10 +64,12 @@ class TestSiteInput:
     def valid_input(self, request: pytest.FixtureRequest) -> re.Match | None:
         """Return the results of checking various valid site names.
 
-        :param request: Pytest request object containing parameter values
-        :type request: pytest.FixtureRequest
-        :return: a Match object for the site or None if there was no match
-        :rtype: re.Match
+        Args:
+            request (pytest.FixtureRequest): Pytest request object containing parameter
+                values
+
+        Returns:
+            re.Match: a Match object for the site or None if there was no match
         """
         return valid_site(request.param)
 
@@ -88,8 +92,8 @@ class TestFileRegex:
         The match object returned will have match groups corresponding to the file
         prefix and name.
 
-        :return: a Match object for the filename or None if there was no match
-        :rtype: re.Match
+        Returns:
+            re.Match: a Match object for the filename or None if there was no match
         """
         return valid_file("File:Example.jpg")
 
@@ -124,10 +128,12 @@ class TestFileInput:
     def invalid_input(self, request: pytest.FixtureRequest) -> re.Match | None:
         """Return the results of checking various invalid filenames.
 
-        :param request: Pytest request object containing parameter values
-        :type request: pytest.FixtureRequest
-        :return: a Match object for the filename or None if there was no match
-        :rtype: re.Match
+        Args:
+            request (pytest.FixtureRequest): Pytest request object containing parameter
+                values
+
+        Returns:
+            re.Match: a Match object for the filename or None if there was no match
         """
         return valid_file(request.param)
 
@@ -144,10 +150,12 @@ class TestFileInput:
     def valid_input(self, request: pytest.FixtureRequest) -> re.Match | None:
         """Return the results of checking various valid filenames.
 
-        :param request: Pytest request object containing parameter values
-        :type request: pytest.FixtureRequest
-        :return: a Match object for the filename or None if there was no match
-        :rtype: re.Match
+        Args:
+            request (pytest.FixtureRequest): Pytest request object containing parameter
+                values
+
+        Returns:
+            re.Match: a Match object for the filename or None if there was no match
         """
         return valid_file(request.param)
 

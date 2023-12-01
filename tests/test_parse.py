@@ -45,8 +45,8 @@ class TestGetDest:
         When only the filename is given as an argument, the dest attribute will be set
         to the same value as the filename and the default site will be used.
 
-        :return: a File object created using a filename
-        :rtype: wikiget.file.File
+        Returns:
+            wikiget.file.File: a File object created using a filename
         """
         args = parse_args(["File:Example.jpg"])
         return get_dest(args.FILE, args)
@@ -76,8 +76,8 @@ class TestGetDest:
         When a URL is passed to get_dest, it will create a File object with the
         filename and site parsed from the URL.
 
-        :return: a File object created using a URL
-        :rtype: wikiget.file.File
+        Returns:
+            wikiget.file.File: a File object created using a URL
         """
         args = parse_args(["https://en.wikipedia.org/wiki/File:Example.jpg"])
         return get_dest(args.FILE, args)
@@ -129,10 +129,11 @@ class TestReadBatchFile:
     def dl_dict(self, batch_file: Path) -> dict[int, str]:
         """Create and process a test batch file with three lines.
 
-        :param batch_file: test batch file
-        :type batch_file: pathlib.Path
-        :return: dictionary representation of the input file
-        :rtype: dict[int, str]
+        Args:
+            batch_file (pathlib.Path): test batch file
+
+        Returns:
+            dict[int, str]: dictionary representation of the input file
         """
         return read_batch_file(str(batch_file))
 
@@ -165,10 +166,11 @@ class TestReadBatchFile:
     def dl_dict_stdin(self, monkeypatch: pytest.MonkeyPatch) -> dict[int, str]:
         """Pass three lines of filenames from stdin to read_batch_file to create a dict.
 
-        :param monkeypatch: Pytest monkeypatch helper
-        :type monkeypatch: pytest.MonkeyPatch
-        :return: dictionary representation of the input
-        :rtype: dict[int, str]
+        Args:
+            monkeypatch (pytest.MonkeyPatch): Pytest monkeypatch helper
+
+        Returns:
+            dict[int, str]: dictionary representation of the input
         """
         monkeypatch.setattr(
             "sys.stdin", io.StringIO("File:Foo.jpg\nFile:Bar.jpg\nFile:Baz.jpg\n")
@@ -206,10 +208,11 @@ class TestReadBatchFile:
 
         In addition to filenames, one line is commented out and another line is blank.
 
-        :param batch_file_with_comment: test batch file
-        :type batch_file_with_comment: pathlib.Path
-        :return: dictionary representation of the input file
-        :rtype: dict[int, str]
+        Args:
+            batch_file_with_comment (pathlib.Path): test batch file
+
+        Returns:
+            dict[int, str]: dictionary representation of the input file
         """
         return read_batch_file(str(batch_file_with_comment))
 

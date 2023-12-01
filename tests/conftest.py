@@ -48,10 +48,9 @@ def _chdir_to_tmp_dir(
 ) -> None:
     """Change to the base temporary directory before running tests.
 
-    :param tmp_path_factory: temporary path generator
-    :type tmp_path_factory: pytest.TempPathFactory
-    :param tmp_path_factory: Pytest monkeypatch helper
-    :type tmp_path_factory: pytest.MonkeyPatch
+    Args:
+        tmp_path_factory (pytest.TempPathFactor): temporary path generator
+        monkeypatch (pytest.MonkeyPatch): Pytest monkeypatch helper
     """
     monkeypatch.chdir(tmp_path_factory.getbasetemp())
 
@@ -60,10 +59,11 @@ def _chdir_to_tmp_dir(
 def batch_file(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Create a temporary batch file for testing.
 
-    :param tmp_path_factory: temporary path generator
-    :type tmp_path_factory: pytest.TempPathFactory
-    :return: test batch file
-    :rtype: pathlib.Path
+    Args:
+        tmp_path_factory (pytest.TempPathFactor): temporary path generator
+
+    Returns:
+        pathlib.Path: test batch file
     """
     tmp_file = tmp_path_factory.getbasetemp() / "batch.txt"
     tmp_file.write_text("File:Foo.jpg\nFile:Bar.jpg\nFile:Baz.jpg\n")
@@ -74,10 +74,11 @@ def batch_file(tmp_path_factory: pytest.TempPathFactory) -> Path:
 def batch_file_with_comment(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Create a temporary batch file with comments for testing.
 
-    :param tmp_path_factory: temporary path generator
-    :type tmp_path_factory: pytest.TempPathFactory
-    :return: test batch file
-    :rtype: pathlib.Path
+    Args:
+        tmp_path_factory (pytest.TempPathFactor): temporary path generator
+
+    Returns:
+        pathlib.Path: test batch file
     """
     tmp_file = tmp_path_factory.getbasetemp() / "batch_with_comment.txt"
     tmp_file.write_text("File:Foo.jpg\n\n#File:Bar.jpg\nFile:Baz.jpg\n")
@@ -88,10 +89,11 @@ def batch_file_with_comment(tmp_path_factory: pytest.TempPathFactory) -> Path:
 def test_file(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Create a fake downloaded file with known contents.
 
-    :param tmp_path_factory: temporary path generator
-    :type tmp_path_factory: pytest.TempPathFactory
-    :return: test file
-    :rtype: pathlib.Path
+    Args:
+        tmp_path_factory (pytest.TempPathFactor): temporary path generator
+
+    Returns:
+        pathlib.Path: test file
     """
     tmp_file = tmp_path_factory.getbasetemp() / "Testfile.jpg"
     tmp_file.write_bytes(TEST_FILE_BYTES)
@@ -105,8 +107,8 @@ def file_with_name() -> File:
     A File object created with only a name should set its destination property to
     the same value and its site property to the program's default site.
 
-    :return: File object created using a filename
-    :rtype: wikiget.file.File
+    Returns:
+        wikiget.file.File: File object created using a filename
     """
     return File("foobar.jpg")
 
@@ -115,8 +117,8 @@ def file_with_name() -> File:
 def file_with_name_and_dest() -> File:
     """Create a test File with a name and destination.
 
-    :return: File object created with name and dest
-    :rtype: wikiget.file.File
+    Returns:
+        wikiget.file.File: File object created with name and dest
     """
     return File(name="foobar.jpg", dest="bazqux.jpg")
 
@@ -125,8 +127,8 @@ def file_with_name_and_dest() -> File:
 def _mock_get(requests_mock: rm.Mocker) -> None:
     """Fake the download request for the true URL of File:Example.jpg.
 
-    :param requests_mock: a requests_mock Mocker object
-    :type requests_mock: requests_mock.Mocker
+    Args:
+        requests_mock (requests_mock.Mocker): a requests_mock Mocker object
     """
     requests_mock.get(
         "https://upload.wikimedia.org/wikipedia/commons/a/a9/Example.jpg",

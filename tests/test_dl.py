@@ -333,8 +333,8 @@ class TestDownload:
     def mock_file(self) -> File:
         """Create a mock File object to test against.
 
-        :return: mock File object
-        :rtype: File
+        Returns:
+            wikiget.file.File: mock File object
         """
         file = File(name="Example.jpg")
         file.image = Mock()
