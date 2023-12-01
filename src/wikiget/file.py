@@ -40,15 +40,14 @@ class File:
         will be used as the output name, and if no site is given, the default site will
         be used (commons.wikimedia.org).
 
-        :param name: name of the file
-        :type name: str
-        :param dest: output name of the file; if not specified, defaults to name
-        :type dest: str, optional
-        :param site: name of the site hosting the file; if not specified, defaults to
-            the global default site
-        :type site: str, optional
-        :param image: mwclient image object retrieved from the host site
-        :type image: mwclient.image.Image, optional
+        Args:
+            name (str): name of the file
+            dest (str, optional): output name of the file; defaults to the value given
+                to name
+            site (str, optional): name of the site hosting the file; defaults to the
+                global default site
+            image (mwclient.image.Image): mwclient image object retrieved from the host
+                site
         """
         self.name = name
         self.dest = Path(dest) if dest else Path(name)
@@ -58,10 +57,11 @@ class File:
     def __eq__(self, other: object) -> bool:
         """Compare this File object with another for equality.
 
-        :param other: another File to compare
-        :type other: wikiget.file.File
-        :return: True if the Files are equal and False otherwise
-        :rtype: bool
+        Args:
+            other (wikiget.file.File): another File to compare
+
+        Returns:
+            bool: True if the Files are equal and False otherwise
         """
         if not isinstance(other, File):
             return NotImplemented
@@ -75,16 +75,16 @@ class File:
     def __str__(self) -> str:
         """Return a basic string representation of this class, for str().
 
-        :return: string form of the class
-        :rtype: str
+        Returns:
+            str: string form of the class
         """
         return str(self.__dict__)
 
     def __repr__(self) -> str:
         """Return a formal string representation of this class, for repr().
 
-        :return: string form of the class
-        :rtype: str
+        Returns:
+            str: string form of the class
         """
         attr_list = [self.name, self.dest, self.site]
         return '{}("{}", {})'.format(

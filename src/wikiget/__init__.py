@@ -15,12 +15,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Wikiget. If not, see <https://www.gnu.org/licenses/>.
 
-"""Wikiget is a tool for downloading files from MediaWiki sites.
+"""A tool for downloading files from MediaWiki sites.
 
-It's similar in conception to download tools like wget, but wikiget can use the name of
-the file or the URL of its description page to get the actual file's URL and download
-it. Additionally, it can download multiple files at once by reading the targets from a
-given text file.
+Wikiget is similar in conception to download tools like wget, but wikiget can use the
+name of the file or the URL of its description page to get the actual file's URL and
+download it. Additionally, it can download multiple files at once by reading the targets
+from a given text file.
 
 Further documentation can be found in the accompanying README.md file or at
 <https://github.com/clpo13/wikiget>.

@@ -45,13 +45,15 @@ logger = logging.getLogger(__name__)
 def prep_download(dl: str, args: Namespace) -> File:
     """Prepare to download a file by parsing the filename or URL and CLI arguments.
 
-    :param dl: a string representing the file or URL to download
-    :type dl: str
-    :param args: command-line arguments and their values
-    :type args: argparse.Namespace
-    :raises FileExistsError: the destination file already exists on disk
-    :return: a File object representing the file to download
-    :rtype: wikiget.file.File
+    Args:
+        dl (str): the file or URL to download
+        args (argparse.Namespace): command-line arguments and their values
+
+    Raises:
+        FileExistsError: the destination file already exists on disk
+
+    Returns:
+        wikiget.file.File: a File object representing the file to download
     """
     file = get_dest(dl, args)
 
@@ -74,10 +76,11 @@ def process_download(args: Namespace) -> int:
     exceptions that it raises. If there aren't any, download the file and return the
     exit code appropriately.
 
-    :param args: command-line arguments and their values
-    :type args: argparse.Namespace
-    :return: program exit code (1 if there were any problems or 0 otherwise)
-    :rtype: int
+    Args:
+        args (argparse.Namespace): command-line arguments and their values
+
+    Returns:
+        int: program exit code (1 if there were any problems or 0 otherwise)
     """
     exit_code = 0
 
@@ -121,10 +124,11 @@ def batch_download(args: Namespace) -> int:
     for validity before being downloaded using a ThreadPool for simultaneous downloads,
     if threading was specified on the command line.
 
-    :param args: command-line arguments and their values
-    :type args: argparse.Namespace
-    :return: number of errors encountered during processing
-    :rtype: int
+    Args:
+        args (argparse.Namespace): command-line arguments and their values
+
+    Returns:
+        int: number of errors encountered during processing
     """
     errors = 0
 
@@ -187,12 +191,13 @@ def batch_download(args: Namespace) -> int:
 def download(f: File, args: Namespace) -> int:
     """Fetch file information and contents if the file exists and save it to disk.
 
-    :param f: a File object representing the file to be downloaded
-    :type f: wikiget.file.File
-    :param args: command-line arguments and their values
-    :type args: argparse.Namespace
-    :return: number of errors encountered during processing
-    :rtype: int
+    Args:
+        f (wikiget.file.File): a File object representing the file to be downloaded
+        args (argparse.Namespace): command-line arguments and their values
+
+    Returns:
+        :return: number of errors encountered during processing
+        :rtype: int
     """
     file = f.image
     filename = f.name

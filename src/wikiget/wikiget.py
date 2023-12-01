@@ -31,10 +31,11 @@ from wikiget.logging import configure_logging
 def parse_args(argv: list[str]) -> argparse.Namespace:
     """Parse the given argument list.
 
-    :param argv: a list of arguments in string form
-    :type argv: list[str]
-    :return: a Namespace containing the arguments and their values
-    :rtype: argparse.Namespace
+    Args:
+        argv (list[str]): a list of arguments in string form
+
+    Returns:
+        argparse.Namespace: a Namespace containing the arguments and their values
     """
     parser = argparse.ArgumentParser(
         description="""
@@ -130,7 +131,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 
 def cli() -> int:
-    """Set up the command-line environment and start the download process."""
+    """Set up the command-line environment and start the download process.
+
+    Returns:
+        int: exit code (0 for success, 1 for errors, 130 for user interrupt)
+    """
     args = parse_args(sys.argv[1:])
     configure_logging(verbosity=args.verbose, logfile=args.logfile, quiet=args.quiet)
 

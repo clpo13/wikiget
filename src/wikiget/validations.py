@@ -36,10 +36,11 @@ def valid_file(search_string: str) -> re.Match | None:
     file prefixes in MediaWiki), includes a period, and has at least one character
     following the period, like 'File:Example.jpg' or 'Image:Example.svg'.
 
-    :param search_string: string to validate
-    :type search_string: str
-    :returns: a regex Match object if there's a match or None otherwise
-    :rtype: re.Match
+    Args:
+        search_string (str): string to validate
+
+    Returns:
+        re.Match: a regex Match object if there's a match or None otherwise
     """
     # second group could also restrict to file extensions with three or more
     # letters with ([^/\r\n\t\f\v]+\.\w{3,})
@@ -56,10 +57,11 @@ def valid_site(search_string: str) -> re.Match | None:
     Currently unused since any site is accepted as input, and we rely on the user to
     ensure the site has a compatible API.
 
-    :param search_string: string to validate
-    :type search_string: str
-    :returns: a regex Match object if there's a match or None otherwise
-    :rtype: re.Match
+    Args:
+        search_string (str): string to validate
+
+    Returns:
+        re.Match: a regex Match object if there's a match or None otherwise
     """
     site_regex = re.compile(r"wiki[mp]edia\.org$", re.I)
     return site_regex.search(search_string)
@@ -71,10 +73,11 @@ def verify_hash(file: Path) -> str:
     Despite being insecure, SHA1 is used since that's what the MediaWiki API returns for
     the file hash.
 
-    :param filename: name of the file to calculate a hash for
-    :type filename: str
-    :return: hash digest
-    :rtype: str
+    Args:
+        file (pathlib.Path): file to calculate a hash for, as a Path object
+
+    Returns:
+        str: hash digest
     """
     hasher = hashlib.sha1()  # noqa: S324
     with file.open("rb") as dl:

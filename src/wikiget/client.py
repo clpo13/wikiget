@@ -38,12 +38,12 @@ logger = logging.getLogger(__name__)
 def connect_to_site(site_name: str, args: Namespace) -> Site:
     """Create and return a Site object using the given site name and CLI arguments.
 
-    :param site_name: hostname of the site to connect to
-    :type site_name: str
-    :param args: command-line arguments and their values
-    :type args: argparse.Namespace
-    :return: a new Site object
-    :rtype: mwclient.Site
+    Args:
+        site_name (str): hostname of the site to connect to
+        args (argparse.Namespace): command-line arguments and their values
+
+    Returns:
+        mwclient.Site: a new Site object
     """
     logger.info("Connecting to %s", site_name)
 
@@ -82,12 +82,12 @@ def query_api(filename: str, site: Site) -> Image:
     Even if there's no file by that name on the site, an Image will still be returned,
     though with an empty imageinfo attribute.
 
-    :param filename: name of the file to retrieve
-    :type filename: str
-    :param site: the Site object to query
-    :type site: mwclient.Site
-    :return: an Image object representing the requested file
-    :rtype: mwclient.image.Image
+    Args:
+        filename (str): name of the file to retrieve
+        site (mwclient.Site): the Site object to query
+
+    Returns:
+        mwclient.image.Image: an Image object representing the requested file
     """
     try:
         # get info about the target file

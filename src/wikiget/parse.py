@@ -38,13 +38,15 @@ logger = logging.getLogger(__name__)
 def get_dest(dl: str, args: Namespace) -> File:
     """Parse the given download target for filename, destination, and site host.
 
-    :param dl: download target (filename or URL)
-    :type dl: str
-    :param args: command-line arguments and their values
-    :type args: argparse.Namespace
-    :raises ParseError: the target was unable to be parsed as a valid file
-    :return: a File object representing the target, destination, and site
-    :rtype: wikiget.file.File
+    Args:
+        dl (str): download target (filename or URL)
+        args (argparse.Namespace): command-line arguments and their values
+
+    Raises:
+        ParseError: the target was unable to be parsed as a valid file
+
+    Returns:
+        wikiget.file.File: a File object representing the target, destination, and site
     """
     url = urlparse(dl)
 
@@ -81,10 +83,11 @@ def read_batch_file(batch_file: str) -> dict[int, str]:
     The contents are returned as a dictionary with line numbers for keys and line
     contents for values. Any blank lines or lines starting with '#' are skipped.
 
-    :param batch_file: name of the file to parse or "-" for stdin
-    :type batch_file: str
-    :return: a dictionary representation of the input contents
-    :rtype: dict[int, str]
+    Args:
+        batch_file (str): name of the file to parse or "-" for stdin
+
+    Returns:
+        dict[int, str]: a dictionary representation of the input contents
     """
     dl_dict = {}
 
